@@ -1,0 +1,12 @@
+name: Tests
+on:
+  push:
+    branches: [main]
+jobs:
+  install:
+    runs-on: macos-latest
+    steps:
+      - name: Run install
+        run: |
+          bash -c "$(curl -fsSL \
+          https://raw.githubusercontent.com/alistairstead/dotfiles2/main/install.sh)"
