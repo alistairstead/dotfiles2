@@ -47,6 +47,8 @@
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+    ".config/nix".source = ~/dotfiles/nix;
+    ".config/nix-darwin".source = ~/dotfiles/nix-darwin;
   };
 
   # You can also manage environment variables but you will have to manually
