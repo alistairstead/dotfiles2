@@ -15,7 +15,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
 echo "nix is installed at version: $(nix --version)"
 
-nix run nix-darwin flakes -- switch --flake ./nix-darwin
+nix run nix-darwin switch --flake ./nix-darwin
 
 echo "My config files are now managed by nix and home-manager"
 

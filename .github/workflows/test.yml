@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Run install
         env:
-          NIX_CONFIG: access_tokens=${{ secrets.GITHUB_TOKEN }}
+          NIX_CONFIG: access_tokens = github.com=${{ secrets.GITHUB_TOKEN }}
         run: |
           bash -c "$(curl -fsSL \
           https://raw.githubusercontent.com/alistairstead/dotfiles2/main/install.sh)"
