@@ -1,5 +1,12 @@
 #!/usr/bin/env sh
 
+sudo -v
+while true; do
+  sudo -n true
+  sleep 60
+  kill -0 "$$" || exit
+done 2>/dev/null &
+
 echo "Mac OS Install Setup Script"
 
 echo "Cloning personal dotfiles..."
@@ -32,7 +39,7 @@ fi
 
 cd ./nix-darwin || echo "Cloning nix-darwin failed" exit
 nix run nix-darwin -- switch --flake .#simple
-rm /etc/nix/nix.conf
+mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 nix run nix-darwin -- switch --flake .#simple
 
 # echo "My config files are now managed by nix and home-manager"
