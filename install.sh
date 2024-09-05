@@ -37,9 +37,10 @@ else
   exit 1
 fi
 
-cd ./nix-darwin || echo "Cloning nix-darwin failed" exit
-nix run nix-darwin -- switch --flake .#simple
+# Move a file that will conflict with nix-darwin
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
+
+cd ./nix-darwin || echo "ERROR: can't locate nix-darwin config" exit
 nix run nix-darwin --extra-experimental-features nix-command --extra-experimental-features flakes -- switch --flake .#simple
 
 # echo "My config files are now managed by nix and home-manager"
