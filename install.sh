@@ -39,7 +39,7 @@ fi
 
 cd ./nix-darwin || echo "Cloning nix-darwin failed" exit
 nix run nix-darwin -- switch --flake .#simple
-mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
+sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 nix run nix-darwin -- switch --flake .#simple
 
 # echo "My config files are now managed by nix and home-manager"
