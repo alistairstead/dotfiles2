@@ -21,17 +21,18 @@ expected_output="Hello, world!"
 
 # Check if the output matches the expected output
 if [ "$output" = "$expected_output" ]; then
-  echo "Success: nix is installed correctly."
-  echo "Info: nix is installed at version: $(nix --version)"
+  echo "SUCCESS: nix is installed correctly."
+  echo "INFO: nix is installed at version: $(nix --version)"
 else
-  echo "Error: nix is not installed correctly."
-  echo "Expected: '$expected_output'"
-  echo "Got: '$output'"
+  echo "ERROR: nix is not installed correctly."
+  echo "EXPECTED: '$expected_output'"
+  echo "GOT: '$output'"
   exit 1
 fi
 
-mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 cd ./nix-darwin || echo "Cloning nix-darwin failed" exit
+nix run nix-darwin -- switch --flake .#simple
+rm /etc/nix/nix.conf
 nix run nix-darwin -- switch --flake .#simple
 
 # echo "My config files are now managed by nix and home-manager"
