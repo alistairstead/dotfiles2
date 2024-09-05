@@ -30,6 +30,7 @@ else
   exit 1
 fi
 
+mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 cd ./nix-darwin || echo "Cloning nix-darwin failed" exit
 nix run nix-darwin -- switch --flake .#simple
 
