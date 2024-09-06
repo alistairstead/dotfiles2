@@ -16,7 +16,7 @@
           envUsername = builtins.getEnv "USERNAME";
         in
         if envUsername == "" then "alistairstead" else envUsername;
-      homeModule = import ./home.nix { inherit config pkgs username; };
+      homeModule = import ./home.nix { inherit username; };
       configuration = { pkgs, ... }: {
         # List packages installed in system profile. To search by name, run:
         # $ nix-env -qaP | grep wget
@@ -77,11 +77,7 @@
         modules = [
           configuration
           home-manager.darwinModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.${username} = homeModule;
-          }
+          homeModule
         ];
       };
 
