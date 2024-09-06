@@ -70,8 +70,7 @@ cd ./nix-darwin || echo "ERROR: can't locate nix-darwin config" exit
 nix run nix-darwin --extra-experimental-features nix-command --extra-experimental-features flakes -- switch --flake .#simple
 
 # echo "My config files are now managed by nix and home-manager"
-ls -la /Users/
 
-ls -la /Users/alistairstead/.config
+ls -la ~/.config
 
 echo "Done!"
