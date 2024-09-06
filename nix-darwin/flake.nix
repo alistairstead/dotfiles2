@@ -79,7 +79,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.${username} = import ./home.nix { inherit username; inherit pkgs; };
+            home-manager.users.${username} = import ./home.nix { inherit username; };
           }
         ];
       };
