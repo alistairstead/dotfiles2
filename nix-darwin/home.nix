@@ -1,18 +1,13 @@
 # home.nix
 # home-manager switch 
 
-{ config, pkgs, ... }:
-let
-  username = let
-    envUsername = builtins.getEnv "USERNAME";
-  in if envUsername == "" then "alistairstead" else envUsername;
-in
+{ config, pkgs, username, ... }:
 {
   home.username = username;
   home.homeDirectory = "/Users/${username}";
   home.stateVersion = "23.05"; # Please read the comment before changing.
 
-# Makes sense for user specific applications that shouldn't be available system-wide
+  # Makes sense for user specific applications that shouldn't be available system-wide
   home.packages = [
   ];
 
@@ -30,12 +25,11 @@ in
     ".config/tmux".source = /Users/${username}/dotfiles/tmux;
   };
 
-  home.sessionVariables = {
-  };
+  home.sessionVariables = { };
 
   home.sessionPath = [
     "/run/current-system/sw/bin"
-      "$HOME/.nix-profile/bin"
+    "$HOME/.nix-profile/bin"
   ];
   programs.home-manager.enable = true;
   programs.zsh = {
