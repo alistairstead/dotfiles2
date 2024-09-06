@@ -7,15 +7,29 @@ while true; do
   kill -0 "$$" || exit
 done 2>/dev/null &
 
-echo "Mac OS Install Setup Script"
+echo "INFO: Mac OS Install Setup Script"
 
-echo "Cloning personal dotfiles..."
+unless ENV["CI"]
+echo "INFO: Installing xcode..."
+xcode-select --install
+end
 
-git clone https://github.com/alistairstead/dotfiles2.git ~/dotfiles
+#
+# Homebrew
+#
+# This installs some of the common dependencies needed (or at least desired)
+# using Homebrew.
 
-cd ~/dotfiles || echo "Cloning dotfiles failed" exit
+# Check for Homebrew
+if test ! "$(which brew)"; then
+  echo "INFO: Installing Homebrew for you."
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
 
-echo "Installing nix..."
+brew upgrade
+brew update
+
+echo "INFO: Installing nix..."
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --determinate --no-confirm
 
 . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
@@ -36,6 +50,12 @@ else
   echo "GOT: '$output'"
   exit 1
 fi
+
+echo "INFO: Cloning personal dotfiles..."
+
+git clone https://github.com/alistairstead/dotfiles2.git ~/dotfiles
+
+cd ~/dotfiles || echo "Cloning dotfiles failed" exit
 
 # Move a file that will conflict with nix-darwin
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
