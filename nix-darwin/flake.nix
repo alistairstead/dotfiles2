@@ -13,9 +13,9 @@
     let
       username =
         let
-          envUsername = builtins.getEnv "USERNAME";
+          CI = builtins.getEnv "USERNAME";
         in
-        if envUsername == "" then "alistairstead" else envUsername;
+        if CI == "" then "alistairstead" else "runner";
       configuration = { pkgs, ... }: {
         # List packages installed in system profile. To search by name, run:
         # $ nix-env -qaP | grep wget
@@ -79,7 +79,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.${username} = import ./home.nix { inherit username; };
+            # home-manager.users.${username} = import ./home.nix { inherit pkgs username; };
           }
         ];
         specialArgs = { inherit username; };
