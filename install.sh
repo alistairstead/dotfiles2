@@ -57,6 +57,12 @@ git clone https://github.com/alistairstead/dotfiles2.git ~/dotfiles
 
 cd ~/dotfiles || echo "Cloning dotfiles failed" exit
 
+USERNAME="$(whoami)"
+
+echo "INFO: Setting up nix-darwin for $USERNAME"
+
+export USERNAME
+
 # Move a file that will conflict with nix-darwin
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 

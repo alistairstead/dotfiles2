@@ -62,6 +62,13 @@
       homebrew.brews = [
 	      "imagemagick"
       ];
+      username = let
+        envUsername = builtins.getEnv "USERNAME";
+        in 
+        if envUsername == "" 
+          then "alistairstead" 
+        else 
+          envUsername;
     };
   in
   {
@@ -73,7 +80,7 @@
         home-manager.darwinModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.alistairstead = import ./home.nix;
+          home-manager.users.[username] = import ./home.nix;
         }
       ];
     };
