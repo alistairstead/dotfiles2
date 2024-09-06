@@ -11,6 +11,11 @@
 
   outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager }:
     let
+      username =
+        let
+          envUsername = builtins.getEnv "USERNAME";
+        in
+        if envUsername == "" then "alistairstead" else envUsername;
       configuration = { pkgs, ... }: {
         # List packages installed in system profile. To search by name, run:
         # $ nix-env -qaP | grep wget
@@ -69,13 +74,12 @@
       # $ darwin-rebuild build --flake .#simple
       darwinConfigurations."simple" = nix-darwin.lib.darwinSystem {
         modules = [
-          ./darwin-configuration.nix
           configuration
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.${username} = import ./home.nix;
+            home-manager.users.${username} = import ./home.nix { inherit username; inherit pkgs; };
           }
         ];
       };
