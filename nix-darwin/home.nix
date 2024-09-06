@@ -23,7 +23,7 @@
     # ".config/nvim".source = ~/dotfiles/nvim;
     # ".config/nix".source = ~/dotfiles/nix;
     # ".config/nix-darwin".source = ~/dotfiles/nix-darwin;
-    ".config/tmux".source = ~/dotfiles/tmux;
+    # ".config/tmux".source = ~/dotfiles/tmux;
   };
 
   home.sessionVariables = {
