@@ -9,7 +9,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager }
+  outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager };
   let
     configuration = { pkgs, ... }: {
       # List packages installed in system profile. To search by name, run:
@@ -18,6 +18,7 @@
         [ 
           pkgs.vim
           pkgs.direnv
+          pkgs.sshs
         ];
 
       # Auto upgrade nix package and the daemon service.
