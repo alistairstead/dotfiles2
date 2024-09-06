@@ -11,6 +11,13 @@
 
   outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager }:
   let
+    username = let
+      envUsername = builtins.getEnv "USERNAME";
+      in 
+      if envUsername == "" 
+        then "alistairstead" 
+      else 
+        envUsername;
     configuration = { pkgs, ... }: {
       # List packages installed in system profile. To search by name, run:
       # $ nix-env -qaP | grep wget
@@ -62,13 +69,6 @@
       homebrew.brews = [
 	      "imagemagick"
       ];
-      username = let
-        envUsername = builtins.getEnv "USERNAME";
-        in 
-        if envUsername == "" 
-          then "alistairstead" 
-        else 
-          envUsername;
     };
   in
   {
