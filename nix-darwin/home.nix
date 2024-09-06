@@ -1,7 +1,7 @@
 # home.nix
 # home-manager switch 
 
-{ config, pkgs, username, ... }:
+{ config, username, ... }:
 
 {
   home-manager.useGlobalPkgs = true;
