@@ -15,10 +15,7 @@
         let
           envUsername = builtins.getEnv "USERNAME";
         in
-        if envUsername == ""
-        then "alistairstead"
-        else
-          envUsername;
+        if envUsername == "" then "alistairstead" else envUsername;
       homeModule = import ./home.nix { inherit username; };
       configuration = { pkgs, ... }: {
         # List packages installed in system profile. To search by name, run:
