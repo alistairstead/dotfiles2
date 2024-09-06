@@ -82,6 +82,7 @@
             home-manager.users.${username} = import ./home.nix { inherit username; };
           }
         ];
+        specialArgs = { inherit username; };
       };
 
       # Expose the package set, including overlays, for convenience.
