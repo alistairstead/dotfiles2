@@ -28,7 +28,7 @@ in
     # ".config/nvim".source = ~/dotfiles/nvim;
     # ".config/nix".source = ~/dotfiles/nix;
     # ".config/nix-darwin".source = ~/dotfiles/nix-darwin;
-    ".config/tmux".source = /Users/${username}/dotfiles/tmux;
+    ".config/tmux".source = ~/dotfiles/tmux;
   };
 
   home.sessionVariables = { };
@@ -47,5 +47,8 @@ in
         . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
       fi
     '';
+  };
+  programs.tmux = {
+    enable = true;
   };
 }
