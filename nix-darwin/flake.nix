@@ -15,7 +15,7 @@
         let
           CI = builtins.getEnv "CI";
         in
-        if CI == "" then "alistairstead" else "runner";
+        if CI == "true" then "runner" else "alistairstead";
       configuration = { pkgs, ... }: {
         # List packages installed in system profile. To search by name, run:
         # $ nix-env -qaP | grep wget
