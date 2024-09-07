@@ -3,15 +3,14 @@
 
 { config, pkgs, ... }:
 let
-  username =
-    let
-      CI = builtins.getEnv "CI";
-    in
-    if CI == "true" then "runner" else "alistairstead";
+  username = builtins.getEnv "USERNAME";
+  loggedUsername = builtins.trace "The value of USERNAME environment variable is: ${toString username}" username;
+  isCI = builtins.getEnv "CI" == "true";
+  loggedIsCI = builtins.trace "The value of CI environment variable is: ${toString isCI}" isCI;
 in
 {
-  home.username = username;
-  home.homeDirectory = "/Users/${username}";
+  home.username = loggedUsername;
+  home.homeDirectory = "/Users/${loggedUsername}";
   home.stateVersion = "23.05"; # Please read the comment before changing.
 
   # Makes sense for user specific applications that shouldn't be available system-wide
