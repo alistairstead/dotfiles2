@@ -60,6 +60,7 @@ cd ~/dotfiles || echo "Cloning dotfiles failed" exit
 USERNAME="$(whoami)"
 
 echo "INFO: Setting up nix-darwin for $USERNAME"
+echo "INFO: CI = $CI"
 
 export USERNAME
 
@@ -72,7 +73,5 @@ nix run nix-darwin --extra-experimental-features nix-command --extra-experimenta
 # echo "My config files are now managed by nix and home-manager"
 
 ls -la ~/.config
-
-echo "CI: $CI"
 
 echo "Done!"

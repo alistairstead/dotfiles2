@@ -15,11 +15,6 @@
       loggedUsername = builtins.trace "The value of USERNAME environment variable is: ${toString username}" username;
       isCI = builtins.getEnv "CI" == "true";
       loggedIsCI = builtins.trace "The value of CI environment variable is: ${toString isCI}" isCI;
-      username =
-        let
-          CI = builtins.getEnv "CI";
-        in
-        if CI == "true" then "runner" else "alistairstead";
       configuration = { pkgs, ... }: {
         # List packages installed in system profile. To search by name, run:
         # $ nix-env -qaP | grep wget
