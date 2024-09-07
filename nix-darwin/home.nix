@@ -5,9 +5,9 @@
 let
   username =
     let
-      CI = builtins.getEnv "USERNAME";
+      CI = builtins.getEnv "CI";
     in
-    if CI then "runner" else "alistairstead";
+    if CI == "" then "alistairstead" else "runner";
 in
 {
   home.username = username;
