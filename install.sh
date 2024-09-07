@@ -68,7 +68,7 @@ export USERNAME
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 
 cd ./nix-darwin || echo "ERROR: can't locate nix-darwin config" exit
-nix run nix-darwin --extra-experimental-features nix-command --extra-experimental-features flakes -- switch --impure --flake .#simple
+nix run nix-darwin --extra-experimental-features nix-command --extra-experimental-features flakes -- switch --impure --show-trace --flake .#simple
 
 # echo "My config files are now managed by nix and home-manager"
 

@@ -19,17 +19,17 @@ in
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
-  home.file = {
-    # ".zshrc".source = ~/dotfiles/zshrc/.zshrc;
-    # ".config/wezterm".source = ~/dotfiles/wezterm;
-    # ".config/skhd".source = ~/dotfiles/skhd;
-    # ".config/starship".source = ~/dotfiles/starship;
-    # ".config/zellij".source = ~/dotfiles/zellij;
-    # ".config/nvim".source = ~/dotfiles/nvim;
-    # ".config/nix".source = ~/dotfiles/nix;
-    # ".config/nix-darwin".source = ~/dotfiles/nix-darwin;
-    ".config/tmux".source = ~/dotfiles/tmux;
-  };
+  # home.file = {
+  #   # ".zshrc".source = ~/dotfiles/zshrc/.zshrc;
+  #   # ".config/wezterm".source = ~/dotfiles/wezterm;
+  #   # ".config/skhd".source = ~/dotfiles/skhd;
+  #   # ".config/starship".source = ~/dotfiles/starship;
+  #   # ".config/zellij".source = ~/dotfiles/zellij;
+  #   # ".config/nvim".source = ~/dotfiles/nvim;
+  #   # ".config/nix".source = ~/dotfiles/nix;
+  #   # ".config/nix-darwin".source = ~/dotfiles/nix-darwin;
+  #   ".config/tmux".source = ~/dotfiles/tmux;
+  # };
 
   home.sessionVariables = { };
 
