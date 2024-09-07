@@ -9,6 +9,7 @@ let
   loggedIsCI = builtins.trace "The value of CI environment variable is: ${toString isCI}" isCI;
 in
 {
+  programs.home-manager.enable = true;
   home.username = loggedUsername;
   home.homeDirectory = "/Users/${loggedUsername}";
   home.stateVersion = "23.05"; # Please read the comment before changing.
