@@ -1,7 +1,14 @@
 # home.nix
 # home-manager switch 
 
-{ config, pkgs, username, ... }:
+{ config, pkgs, ... }:
+let
+  username =
+    let
+      CI = builtins.getEnv "USERNAME";
+    in
+    if CI == "" then "alistairstead" else "runner";
+in
 {
   home.username = username;
   home.homeDirectory = "/Users/${username}";

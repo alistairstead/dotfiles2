@@ -79,10 +79,9 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.${username} = import ./home.nix { inherit pkgs username; };
+            home-manager.users.${username} = import ./home.nix;
           }
         ];
-        specialArgs = { inherit username; };
       };
 
       # Expose the package set, including overlays, for convenience.
