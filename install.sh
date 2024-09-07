@@ -73,4 +73,6 @@ nix run nix-darwin --extra-experimental-features nix-command --extra-experimenta
 
 ls -la ~/.config
 
+echo "CI: $CI"
+
 echo "Done!"

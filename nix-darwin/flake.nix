@@ -11,6 +11,10 @@
 
   outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager }:
     let
+      username = builtins.getEnv "USERNAME";
+      loggedUsername = builtins.trace "The value of USERNAME environment variable is: ${toString username}" username;
+      isCI = builtins.getEnv "CI" == "true";
+      loggedIsCI = builtins.trace "The value of CI environment variable is: ${toString isCI}" isCI;
       username =
         let
           CI = builtins.getEnv "CI";
@@ -79,7 +83,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.${username} = import ./home.nix;
+            # home-manager.users.${username} = import ./home.nix;
           }
         ];
       };
