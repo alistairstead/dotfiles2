@@ -12,7 +12,7 @@ in
   programs.home-manager.enable = true;
   # home.username = loggedUsername;
   # home.homeDirectory = "/Users/${loggedUsername}";
-  # home.stateVersion = "24.11"; # Please read the comment before changing.
+  home.stateVersion = "24.11"; # Please read the comment before changing.
   #
   # # Makes sense for user specific applications that shouldn't be available system-wide
   # home.packages = [
