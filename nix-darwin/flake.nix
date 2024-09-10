@@ -75,7 +75,7 @@
         modules = [
           configuration
           {
-            users.users.${loggedusername} = {
+            users.users.${loggedUsername} = {
               name = "${username}";
               home = "/Users/${username}";
             };
