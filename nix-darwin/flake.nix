@@ -74,11 +74,18 @@
       darwinConfigurations."simple" = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
+          {
+            users.users.${loggedusername} = {
+              name = "${username}";
+              home = "/Users/${username}";
+            };
+          }
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.${loggedUsername} = import ./home.nix;
+            home-manager.backupFileExtension = "backup";
+            home-manager.users.${username} = import ./home.nix;
           }
         ];
       };
@@ -87,3 +94,5 @@
       darwinPackages = self.darwinConfigurations."simple".pkgs;
     };
 }
+
+

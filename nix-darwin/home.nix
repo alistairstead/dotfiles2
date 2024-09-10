@@ -2,16 +2,8 @@
 # home-manager switch 
 
 { config, pkgs, ... }:
-let
-  username = builtins.getEnv "USERNAME";
-  loggedUsername = builtins.trace "The value of USERNAME environment variable is: ${toString username}" username;
-  isCI = builtins.getEnv "CI" == "true";
-  loggedIsCI = builtins.trace "The value of CI environment variable is: ${toString isCI}" isCI;
-in
 {
   programs.home-manager.enable = true;
-  # home.username = loggedUsername;
-  # home.homeDirectory = "/Users/${loggedUsername}";
   home.stateVersion = "24.11"; # Please read the comment before changing.
 
   # Makes sense for user specific applications that shouldn't be available system-wide
@@ -35,21 +27,20 @@ in
     # ".config/tmux".source = ~/dotfiles/tmux;
   };
 
-  # home.sessionVariables = { };
-  #
-  # home.sessionPath = [
-  #   "/run/current-system/sw/bin"
-  #   "$HOME/.nix-profile/bin"
-  # ];
-  # programs.home-manager.enable = true;
-  # programs.zsh = {
-  #   enable = true;
-  #   initExtra = ''
-  #     # Add any additional configurations here
-  #     export PATH=/run/current-system/sw/bin:$HOME/.nix-profile/bin:$PATH
-  #     if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-  #       . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-  #     fi
-  #   '';
-  # };
+  home.sessionVariables = { };
+
+  home.sessionPath = [
+    "/run/current-system/sw/bin"
+    "$HOME/.nix-profile/bin"
+  ];
+  programs.zsh = {
+    enable = true;
+    initExtra = ''
+      # Add any additional configurations here
+      export PATH=/run/current-system/sw/bin:$HOME/.nix-profile/bin:$PATH
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
+    '';
+  };
 }
