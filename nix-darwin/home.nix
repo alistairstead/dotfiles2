@@ -10,13 +10,13 @@ let
 in
 {
   programs.home-manager.enable = true;
-  home.username = loggedUsername;
-  home.homeDirectory = "/Users/${loggedUsername}";
-  home.stateVersion = "23.05"; # Please read the comment before changing.
-
-  # Makes sense for user specific applications that shouldn't be available system-wide
-  home.packages = [
-  ];
+  # home.username = loggedUsername;
+  # home.homeDirectory = "/Users/${loggedUsername}";
+  # home.stateVersion = "24.11"; # Please read the comment before changing.
+  #
+  # # Makes sense for user specific applications that shouldn't be available system-wide
+  # home.packages = [
+  # ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
@@ -32,24 +32,24 @@ in
   #   ".config/tmux".source = ~/dotfiles/tmux;
   # };
 
-  home.sessionVariables = { };
-
-  home.sessionPath = [
-    "/run/current-system/sw/bin"
-    "$HOME/.nix-profile/bin"
-  ];
-  programs.home-manager.enable = true;
-  programs.zsh = {
-    enable = true;
-    initExtra = ''
-      # Add any additional configurations here
-      export PATH=/run/current-system/sw/bin:$HOME/.nix-profile/bin:$PATH
-      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-      fi
-    '';
-  };
-  programs.tmux = {
-    enable = true;
-  };
+  # home.sessionVariables = { };
+  #
+  # home.sessionPath = [
+  #   "/run/current-system/sw/bin"
+  #   "$HOME/.nix-profile/bin"
+  # ];
+  # programs.home-manager.enable = true;
+  # programs.zsh = {
+  #   enable = true;
+  #   initExtra = ''
+  #     # Add any additional configurations here
+  #     export PATH=/run/current-system/sw/bin:$HOME/.nix-profile/bin:$PATH
+  #     if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+  #       . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+  #     fi
+  #   '';
+  # };
+  # programs.tmux = {
+  #   enable = true;
+  # };
 }
