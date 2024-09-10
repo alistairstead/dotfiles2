@@ -1,0 +1,59 @@
+[alias]
+  co = checkout
+
+  # View abbreviated SHA, description, and history graph of the latest 20 commits
+  l = log --pretty=oneline -n 40 --graph --abbrev-commit
+  la = log --pretty=custom -n 40 --graph --abbrev-commit
+
+  # View the current working tree status using the short format
+  s = status -s
+  st = status
+
+  # Show verbose output about tags, branches or remotes
+  tags = tag -l
+  branches = branch -a
+  remotes = remote -v
+
+  undo = reset --soft HEAD^
+
+[core]
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true    # use n and N to move between diff sections
+    light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
+
+[merge]
+	; renames = copies
+  ; conflictstyle = diff3
+
+[diff]
+  colorMoved = default
+
+[apply]
+  whitespace = fix
+
+[init]
+	defaultBranch = main
+
+[rerere]
+  enabled = true
+
+[push]
+  default = current
+  autoSetupRemote = true
+
+[help]
+  autocorrect = 1
+
+[pretty]
+  # custom = "%Cred%h%Creset %an: %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset"
+  custom = "%C(magenta)%h%C(red)%d %C(yellow)%ar %C(green)%s %C(yellow)(%an)"
+  #                     │        │            │            │             └─ author name
+  #                     │        │            │            └─ message
+  #                     │        │            └─ date (relative)
+  #                     │        └─ decorations (branch, heads or tags)
+  #                     └─ hash (abbreviated)
