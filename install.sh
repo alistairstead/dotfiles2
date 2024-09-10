@@ -73,6 +73,8 @@ nix run nix-darwin --extra-experimental-features nix-command --extra-experimenta
 # echo "My config files are now managed by nix and home-manager"
 
 ls -la ~/
+la -la ~/.nix-profile
+cat ~/.gitconfig
 ls -la ~/.config
 
 echo "Done!"
