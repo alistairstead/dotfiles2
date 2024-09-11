@@ -15,7 +15,7 @@
       Day = 1;
     };
 
-    environment.shells = [ pkgs.zsh ];
+    environment.shells = [ pkgs.fish ];
 
     security.pam.enableSudoTouchIdAuth = true;
 

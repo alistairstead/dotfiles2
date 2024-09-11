@@ -19,7 +19,7 @@
 
       # Default shell setting doesn't work
       home.sessionVariables = {
-        SHELL = "${pkgs.zsh}/bin/zsh";
+        SHELL = "${pkgs.fish}/bin/fish";
       };
 
       # Used for aerc

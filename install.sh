@@ -99,9 +99,5 @@ else
   info "INFO: Running nix-darwin in normal mode..."
   nix run nix-darwin --experimental-features 'nix-command flakes' -- switch --flake github:alistairstead/dotfiles2#wombat
 fi
-# cd ./nix-darwin || fail "ERROR: can't locate nix-darwin config"
-nix run nix-darwin --extra-experimental-features nix-command --extra-experimental-features flakes -- switch --impure --show-trace --flake github:alistairstead/dotfiles2#wombat
-
-# echo "My config files are now managed by nix and home-manager"
 
 success "Done!"
