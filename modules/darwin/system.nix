@@ -174,13 +174,13 @@
       };
 
       # Settings that don't have an option in nix-darwin
-      activationScripts.postActivation.text = ''
-        echo "Allow apps from anywhere"
-        SPCTL=$(spctl --status)
-        if ! [ "$SPCTL" = "assessments disabled" ]; then
-            sudo spctl --master-disable
-        fi
-      '';
+      # activationScripts.postActivation.text = ''
+      #   echo "Allow apps from anywhere"
+      #   SPCTL=$(spctl --status)
+      #   if ! [ "$SPCTL" = "assessments disabled" ]; then
+      #       sudo spctl --master-disable
+      #   fi
+      # '';
 
       # User-level settings
       activationScripts.postUserActivation.text = ''
