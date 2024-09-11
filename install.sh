@@ -92,12 +92,16 @@ export USERNAME
 # Move a file that will conflict with nix-darwin
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 
-if CI; then
+if $CI; then
   info "INFO: Running nix-darwin in CI mode..."
-  nix run nixpkgs#nix-darwin --experimental-features 'nix-command flakes' -- switch --no-write-lock-file --flake github:alistairstead/dotfiles2#wombat
+  nix run nix-darwin --experimental-features 'nix-command flakes' -- switch --no-write-lock-file --flake github:alistairstead/dotfiles2#wombat
 else
   info "INFO: Running nix-darwin in normal mode..."
-  nix run nixpkgs#nix-darwin --experimental-features 'nix-command flakes' -- switch --flake github:alistairstead/dotfiles2#wombat
+  nix run nix-darwin --experimental-features 'nix-command flakes' -- switch --flake github:alistairstead/dotfiles2#wombat
 fi
+# cd ./nix-darwin || fail "ERROR: can't locate nix-darwin config"
+nix run nix-darwin --extra-experimental-features nix-command --extra-experimental-features flakes -- switch --impure --show-trace --flake github:alistairstead/dotfiles2#wombat
+
+# echo "My config files are now managed by nix and home-manager"
 
 success "Done!"
