@@ -26,7 +26,7 @@
     };
   };
 
-  outputs = inputs@{ self, darwin, nixpkgs, home-manager }:
+  outputs = inputs@{ nixpkgs, ... }:
     let
       # Global configuration for my systems
       globals =

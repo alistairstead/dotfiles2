@@ -6,12 +6,6 @@
 
 {
 
-  unfreePackages = [
-    "consul"
-    "vault-bin"
-    "teams"
-  ];
-
   home-manager.users.${config.user} = lib.mkIf pkgs.stdenv.isDarwin {
 
     home.packages = [
