@@ -35,25 +35,25 @@ done 2>/dev/null &
 
 info "INFO: Mac OS System Install Setup Script"
 
-unless ENV["CI"]
-info "INFO: Installing xcode..."
-xcode-select --install
-end
-
+# unless ENV["CI"]
+# info "INFO: Installing xcode..."
+# xcode-select --install
+# end
 #
-# Homebrew
+# #
+# # Homebrew
+# #
+# # This installs some of the common dependencies needed (or at least desired)
+# # using Homebrew.
 #
-# This installs some of the common dependencies needed (or at least desired)
-# using Homebrew.
-
-# Check for Homebrew
-if test ! "$(which brew)"; then
-  info "INFO: Installing Homebrew for you."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-
-brew upgrade
-brew update
+# # Check for Homebrew
+# if test ! "$(which brew)"; then
+#   info "INFO: Installing Homebrew for you."
+#   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# fi
+#
+# brew upgrade
+# brew update
 
 info "INFO: Installing nix..."
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --determinate --no-confirm
