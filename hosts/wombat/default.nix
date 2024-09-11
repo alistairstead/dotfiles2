@@ -17,14 +17,14 @@ inputs.darwin.lib.darwinSystem {
     inputs.mac-app-util.darwinModules.default
     {
       networking.hostName = "wombat";
-      # gui.enable = true;
+      gui.enable = true;
       # atuin.enable = true;
       # charm.enable = true;
       # neovim.enable = true;
       # discord.enable = true;
       # firefox.enable = true;
-      # dotfiles.enable = true;
-      # terraform.enable = true;
+      dotfiles.enable = true;
+      terraform.enable = true;
       # python.enable = true;
       # rust.enable = true;
       # lua.enable = true;
