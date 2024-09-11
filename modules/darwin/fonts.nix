@@ -7,7 +7,7 @@
 
   home-manager.users.${config.user} = lib.mkIf pkgs.stdenv.isDarwin {
 
-    home.packages = with pkgs; [ (nerdfonts.override { fonts = [ "VictorMono" ]; }) ];
+    home.packages = with pkgs; [ monaspace ];
 
     # programs.alacritty.settings = {
     #   font.normal.family = "VictorMono";
