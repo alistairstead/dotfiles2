@@ -129,16 +129,16 @@ in
       programs.fish.functions =
         lib.mkIf (builtins.elem pkgs.fzf home-packages && builtins.elem pkgs.bat home-packages)
           {
-            git = {
-              body = builtins.readFile ./fish/functions/git.fish;
-            };
-            git-add-fuzzy = {
-              body = builtins.readFile ./fish/functions/git-add-fuzzy.fish;
-            };
-            git-fuzzy-branch = {
-              argumentNames = "header";
-              body = builtins.readFile ./fish/functions/git-fuzzy-branch.fish;
-            };
+            # git = {
+            #   body = builtins.readFile ./fish/functions/git.fish;
+            # };
+            # git-add-fuzzy = {
+            #   body = builtins.readFile ./fish/functions/git-add-fuzzy.fish;
+            # };
+            # git-fuzzy-branch = {
+            #   argumentNames = "header";
+            #   body = builtins.readFile ./fish/functions/git-fuzzy-branch.fish;
+            # };
             git-checkout-fuzzy = {
               body = ''
                 set branch (git-fuzzy-branch "checkout branch...")
@@ -163,19 +163,19 @@ in
                 and git merge $branch
               '';
             };
-            git-show-fuzzy = {
-              body = builtins.readFile ./fish/functions/git-show-fuzzy.fish;
-            };
-            git-commits = {
-              body = builtins.readFile ./fish/functions/git-commits.fish;
-            };
-            git-history = {
-              body = builtins.readFile ./fish/functions/git-history.fish;
-            };
-            uncommitted = {
-              description = "Find uncommitted git repos";
-              body = builtins.readFile ./fish/functions/uncommitted.fish;
-            };
+            # git-show-fuzzy = {
+            #   body = builtins.readFile ./fish/functions/git-show-fuzzy.fish;
+            # };
+            # git-commits = {
+            #   body = builtins.readFile ./fish/functions/git-commits.fish;
+            # };
+            # git-history = {
+            #   body = builtins.readFile ./fish/functions/git-history.fish;
+            # };
+            # uncommitted = {
+            #   description = "Find uncommitted git repos";
+            #   body = builtins.readFile ./fish/functions/uncommitted.fish;
+            # };
           };
     };
   };

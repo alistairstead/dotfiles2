@@ -2,7 +2,8 @@
   description = "My system flake";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    # Used for system packages
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Used for specific stable packages
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
@@ -31,7 +32,9 @@
       # Global configuration for my systems
       globals =
         let
-          username = builtins.getEnv "USERNAME";
+          envUsername = builtins.getEnv "USERNAME";
+          username = if envUsername == "" then "alistairstead" else envUsername;
+          # username = "alistairstead";
           loggedUsername = builtins.trace "The value of USERNAME environment variable is: ${toString username}" username;
           isCI = builtins.getEnv "CI" == "true";
           loggedIsCI = builtins.trace "The value of CI environment variable is: ${toString isCI}" isCI;
@@ -92,6 +95,36 @@
             ];
           };
         }
+      );
+
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          neovim =
+            pkgs.runCommand "neovim-check-health" { buildInputs = [ inputs.self.packages.${system}.neovim ]; }
+              ''
+                mkdir -p $out
+                export HOME=$TMPDIR
+                nvim -c "checkhealth" -c "write $out/health.log" -c "quitall"
+
+                # Check for errors inside the health log
+                if $(grep "ERROR" $out/health.log); then
+                  cat $out/health.log
+                  exit 1
+                fi
+              '';
+        }
+      );
+
+      formatter = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        pkgs.nixfmt-rfc-style
       );
     };
 }

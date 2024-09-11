@@ -1,11 +1,12 @@
 { ... }:
 {
   imports = [
-    # ./fonts.nix
+    ./fish.nix
+    ./fonts.nix
     # ./hammerspoon.nix
     ./homebrew.nix
-    # ./networking.nix
-    # ./nixpkgs.nix
+    ./networking.nix
+    ./nixpkgs.nix
     ./system.nix
     ./tmux.nix
     ./user.nix

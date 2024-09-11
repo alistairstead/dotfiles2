@@ -6,7 +6,7 @@
 {
 
   imports = [
-    # ./applications
+    ./applications
     # ./mail
     # ./neovim
     ./programming
