@@ -3,11 +3,13 @@
 
   inputs = {
     # Used for system packages
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
 
     # Used for specific stable packages
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # Pin the pkgs for darwin and home-manager to the same commit
+    # this commit has a working version of swift for darwin
     darwin-nixpkgs.url = "github:nixos/nixpkgs?rev=2e92235aa591abc613504fde2546d6f78b18c0cd";
 
     # Used for MacOS system config
@@ -19,13 +21,13 @@
     # Used for user packages and dotfiles
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "darwin-nixpkgs"; # Use system packages list for their inputs
+      inputs.nixpkgs.follows = "nixpkgs"; # Use system packages list for their inputs
     };
 
     # Better App install management in macOS
     mac-app-util = {
       url = "github:hraban/mac-app-util";
-      inputs.nixpkgs.follows = "darwin-nixpkgs"; # Use system packages list for their inputs
+      inputs.nixpkgs.follows = "nixpkgs"; # Use system packages list for their inputs
     };
   };
 
@@ -36,7 +38,6 @@
         let
           envUsername = builtins.getEnv "USERNAME";
           username = if envUsername == "" then "alistairstead" else envUsername;
-          # username = "alistairstead";
           loggedUsername = builtins.trace "The value of USERNAME environment variable is: ${toString username}" username;
           isCI = builtins.getEnv "CI" == "true";
           loggedIsCI = builtins.trace "The value of CI environment variable is: ${toString isCI}" isCI;

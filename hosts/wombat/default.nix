@@ -17,7 +17,7 @@ inputs.darwin.lib.darwinSystem {
     inputs.mac-app-util.darwinModules.default
     {
       networking.hostName = "wombat";
-      # gui.enable = true;
+      gui.enable = true;
       # atuin.enable = true;
       # charm.enable = true;
       # neovim.enable = true;
@@ -30,7 +30,7 @@ inputs.darwin.lib.darwinSystem {
       # obsidian.enable = true;
       # _1password.enable = true;
       slack.enable = true;
-      # wezterm.enable = true;
+      wezterm.enable = true;
     }
   ];
 }
