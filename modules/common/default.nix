@@ -31,7 +31,7 @@
         default = if pkgs.stdenv.isDarwin then "$HOME/Downloads" else "$HOME/downloads";
       };
     };
-    isCI = {
+    ci = {
       enable = lib.mkEnableOption {
         description = "Running in CI.";
         default = false;

@@ -18,7 +18,7 @@
     let
       font = config.home-manager.users.${config.user}.programs.kitty.font.name;
     in
-    lib.mkIf (!config.isCI.enable && config.gui.enable && config.wezterm.enable) {
+    lib.mkIf (!config.ci.enable && config.gui.enable && config.wezterm.enable) {
 
       # Set the Rofi-Systemd terminal for viewing logs
       # Using optionalAttrs because only available in NixOS

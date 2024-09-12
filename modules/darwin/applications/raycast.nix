@@ -13,7 +13,7 @@
     };
   };
 
-  config = lib.mkIf (!config.isCI.enable && config.gui.enable && config.raycast.enable) {
+  config = lib.mkIf (!config.ci.enable && config.gui.enable && config.raycast.enable) {
     unfreePackages = [ "raycast" ];
     home-manager.users.${config.user} = {
       home.packages = [

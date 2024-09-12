@@ -14,7 +14,7 @@
     };
   };
 
-  config = lib.mkIf (!config.isCI.enable && config.gui.enable && config.obsidian.enable) {
+  config = lib.mkIf (!config.ci.enable && config.gui.enable && config.obsidian.enable) {
     unfreePackages = [ "obsidian" ];
     home-manager.users.${config.user} = {
       home.packages = with pkgs; [ obsidian ];
