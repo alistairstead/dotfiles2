@@ -22,7 +22,7 @@ inputs.darwin.lib.darwinSystem {
       # charm.enable = true;
       # neovim.enable = true;
       # discord.enable = true;
-      # dotfiles.enable = true;
+      dotfiles.enable = true;
       # terraform.enable = true;
       # python.enable = true;
       # rust.enable = true;
