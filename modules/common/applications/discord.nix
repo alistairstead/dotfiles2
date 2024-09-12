@@ -14,7 +14,7 @@
     };
   };
 
-  config = lib.mkIf (config.gui.enable && config.discord.enable) {
+  config = lib.mkIf (!config.isCI.enable && config.gui.enable && config.discord.enable) {
     unfreePackages = [ "discord" ];
     environment.systemPackages = [ pkgs.discord ];
     home-manager.users.${config.user} = {

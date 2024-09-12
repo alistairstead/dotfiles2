@@ -27,8 +27,8 @@ inputs.darwin.lib.darwinSystem {
       # python.enable = true;
       # rust.enable = true;
       # lua.enable = true;
-      # obsidian.enable = true;
-      # _1password.enable = true;
+      obsidian.enable = true;
+      _1password.enable = true;
       slack.enable = true;
       wezterm.enable = true;
     }

@@ -14,7 +14,7 @@
     };
   };
 
-  config = lib.mkIf (config.gui.enable && config._1password.enable) {
+  config = lib.mkIf (!config.isCI.enable && config.gui.enable && config._1password.enable) {
     unfreePackages = [
       "1password"
       "_1password-gui"

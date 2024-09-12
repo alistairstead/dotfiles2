@@ -1,6 +1,7 @@
 { ... }:
 {
   imports = [
+    ./applications
     ./fish.nix
     ./fonts.nix
     # ./hammerspoon.nix

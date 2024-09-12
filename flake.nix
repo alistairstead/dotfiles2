@@ -48,6 +48,7 @@
           gitName = fullName;
           gitEmail = "62936+alistairstead@users.noreply.github.com";
           dotfilesRepo = "https://github.com/alistairstead/dotfiles2";
+          isCI = loggedIsCI;
         };
       # System types to support.
       supportedSystems = [
