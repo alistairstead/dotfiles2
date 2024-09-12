@@ -3,27 +3,29 @@
 
   inputs = {
     # Used for system packages
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Used for specific stable packages
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
 
+    darwin-nixpkgs.url = "github:nixos/nixpkgs?rev=2e92235aa591abc613504fde2546d6f78b18c0cd";
+
     # Used for MacOS system config
     darwin = {
       url = "github:lnl7/nix-darwin/master";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "darwin-nixpkgs";
     };
 
     # Used for user packages and dotfiles
     home-manager = {
-      url = "github:nix-community/home-manager/master";
-      inputs.nixpkgs.follows = "nixpkgs"; # Use system packages list for their inputs
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "darwin-nixpkgs"; # Use system packages list for their inputs
     };
 
     # Better App install management in macOS
     mac-app-util = {
       url = "github:hraban/mac-app-util";
-      inputs.nixpkgs.follows = "nixpkgs"; # Use system packages list for their inputs
+      inputs.nixpkgs.follows = "darwin-nixpkgs"; # Use system packages list for their inputs
     };
   };
 

@@ -1,5 +1,7 @@
 # Dotfiles 2 System Configurations
 
+[I] This repository is a fork of [nmasur/dotfiles]
+
 This repository contains configuration files for my NixOS, macOS, and WSL
 hosts.
 
