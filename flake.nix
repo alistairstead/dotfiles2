@@ -3,10 +3,10 @@
 
   inputs = {
     # Used for system packages
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Used for specific stable packages
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
 
     # Pin the pkgs for darwin and home-manager to the same commit
     # this commit has a working version of swift for darwin

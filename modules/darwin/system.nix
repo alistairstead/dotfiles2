@@ -20,6 +20,7 @@
     security.pam.enableSudoTouchIdAuth = true;
 
     system = {
+      stateVersion = 5;
 
       keyboard = {
         remapCapsLockToControl = true;
