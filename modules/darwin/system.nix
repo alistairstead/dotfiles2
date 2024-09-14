@@ -20,8 +20,6 @@
     security.pam.enableSudoTouchIdAuth = true;
 
     system = {
-      stateVersion = 5;
-
       keyboard = {
         remapCapsLockToControl = true;
         enableKeyMapping = true; # Allows for skhd
@@ -96,11 +94,10 @@
 
           persistent-apps = [
             "/Applications/1Password.app"
-            "${pkgs.slack}/Applications/Slack.app"
-            "/System/Applications/Calendar.app"
+            # "${pkgs.slack}/Applications/Slack.app"
             "/System/Applications/Messages.app"
-            "${pkgs.obsidian}/Applications/Obsidian.app"
-            "${pkgs.wezterm}/Applications/WezTerm.app"
+            # "${pkgs.obsidian}/Applications/Obsidian.app"
+            # "${pkgs.wezterm}/Applications/WezTerm.app"
           ];
         };
 

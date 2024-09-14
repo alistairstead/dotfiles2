@@ -24,6 +24,9 @@
       inputs.nixpkgs.follows = "nixpkgs"; # Use system packages list for their inputs
     };
 
+    # Catppuccino theme
+    catppuccin.url = "github:catppuccin/nix";
+
     # Better App install management in macOS
     mac-app-util = {
       url = "github:hraban/mac-app-util";

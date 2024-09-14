@@ -20,29 +20,30 @@
         # Version of bash which works much better on the terminal
         bash = "${pkgs.bashInteractive}/bin/bash";
 
-        # Use eza (exa) instead of ls for fancier output
-        ls = "${pkgs.eza}/bin/eza --group";
-
         # Move files to XDG trash on the commandline
         trash = lib.mkIf pkgs.stdenv.isLinux "${pkgs.trash-cli}/bin/trash-put";
       };
       functions = {
+        fish_user_key_bindings = {
+          description = "Insert commit into commandline";
+          body = builtins.readFile ./functions/fish_user_key_bindings.fish;
+        };
         # commandline-git-commits = {
         #   description = "Insert commit into commandline";
         #   body = builtins.readFile ./functions/commandline-git-commits.fish;
         # };
-        # copy = {
-        #   description = "Copy file contents into clipboard";
-        #   body = "cat $argv | pbcopy"; # Need to fix for non-macOS
-        # };
+        copy = {
+          description = "Copy file contents into clipboard";
+          body = "cat $argv | pbcopy"; # Need to fix for non-macOS
+        };
         # edit = {
         #   description = "Open a file in Vim";
         #   body = builtins.readFile ./functions/edit.fish;
         # };
-        # envs = {
-        #   description = "Evaluate a bash-like environment variables file";
-        #   body = ''set -gx (cat $argv | tr "=" " " | string split ' ')'';
-        # };
+        envs = {
+          description = "Evaluate a bash-like environment variables file";
+          body = ''set -gx (cat $argv | tr "=" " " | string split ' ')'';
+        };
         # fcd = {
         #   description = "Jump to directory";
         #   argumentNames = "directory";
@@ -87,6 +88,7 @@
         set -g fish_cursor_insert line
         set -g fish_cursor_visual block
         set -g fish_cursor_replace_one underscore
+        set fish_key_bindings fish_user_key_bindings
       '';
       loginShellInit = "";
       shellAbbrs = {
@@ -95,13 +97,14 @@
         l = "ls -lh";
         lh = "ls -lh";
         ll = "ls -alhF";
-        la = "ls -a";
+        la = "ls -la";
         c = "cd";
         "-" = "cd -";
         mkd = "mkdir -pv";
 
         # Vim (overwritten by Neovim)
-        v = "vim";
+        v = "nvim";
+        vim = "nvim";
         vl = "vim -c 'normal! `0'";
 
 
@@ -111,10 +114,6 @@
         publickey = "ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub";
         forloop = "for i in (seq 1 100)";
 
-        # Docker
-        dc = "$DOTS/bin/docker_cleanup";
-        dr = "docker run --rm -it";
-        db = "docker build . -t";
       };
       shellInit = "";
     };

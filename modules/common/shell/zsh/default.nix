@@ -6,16 +6,16 @@
   config = {
     home-manager.users.${config.user} = {
 
-      programs.bash = {
+      programs.zsh = {
         enable = true;
         shellAliases = config.home-manager.users.${config.user}.programs.fish.shellAliases;
         initExtra = "";
         profileExtra = "";
       };
 
-      programs.starship.enableBashIntegration = true;
-      programs.zoxide.enableBashIntegration = true;
-      programs.fzf.enableBashIntegration = true;
+      programs.starship.enableZshIntegration = true;
+      programs.zoxide.enableZshIntegration = true;
+      programs.fzf.enableZshIntegration = true;
     };
   };
 }

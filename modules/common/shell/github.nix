@@ -9,8 +9,8 @@
 
     programs.gh = lib.mkIf config.home-manager.users.${config.user}.programs.git.enable {
       enable = true;
-      gitCredentialHelper.enable = true;
-      settings.git_protocol = "https";
+      # gitCredentialHelper.enable = true;
+      settings.git_protocol = "ssh";
       extensions = [
         pkgs.gh-dash
       ];

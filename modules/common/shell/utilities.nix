@@ -29,11 +29,13 @@ in
         # inetutils # Includes telnet, whois
         # jless # JSON viewer
         # jo # JSON output
-        jq # JSON manipulation
+        jq # A lightweight and flexible command-line JSON processor
+        yq # Command-line YAML/XML/TOML processor - jq wrapper for YAML, XML, TOML documents
         # lf # File viewer
         # qrencode # Generate qr codes
         ripgrep # grep
         # sd # sed
+        sesh
         # tealdeer # Cheatsheets
         tree # View directory hierarchy
         unzip # Extract zips

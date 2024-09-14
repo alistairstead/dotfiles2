@@ -32,13 +32,23 @@
         brewfile = true; # Run brew bundle from anywhere
         lockfiles = false; # Don't save lockfile (since running from anywhere)
       };
+      taps = [
+        "1password/tap"
+        "neovim/neovim"
+      ];
       brews = [
         "trash" # Delete files and folders to trash instead of rm
+        "neovim"
       ];
       casks = [
         "1password" # 1Password will not launch from Nix on macOS
+        "1password-cli" # 1Password CLI
         "meetingbar" # Show meetings in menu bar
         "steam" # Not packaged for Nixon macOS
+        "font-symbols-only-nerd-font" # Nerd Font with only symbols
+        "cleanmymac" # Clean up macOS
+        "choosy" # Choose browser
+        "google-chrome" # Chrome
       ];
     };
   };

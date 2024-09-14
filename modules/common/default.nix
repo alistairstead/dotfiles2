@@ -9,7 +9,7 @@
     ./applications
     # ./mail
     # ./neovim
-    ./programming
+    # ./programming
     ./repositories
     ./shell
   ];
@@ -31,6 +31,14 @@
         default = if pkgs.stdenv.isDarwin then "$HOME/Downloads" else "$HOME/downloads";
       };
     };
+    gitName = lib.mkOption {
+      type = lib.types.str;
+      description = "Name to use for git commits";
+    };
+    gitEmail = lib.mkOption {
+      type = lib.types.str;
+      description = "Email to use for git commits";
+    };
     ci = {
       enable = lib.mkEnableOption {
         description = "Running in CI.";
@@ -43,18 +51,6 @@
         default = false;
       };
     };
-    # theme = {
-    #   colors = lib.mkOption {
-    #     type = lib.types.attrs;
-    #     description = "Base16 color scheme.";
-    #     default = (import ../colorscheme/gruvbox).dark;
-    #   };
-    #   dark = lib.mkOption {
-    #     type = lib.types.bool;
-    #     description = "Enable dark mode.";
-    #     default = true;
-    #   };
-    # };
     homePath = lib.mkOption {
       type = lib.types.path;
       description = "Path of user's home directory.";
@@ -99,12 +95,15 @@
       # using multiple profiles for one user
       home-manager.useUserPackages = true;
 
+      # Move files to backup instead of erroring on collision
+      home-manager.backupFileExtension = "backup";
+
       # Allow specified unfree packages (identified elsewhere)
       # Retrieves package object based on string name
       nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) config.unfreePackages;
 
       # Allow broken packages.
-      nixpkgs.config.allowBroken = true;
+      nixpkgs.config.allowBroken = false;
 
       # Pin a state version to prevent warnings
       home-manager.users.${config.user}.home.stateVersion = stateVersion;
