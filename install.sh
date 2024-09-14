@@ -92,6 +92,9 @@ export NIXPKGS_ALLOW_BROKEN=1
 
 # Move a file that will conflict with nix-darwin
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
+if [[ $CI ]]; then
+  sudo mv /etc/shells /etc/shells.before-nix-darwin
+fi
 
 if $CI; then
   info "INFO: Running nix-darwin in CI mode..."
