@@ -47,6 +47,7 @@
         "steam" # Not packaged for Nixon macOS
         "font-symbols-only-nerd-font" # Nerd Font with only symbols
         "cleanmymac" # Clean up macOS
+        # "cleanshot" # screen shots sorted
         "choosy" # Choose browser
         "google-chrome" # Chrome
       ];

@@ -5,7 +5,7 @@
 }:
 {
 
-  users.users.${config.user}.shell = pkgs.fish;
+  users.users.${config.user}.shell = lib.mkIf (!config.ci.enable) pkgs.fish or pkgs.zsh;
   programs.fish.enable = true; # Needed for LightDM to remember username
 
   home-manager.users.${config.user} = {

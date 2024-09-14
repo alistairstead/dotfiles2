@@ -10,12 +10,12 @@
     home.packages = with pkgs; [ monaspace ];
 
     # programs.alacritty.settings = {
-    #   font.normal.family = "VictorMono";
+    #   font.normal.family = "Monaspace Neon ExtraLight";
     # };
     #
     # programs.kitty.font = {
-    #   package = (pkgs.nerdfonts.override { fonts = [ "VictorMono" ]; });
-    #   name = "VictorMono Nerd Font Mono";
+    #   package = (pkgs.nerdfonts.override { fonts = [ "Monaspace Neon ExtraLight" ]; });
+    #   name = "Monaspace Neon ExtraLight";
     # };
   };
 }
