@@ -36,9 +36,7 @@ inputs.darwin.lib.darwinSystem {
       # rust.enable = true;
       # lua.enable = true;
       obsidian.enable = true;
-      # 1Password is managed by Homebrew as it will not run on MacOS 
-      # when installed from  Nix-pkgs
-      # _1password.enable = true;
+      _1password.enable = true;
       slack.enable = true;
       wezterm.enable = true;
       raycast.enable = true;

@@ -17,9 +17,6 @@ in
     };
 
     home-manager.users.${config.user} = {
-
-
-
       programs.git = {
         enable = true;
         userName = config.gitName;

@@ -18,17 +18,18 @@ let
     };
 in
 {
-  home-manager.users.${config.user}.programs.tmux = {
-    enable = true;
-    baseIndex = 1; # Start windows and panes at 1
-    escapeTime = 0; # Wait time after escape is input
-    historyLimit = 100000;
-    keyMode = "vi";
-    newSession = true; # Automatically spawn new session
-    resizeAmount = 10;
-    shell = "${pkgs.bash}/bin/bash";
-    terminal = "screen-256color";
-    extraConfig = ''
+  home-manager.users.${config.user} = {
+    programs.tmux = {
+      enable = true;
+      baseIndex = 1; # Start windows and panes at 1
+      escapeTime = 0; # Wait time after escape is input
+      historyLimit = 100000;
+      keyMode = "vi";
+      newSession = true; # Automatically spawn new session
+      resizeAmount = 10;
+      shell = "${pkgs.bash}/bin/bash";
+      terminal = "screen-256color";
+      extraConfig = ''
 
         # ████████╗███╗   ███╗██╗   ██╗██╗  ██╗
         # ╚══██╔══╝████╗ ████║██║   ██║╚██╗██╔╝
@@ -109,64 +110,67 @@ in
         set -g status-style bg=default
       '';
 
-    plugins = with pkgs; [
-      tmuxPlugins.sensible
-      tmux-nerd-font-window-name
-      tmuxPlugins.vim-tmux-navigator
-      {
-        plugin = tmuxPlugins.yank;
-        extraConfig = ''
-          # tmux-yank config
-          set -g @shell_mode 'vi'
-        '';
-      }
-      {
-        plugin = tmuxPlugins.tmux-fzf;
-        extraConfig = ''
-          bind-key "T" run-shell "sesh connect $(sesh list -tz | fzf-tmux -p 55%,60% \
-            --no-sort --border-label ' sesh ' --prompt '⚡ ' \
-            --header '  ^a all ^t tmux ^x zoxide ^f find' \
-            --bind 'tab:down,btab:up' \
-            --bind 'ctrl-a:change-prompt(⚡)+reload(sesh list)' \
-            --bind 'ctrl-t:change-prompt( )+reload(sesh list -t)' \
-            --bind 'ctrl-x:change-prompt( )+reload(sesh list -z)' \
-            --bind 'ctrl-f:change-prompt( )+reload(fd -H -d 2 -t d -E .Trash . ~)'
-          )"
-        '';
-      }
-      {
-        plugin = tmuxPlugins.catppuccin;
-        extraConfig = ''
-          # Catppuccino theme config
-          set -g @catppuccin_flavor 'mocha'
-          set -g @catppuccin_window_default_fill "number"
-          set -g @catppuccin_window_default_text "#W"
-          set -g @catppuccin_window_left_separator "█"
-          set -g @catppuccin_window_right_separator "█ "
-          set -g @catppuccin_window_middle_separator "█ "
-          set -g @catppuccin_window_current_fill "number"
-          set -g @catppuccin_window_status "icon"
-          set -g @catppuccin_icon_window_last "null"
-          set -g @catppuccin_icon_window_current "null"
-          set -g @catppuccin_icon_window_zoom ""
-          set -g @catppuccin_icon_window_mark "null"
-          set -g @catppuccin_icon_window_silent "null"
-          set -g @catppuccin_icon_window_activity "󰖲"
-          set -g @catppuccin_icon_window_bell "󰂞"
-          set -g @catppuccin_status_modules_right "application session date_time"
-          set -g @catppuccin_status_right_separator "█"
-          set -g @catppuccin_status_left_separator "null"
-          set -g @catppuccin_status_right_separator_inverse "no"
-          set -g @catppuccin_status_connect_separator "no"
-          set -g @catppuccin_status_fill "icon"
-          set -g @catppuccin_status_connect_separator "no"
-          set -g @catppuccin_date_time_text "%H:%M"
-          set -g @catppuccin_date_time_icon "null"
-          set -g @catppuccin_session_icon "null"
-          set -g @catppuccin_application_icon "null"
-        '';
-      }
-    ];
+      plugins = with pkgs; [
+        tmuxPlugins.sensible
+        tmux-nerd-font-window-name
+        tmuxPlugins.vim-tmux-navigator
+        {
+          plugin = tmuxPlugins.yank;
+          extraConfig = ''
+            # tmux-yank config
+            set -g @shell_mode 'vi'
+          '';
+        }
+        {
+          plugin = tmuxPlugins.tmux-fzf;
+          extraConfig = ''
+            bind-key "T" run-shell "sesh connect $(sesh list -tz | fzf-tmux -p 55%,60% \
+              --no-sort --border-label ' sesh ' --prompt '⚡ ' \
+              --header '  ^a all ^t tmux ^x zoxide ^f find' \
+              --bind 'tab:down,btab:up' \
+              --bind 'ctrl-a:change-prompt(⚡)+reload(sesh list)' \
+              --bind 'ctrl-t:change-prompt( )+reload(sesh list -t)' \
+              --bind 'ctrl-x:change-prompt( )+reload(sesh list -z)' \
+              --bind 'ctrl-f:change-prompt( )+reload(fd -H -d 2 -t d -E .Trash . ~)'
+            )"
+          '';
+        }
+        {
+          plugin = tmuxPlugins.catppuccin;
+          extraConfig = ''
+            # Catppuccino theme config
+            set -g @catppuccin_flavor 'mocha'
+            set -g @catppuccin_window_default_fill "number"
+            set -g @catppuccin_window_default_text "#W"
+            set -g @catppuccin_window_left_separator "█"
+            set -g @catppuccin_window_right_separator "█ "
+            set -g @catppuccin_window_middle_separator "█ "
+            set -g @catppuccin_window_current_fill "number"
+            set -g @catppuccin_window_status "icon"
+            set -g @catppuccin_icon_window_last "null"
+            set -g @catppuccin_icon_window_current "null"
+            set -g @catppuccin_icon_window_zoom ""
+            set -g @catppuccin_icon_window_mark "null"
+            set -g @catppuccin_icon_window_silent "null"
+            set -g @catppuccin_icon_window_activity "󰖲"
+            set -g @catppuccin_icon_window_bell "󰂞"
+            set -g @catppuccin_status_modules_right "application session date_time"
+            set -g @catppuccin_status_right_separator "█"
+            set -g @catppuccin_status_left_separator "null"
+            set -g @catppuccin_status_right_separator_inverse "no"
+            set -g @catppuccin_status_connect_separator "no"
+            set -g @catppuccin_status_fill "icon"
+            set -g @catppuccin_status_connect_separator "no"
+            set -g @catppuccin_date_time_text "%H:%M"
+            set -g @catppuccin_date_time_icon "null"
+            set -g @catppuccin_session_icon "null"
+            set -g @catppuccin_application_icon "null"
+          '';
+        }
+      ];
 
+    };
+
+    xdg.configFile."tmux/tmux-nerd-font-window-name.yaml".source = ./tmux-nerd-font-window-name.yml;
   };
 }
