@@ -9,7 +9,7 @@
     ./applications
     # ./mail
     # ./neovim
-    # ./programming
+    ./programming
     ./repositories
     ./shell
   ];
@@ -108,5 +108,6 @@
       # Pin a state version to prevent warnings
       home-manager.users.${config.user}.home.stateVersion = stateVersion;
       home-manager.users.root.home.stateVersion = stateVersion;
+
     };
 }

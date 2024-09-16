@@ -21,6 +21,11 @@
     # Add homebrew paths to CLI path
     home-manager.users.${config.user}.home.sessionPath = [ "/opt/homebrew/bin/" ];
 
+    environment.systemPath = [ "/opt/homebrew/bin" ];
+    environment.variables = {
+      HOMEBREW_NO_ANALYTICS = "1";
+    };
+
     homebrew = {
       enable = true;
       onActivation = {
@@ -43,14 +48,26 @@
       casks = [
         "1password" # 1Password will not launch from Nix on macOS
         "1password-cli" # 1Password CLI
-        "meetingbar" # Show meetings in menu bar
-        "steam" # Not packaged for Nixon macOS
-        "font-symbols-only-nerd-font" # Nerd Font with only symbols
-        "cleanmymac" # Clean up macOS
-        # "cleanshot" # screen shots sorted
+        "bartender"
         "choosy" # Choose browser
+        "cleanmymac" # Clean up macOS
+        "fantastical"
+        "figma"
+        "font-symbols-only-nerd-font" # Nerd Font with only symbols
         "google-chrome" # Chrome
+        "nordvpn"
+        "steam" # Not packaged for Nixon macOS
+        # "cleanshot" # screen shots sorted
+        "orbstack"
       ];
+      caskArgs = {
+        appdir = "/Applications";
+      };
+      # This requires a prior login to the App Store so will not
+      # run on CI
+      # masApps = {
+      #   "1Password for Safari" = 1569813296;
+      # };
     };
   };
 }

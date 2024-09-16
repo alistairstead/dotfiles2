@@ -118,10 +118,19 @@
       shellInit = "";
     };
 
-    home.sessionVariables.fish_greeting = "";
+    # Global fzf configuration
+    home.sessionVariables =
+      {
+        fish_greeting = "";
+        EDITOR = "nvim";
+        GIT_EDITOR = "nvim";
+        VISUAL = "nvim";
+      };
 
     programs.starship.enableFishIntegration = true;
     programs.zoxide.enableFishIntegration = true;
     programs.fzf.enableFishIntegration = true;
   };
 }
+
+

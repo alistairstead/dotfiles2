@@ -171,6 +171,6 @@ in
 
     };
 
-    xdg.configFile."tmux/tmux-nerd-font-window-name.yaml".source = ./tmux-nerd-font-window-name.yml;
+    xdg.configFile."tmux/tmux-nerd-font-window-name.yml".source = ./tmux-nerd-font-window-name.yml;
   };
 }

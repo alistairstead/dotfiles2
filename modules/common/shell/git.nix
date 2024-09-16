@@ -47,24 +47,27 @@ in
             difffilter = "delta --color-only";
           };
           delta = {
-            navigate = "true";
-            light = "false";
+            navigate = true;
+            light = false;
           };
           apply = {
             whitespace = "fix";
           };
           push = {
             default = "current";
-            autoSetupRemote = "true";
+            autoSetupRemote = true;
           };
           init = {
             defaultBranch = "main";
           };
           rebase = {
-            autosquash = "true";
+            autosquash = true;
+            autostash = true;
+            stat = true;
           };
           rerere = {
-            enabled = "true";
+            autoupdate = true;
+            enabled = true;
           };
           help = {
             autocorrect = "1";

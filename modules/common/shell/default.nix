@@ -4,6 +4,7 @@
     ./bash
     # ./charm.nix
     ./direnv.nix
+    ./editorconfig.nix
     ./eza.nix
     ./fish
     ./zsh
