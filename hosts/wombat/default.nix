@@ -31,6 +31,7 @@ inputs.darwin.lib.darwinSystem {
       discord.enable = true;
       dotfiles.enable = true;
       # terraform.enable = true;
+      aws.enable = true;
       obsidian.enable = true;
       _1password.enable = true;
       slack.enable = true;
