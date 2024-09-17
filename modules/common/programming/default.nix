@@ -2,9 +2,8 @@
 {
 
   imports = [
-    # ./lua.nix
-    # ./python.nix
-    # ./rust.nix
+    ./aws.nix
+    ./devenv.nix
     ./terraform.nix
   ];
 }

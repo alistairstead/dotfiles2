@@ -10,6 +10,6 @@
     ./nixpkgs.nix
     ./system.nix
     ./user.nix
-    ./utilities.nix
+    ./yabai.nix
   ];
 }

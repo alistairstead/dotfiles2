@@ -15,8 +15,6 @@
       Day = 1;
     };
 
-    environment.shells = [ pkgs.fish ];
-
     security.pam.enableSudoTouchIdAuth = true;
 
     system = {
@@ -37,8 +35,8 @@
           # Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
           AppleKeyboardUIMode = 3;
 
-          # Only hide menu bar in fullscreen
-          _HIHideMenuBar = false;
+          # Hide menu bar
+          _HIHideMenuBar = true;
 
           # Expand save panel by default
           NSNavPanelExpandedStateForSaveMode = true;
@@ -156,39 +154,9 @@
             # Default Finder window set to column view
             FXPreferredViewStyle = "clmv";
           };
-          "leits.MeetingBar" = {
-            eventTimeFormat = ''"show"'';
-            eventTitleFormat = ''"none"'';
-            eventTitleIconFormat = ''"iconCalendar"'';
-            slackBrowser = ''{"deletable":true,"arguments":"","name":"Slack","path":""}'';
-            zoomBrowser = ''{"deletable":true,"arguments":"","name":"Zoom","path":""}'';
-            teamsBrowser = ''{"deletable":true,"arguments":"","name":"Teams","path":""}'';
-            KeyboardShortcuts_joinEventShortcut = ''{"carbonModifiers":6400,"carbonKeyCode":38}'';
-            timeFormat = ''"12-hour"'';
-          };
         };
-
-        CustomSystemPreferences = { };
       };
 
-      # Settings that don't have an option in nix-darwin
-      # activationScripts.postActivation.text = ''
-      #   echo "Allow apps from anywhere"
-      #   SPCTL=$(spctl --status)
-      #   if ! [ "$SPCTL" = "assessments disabled" ]; then
-      #       sudo spctl --master-disable
-      #   fi
-      # '';
-
-      # User-level settings
-      activationScripts.postUserActivation.text = ''
-        echo "Show the ~/Library folder"
-        chflags nohidden ~/Library
-
-        echo "Reduce Menu Bar padding"
-        defaults write -globalDomain NSStatusItemSelectionPadding -int 6
-        defaults write -globalDomain NSStatusItemSpacing -int 6
-      '';
     };
   };
 }

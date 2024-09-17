@@ -8,6 +8,7 @@
     };
 
   imports = [
+    ./aerospace
     ./raycast.nix
   ];
 }

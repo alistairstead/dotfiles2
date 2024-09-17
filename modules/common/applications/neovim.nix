@@ -11,7 +11,9 @@
   };
   config = lib.mkIf (!config.ci.enable && config.gui.enable && config.neovim.enable) {
     home-manager.users.${config.user} = {
-
+      programs.ripgrep = {
+        enable = true;
+      };
       programs.neovim = {
         extraPackages = with pkgs; [
           # LazyVim
