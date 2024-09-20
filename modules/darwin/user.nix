@@ -7,9 +7,13 @@
 
   config = lib.mkIf pkgs.stdenv.isDarwin {
 
+    users.knownUsers = [ config.user ];
+
     users.users."${config.user}" = {
       # macOS user
       home = config.homePath;
+      shell = pkgs.fish;
+      uid = 501;
     };
 
     # This might fix the shell issues

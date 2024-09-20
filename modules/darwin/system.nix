@@ -15,6 +15,12 @@
       Day = 1;
     };
 
+    environment.shells = with pkgs; [ 
+      bash
+      fish 
+      zsh
+    ];
+
     security.pam.enableSudoTouchIdAuth = true;
 
     system = {
@@ -24,13 +30,19 @@
       };
 
       defaults = {
+
+        loginwindow = {
+          # Text to be shown on the login window. Default is “\\U03bb”.
+          LoginwindowText = "Reward available for return call +44 (0)7788 107333";
+        };
+
         NSGlobalDomain = {
 
           # Set to dark mode
           AppleInterfaceStyle = "Dark";
 
           # Don't change from dark to light automatically
-          # AppleInterfaceSwitchesAutomatically = false;
+          AppleInterfaceStyleSwitchesAutomatically = false;
 
           # Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
           AppleKeyboardUIMode = 3;
@@ -85,17 +97,22 @@
           # Highlight hover effect in dock stack grid view
           mouse-over-hilite-stack = true;
 
-          mineffect = "genie";
+          # Set the minimize/maximize window effect. The default is genie.
+          # mineffect = "scale";
+
           orientation = "bottom";
+          # Animate opening applications from the Dock. The default is true.
+          launchanim = false;
+
           show-recents = false;
           tilesize = 44;
 
           persistent-apps = [
             "/Applications/1Password.app"
-            # "${pkgs.slack}/Applications/Slack.app"
+            "${pkgs.slack}/Applications/Slack.app"
             "/System/Applications/Messages.app"
-            # "${pkgs.obsidian}/Applications/Obsidian.app"
-            # "${pkgs.wezterm}/Applications/WezTerm.app"
+            "${pkgs.obsidian}/Applications/Obsidian.app"
+            "${pkgs.wezterm}/Applications/WezTerm.app"
           ];
         };
 
@@ -112,6 +129,12 @@
 
           # Allow quitting of Finder application
           QuitMenuItem = true;
+
+          # Show path breadcrumbs in finder windows. The default is false.
+          ShowPathbar = true;
+
+          # Show status bar at bottom of finder windows with item/disk space stats. The default is false.
+          ShowStatusBar = true;
         };
 
         # Disable "Are you sure you want to open" dialog

@@ -10,7 +10,7 @@
         # bc # Calculator
         # difftastic # Other fancy diffs
         # dig # DNS lookup
-        # fd # find
+        fd # find
         htop # Show system processes
         killall # Force quit
         # inetutils # Includes telnet, whois
@@ -23,6 +23,7 @@
         ripgrep # grep
         # sd # sed
         sesh
+        sqlite
         # tealdeer # Cheatsheets
         tree # View directory hierarchy
         unzip # Extract zips

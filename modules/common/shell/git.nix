@@ -73,7 +73,9 @@ in
             autocorrect = "1";
           };
           user = {
-            signingkey = "$(op item get 'SSH Key' - -fields label='public key')";
+            # This is not evaluated as a sub-shell but it is public so can include the value
+            # signingkey = ''$(op item get "SSH Key" --fields label="public key")'';
+            signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICqsrSxLYhMuCdzuO6pra5QulC8SKN19v1AUjh7wqUZq";
           };
           gpg = {
             format = "ssh";
@@ -120,8 +122,7 @@ in
 
 
       programs.fish.shellAbbrs = {
-        g = "git";
-        gs = "git status";
+        g = "git status";
         gd = "git diff";
         gds = "git diff --staged";
         gdp = "git diff HEAD^";

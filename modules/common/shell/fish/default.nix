@@ -4,8 +4,6 @@
 , ...
 }:
 {
-
-  users.users.${config.user}.shell = lib.mkIf (!config.ci.enable) pkgs.fish or pkgs.zsh;
   programs.fish.enable = true; # Needed for LightDM to remember username
 
   home-manager.users.${config.user} = {
@@ -94,13 +92,7 @@
       shellAbbrs = {
 
         # Directory aliases
-        l = "ls -lh";
-        lh = "ls -lh";
-        ll = "ls -alhF";
-        la = "ls -la";
-        c = "cd";
         "-" = "cd -";
-        mkd = "mkdir -pv";
 
         # Vim (overwritten by Neovim)
         v = "nvim";

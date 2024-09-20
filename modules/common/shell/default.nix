@@ -1,13 +1,13 @@
 { ... }:
 {
   imports = [
+    ./zsh
     ./bash
+    ./fish
     # ./charm.nix
     ./direnv.nix
     ./editorconfig.nix
     ./eza.nix
-    ./fish
-    ./zsh
     ./fzf.nix
     ./git.nix
     ./github.nix
@@ -15,5 +15,6 @@
     ./starship.nix
     ./tmux
     ./utilities.nix
+    ./zoxide.nix
   ];
 }

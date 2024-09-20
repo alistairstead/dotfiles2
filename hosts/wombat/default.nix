@@ -18,10 +18,10 @@ inputs.darwin.lib.darwinSystem {
         };
       };
     }
-    ../../modules/common
-    ../../modules/darwin
     globals
     inputs.home-manager.darwinModules.home-manager
+    ../../modules/common
+    ../../modules/darwin
     # inputs.mac-app-util.darwinModules.default
     {
       networking.hostName = "wombat";

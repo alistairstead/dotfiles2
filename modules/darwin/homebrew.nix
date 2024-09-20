@@ -51,14 +51,14 @@
         "bartender"
         "choosy" # Choose browser
         "cleanmymac" # Clean up macOS
-        "fantastical"
+        "cleanshot" # screen shots sorted
         "figma"
         "font-symbols-only-nerd-font" # Nerd Font with only symbols
         "google-chrome" # Chrome
         "nordvpn"
-        "steam" # Not packaged for Nixon macOS
-        # "cleanshot" # screen shots sorted
         "orbstack"
+        "readdle-spark"
+        "todoist"
       ];
       caskArgs = {
         appdir = "/Applications";
