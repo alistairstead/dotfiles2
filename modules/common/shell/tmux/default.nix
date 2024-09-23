@@ -8,6 +8,7 @@ let
   tmux-nerd-font-window-name = pkgs.tmuxPlugins.mkTmuxPlugin
     {
       pluginName = "tmux-nerd-font-window-name";
+      rtpFilePath = "tmux-nerd-font-window-name.tmux";
       version = "unstable-2024-09-14";
       src = pkgs.fetchFromGitHub {
         owner = "joshmedeski";

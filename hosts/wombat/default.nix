@@ -38,8 +38,8 @@ inputs.darwin.lib.darwinSystem {
       wezterm.enable = true;
       raycast.enable = true;
       devenv.enable = true;
+      node.enable = true;
       aerospace.enable = true;
-      # yabai.enable = false;
     }
   ];
 }

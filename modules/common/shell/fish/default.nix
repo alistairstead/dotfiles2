@@ -81,6 +81,7 @@
         bind Y fish_clipboard_copy
         bind -M visual y fish_clipboard_copy
         bind -M default p fish_clipboard_paste
+        bind \ce forward-char
         set -g fish_vi_force_cursor
         set -g fish_cursor_default block
         set -g fish_cursor_insert line
