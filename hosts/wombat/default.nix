@@ -39,6 +39,7 @@ inputs.darwin.lib.darwinSystem {
       raycast.enable = true;
       devenv.enable = true;
       node.enable = true;
+      go.enable = true;
       aerospace.enable = true;
     }
   ];

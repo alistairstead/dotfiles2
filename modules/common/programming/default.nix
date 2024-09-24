@@ -4,6 +4,7 @@
   imports = [
     ./aws.nix
     ./devenv.nix
+    ./go.nix
     ./node.nix
     ./terraform.nix
   ];
