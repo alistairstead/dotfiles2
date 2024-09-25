@@ -5,17 +5,10 @@
     # Used for system packages
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Used for specific stable packages
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
-
-    # Pin the pkgs for darwin and home-manager to the same commit
-    # this commit has a working version of swift for darwin
-    darwin-nixpkgs.url = "github:nixos/nixpkgs?rev=2e92235aa591abc613504fde2546d6f78b18c0cd";
-
     # Used for MacOS system config
     darwin = {
       url = "github:lnl7/nix-darwin/master";
-      inputs.nixpkgs.follows = "darwin-nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Used for user packages and dotfiles

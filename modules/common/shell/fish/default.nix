@@ -23,7 +23,6 @@
       };
       functions = {
         fish_user_key_bindings = {
-          description = "Insert commit into commandline";
           body = builtins.readFile ./functions/fish_user_key_bindings.fish;
         };
         # commandline-git-commits = {
@@ -46,9 +45,6 @@
         #   description = "Jump to directory";
         #   argumentNames = "directory";
         #   body = builtins.readFile ./functions/fcd.fish;
-        # };
-        # fish_user_key_bindings = {
-        #   body = builtins.readFile ./functions/fish_user_key_bindings.fish;
         # };
         # ip = {
         #   body = builtins.readFile ./functions/ip.fish;
@@ -81,13 +77,14 @@
         bind Y fish_clipboard_copy
         bind -M visual y fish_clipboard_copy
         bind -M default p fish_clipboard_paste
-        bind \ce forward-char
+        bind -M insert \ce forward-char
+
         set -g fish_vi_force_cursor
+        set fish_key_bindings fish_user_key_bindings
         set -g fish_cursor_default block
         set -g fish_cursor_insert line
         set -g fish_cursor_visual block
         set -g fish_cursor_replace_one underscore
-        set fish_key_bindings fish_user_key_bindings
       '';
       loginShellInit = "";
       shellAbbrs = {
@@ -99,13 +96,6 @@
         v = "nvim";
         vim = "nvim";
         vl = "vim -c 'normal! `0'";
-
-
-        # Cheat Sheets
-        ssl = "openssl req -new -newkey rsa:2048 -nodes -keyout server.key -out server.csr";
-        fingerprint = "ssh-keyscan myhost.com | ssh-keygen -lf -";
-        publickey = "ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub";
-        forloop = "for i in (seq 1 100)";
 
       };
       shellInit = "";

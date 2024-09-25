@@ -62,7 +62,7 @@
               #     leaveDotGit = true;
               #   };
               # in "file://${pkg}";
-              weztermStatus = "https://github.com/yriveiro/wezterm-status";
+              # weztermStatus = "https://github.com/yriveiro/wezterm-status";
             };
           });
         };

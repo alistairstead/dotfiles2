@@ -47,13 +47,15 @@ return {
   -- default_prog = {
   --   "${pkgs.tmux}/bin/tmux",
   -- },
+  -- See: https://github.com/wez/wezterm/issues/5990#issuecomment-2295721814
+  front_end = "WebGpu",
   macos_window_background_blur = 15,
   color_scheme = "Catppuccin Mocha",
   font_size = 18,
   line_height = 1.3,
   cell_width = 1.04,
   warn_about_missing_glyphs = true,
-  freetype_load_target = "Light",
+  -- freetype_load_target = "Light",
   use_cap_height_to_scale_fallback_fonts = true,
 
   -- "Monaspace Argon",

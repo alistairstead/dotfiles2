@@ -11,6 +11,7 @@
 
     home-manager.users.${config.user} = {
       programs.fish.shellAbbrs = {
+        pn = "pnpm";
       };
       home.packages = with pkgs; [
         nodejs

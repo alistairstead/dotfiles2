@@ -55,6 +55,7 @@
         "figma"
         "font-symbols-only-nerd-font" # Nerd Font with only symbols
         "google-chrome" # Chrome
+        "home-assistant" # Home Assistant
         "nordvpn"
         "orbstack"
         "readdle-spark"
