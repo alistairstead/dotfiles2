@@ -9,6 +9,7 @@
 
   imports = [
     ./aerospace
+    ./hammerspoon
     ./raycast.nix
   ];
 }

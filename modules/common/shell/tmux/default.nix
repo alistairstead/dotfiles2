@@ -114,7 +114,7 @@ in
 
       plugins = with pkgs; [
         # tmuxPlugins.sensible
-        # tmux-nerd-font-window-name
+        tmux-nerd-font-window-name
         tmuxPlugins.vim-tmux-navigator
         {
           plugin = tmuxPlugins.yank;
