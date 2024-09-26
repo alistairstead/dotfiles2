@@ -15,8 +15,8 @@
     };
     # DevEnv setup and documentation
     # https://devenv.sh/getting-started/#2-install-devenv
-    environment.systemPackages = [
-      pkgs.devenv
+    environment.systemPackages = with pkgs; [
+      devenv
     ];
   };
 }

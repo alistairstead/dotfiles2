@@ -46,6 +46,10 @@
           dotfilesRepo = "https://github.com/alistairstead/dotfiles2";
           ci.enable = loggedIsCI;
         };
+      # Common overlays to always use
+      overlays = [
+        (import ./overlays/granted.nix)
+      ];
       # System types to support.
       supportedSystems = [
         "x86_64-linux"
@@ -62,7 +66,7 @@
       # Contains my full Mac system builds, including home-manager
       # darwin-rebuild switch --flake .#wombat
       darwinConfigurations = {
-        wombat = import ./hosts/wombat { inherit inputs globals; };
+        wombat = import ./hosts/wombat { inherit inputs globals overlays; };
       };
 
       # For quickly applying home-manager settings with:
@@ -75,7 +79,7 @@
       apps = forAllSystems (
         system:
         let
-          pkgs = import nixpkgs { inherit system; };
+          pkgs = import nixpkgs { inherit system overlays; };
         in
         import ./apps { inherit pkgs; }
       );
@@ -84,7 +88,7 @@
       devShells = forAllSystems (
         system:
         let
-          pkgs = import nixpkgs { inherit system; };
+          pkgs = import nixpkgs { inherit system overlays; };
         in
         {
 
@@ -100,7 +104,7 @@
       checks = forAllSystems (
         system:
         let
-          pkgs = import nixpkgs { inherit system; };
+          pkgs = import nixpkgs { inherit system overlays; };
         in
         {
           neovim =
@@ -122,7 +126,7 @@
       formatter = forAllSystems (
         system:
         let
-          pkgs = import nixpkgs { inherit system; };
+          pkgs = import nixpkgs { inherit system overlays; };
         in
         pkgs.nixfmt-rfc-style
       );

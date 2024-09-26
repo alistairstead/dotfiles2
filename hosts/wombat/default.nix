@@ -3,6 +3,7 @@
 
 { inputs
 , globals
+, overlays
 , ...
 }:
 
@@ -24,6 +25,7 @@ inputs.darwin.lib.darwinSystem {
     ../../modules/darwin
     # inputs.mac-app-util.darwinModules.default
     {
+      nixpkgs.overlays = overlays;
       networking.hostName = "wombat";
       gui.enable = true;
       # charm.enable = true;
