@@ -22,9 +22,9 @@
         trash = lib.mkIf pkgs.stdenv.isLinux "${pkgs.trash-cli}/bin/trash-put";
       };
       functions = {
-        fish_user_key_bindings = {
-          body = builtins.readFile ./functions/fish_user_key_bindings.fish;
-        };
+        # fish_user_key_bindings = {
+        #   body = builtins.readFile ./functions/fish_user_key_bindings.fish;
+        # };
         # commandline-git-commits = {
         #   description = "Insert commit into commandline";
         #   body = builtins.readFile ./functions/commandline-git-commits.fish;
@@ -73,6 +73,9 @@
       };
       interactiveShellInit = ''
         fish_vi_key_bindings
+        bind -M insert -m default jk backward-char force-repaint
+        bind -M insert \ce forward-char
+
         bind yy fish_clipboard_copy
         bind Y fish_clipboard_copy
         bind -M visual y fish_clipboard_copy
@@ -80,7 +83,6 @@
         bind -M insert \ce forward-char
 
         set -g fish_vi_force_cursor
-        set fish_key_bindings fish_user_key_bindings
         set -g fish_cursor_default block
         set -g fish_cursor_insert line
         set -g fish_cursor_visual block

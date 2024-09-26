@@ -28,8 +28,8 @@ in
       keyMode = "vi";
       newSession = true; # Automatically spawn new session
       resizeAmount = 10;
-      shell = "${pkgs.bash}/bin/bash";
-      terminal = "screen-256color";
+      # shell = "${pkgs.fish}/bin/fish";
+      # terminal = "screen-256color";
       extraConfig = ''
 
         # ████████╗███╗   ███╗██╗   ██╗██╗  ██╗
@@ -49,11 +49,12 @@ in
         set -g renumber-windows on   # renumber all windows when any window is closed
         set -g set-clipboard on      # use system clipboard
         set -g status-interval 3     # update the status bar every 3 seconds
-        set -g status-position top       # macOS / darwin style
+        set -g status-position top   # macOS / darwin style
 
-        set -g allow-passthrough on
-        set -ga update-environment TERM
-        set -ga update-environment TERM_PROGRAM
+        # set -g xterm-keys on
+        # set -g allow-passthrough on
+        # set -ga update-environment TERM
+        # set -ga update-environment TERM_PROGRAM
 
         set -g status-left-length 100
 
@@ -112,8 +113,8 @@ in
       '';
 
       plugins = with pkgs; [
-        tmuxPlugins.sensible
-        tmux-nerd-font-window-name
+        # tmuxPlugins.sensible
+        # tmux-nerd-font-window-name
         tmuxPlugins.vim-tmux-navigator
         {
           plugin = tmuxPlugins.yank;
