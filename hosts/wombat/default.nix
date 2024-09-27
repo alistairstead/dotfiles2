@@ -29,7 +29,7 @@ inputs.darwin.lib.darwinSystem {
       networking.hostName = "wombat";
       gui.enable = true;
       # charm.enable = true;
-      # neovim.enable = true;
+      neovim.enable = true;
       discord.enable = true;
       dotfiles.enable = true;
       # terraform.enable = true;
