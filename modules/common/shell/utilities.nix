@@ -12,6 +12,8 @@
         # dig # DNS lookup
         fd # find
         htop # Show system processes
+        inkscape # Vector
+        imagemagick # Image manipulation
         killall # Force quit
         # inetutils # Includes telnet, whois
         # jless # JSON viewer
