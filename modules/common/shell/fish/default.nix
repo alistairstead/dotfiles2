@@ -110,6 +110,7 @@
         EDITOR = "nvim";
         GIT_EDITOR = "nvim";
         VISUAL = "nvim";
+        FONTCONFIG_FILE = "${pkgs.fontconfig.out}/etc/fonts/fonts.conf";
       };
 
     programs.starship.enableFishIntegration = true;

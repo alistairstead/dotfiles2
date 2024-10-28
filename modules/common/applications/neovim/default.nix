@@ -10,6 +10,11 @@
   };
   config = lib.mkIf (!config.ci.enable && config.gui.enable && config.neovim.enable) {
     home-manager.users.${config.user} = {
+      home.packages = with pkgs; [
+        go
+        cargo
+      ];
+
       programs.ripgrep = {
         enable = true;
       };
@@ -17,9 +22,11 @@
         extraPackages = with pkgs; [
           # LazyVim
           lua-language-server
+          astro-language-server
           stylua
           # Telescope
           ripgrep
+          nil
         ];
 
         plugins = with pkgs.vimPlugins; [
@@ -30,54 +37,54 @@
           let
             plugins = with pkgs.vimPlugins; [
               # LazyVim
-              # LazyVim
-              # bufferline-nvim
-              # cmp-buffer
-              # cmp-nvim-lsp
-              # cmp-path
-              # cmp_luasnip
-              # conform-nvim
-              # dashboard-nvim
-              # dressing-nvim
-              # flash-nvim
-              # friendly-snippets
-              # gitsigns-nvim
-              # indent-blankline-nvim
-              # lualine-nvim
-              # neo-tree-nvim
-              # neoconf-nvim
-              # neodev-nvim
-              # noice-nvim
-              # nui-nvim
-              # nvim-cmp
-              # nvim-lint
-              # nvim-lspconfig
-              # nvim-notify
-              # nvim-spectre
-              # nvim-treesitter
-              # nvim-treesitter-context
-              # nvim-treesitter-textobjects
-              # nvim-ts-autotag
-              # nvim-ts-context-commentstring
-              # nvim-web-devicons
-              # persistence-nvim
-              # plenary-nvim
-              # telescope-fzf-native-nvim
-              # telescope-nvim
-              # todo-comments-nvim
-              # tokyonight-nvim
-              # trouble-nvim
-              # vim-illuminate
-              # vim-startuptime
-              # which-key-nvim
-              # { name = "LuaSnip"; path = luasnip; }
-              # { name = "catppuccin"; path = catppuccin-nvim; }
-              # { name = "mini.ai"; path = mini-nvim; }
-              # { name = "mini.bufremove"; path = mini-nvim; }
-              # { name = "mini.comment"; path = mini-nvim; }
-              # { name = "mini.indentscope"; path = mini-nvim; }
-              # { name = "mini.pairs"; path = mini-nvim; }
-              # { name = "mini.surround"; path = mini-nvim; }
+              LazyVim
+              bufferline-nvim
+              cmp-buffer
+              cmp-nvim-lsp
+              cmp-path
+              cmp_luasnip
+              conform-nvim
+              dashboard-nvim
+              dressing-nvim
+              flash-nvim
+              friendly-snippets
+              gitsigns-nvim
+              indent-blankline-nvim
+              lualine-nvim
+              neo-tree-nvim
+              neoconf-nvim
+              neodev-nvim
+              noice-nvim
+              nui-nvim
+              nvim-cmp
+              nvim-lint
+              nvim-lspconfig
+              nvim-notify
+              nvim-spectre
+              nvim-treesitter
+              nvim-treesitter-context
+              nvim-treesitter-textobjects
+              nvim-ts-autotag
+              nvim-ts-context-commentstring
+              nvim-web-devicons
+              persistence-nvim
+              plenary-nvim
+              telescope-fzf-native-nvim
+              telescope-nvim
+              todo-comments-nvim
+              tokyonight-nvim
+              trouble-nvim
+              vim-illuminate
+              vim-startuptime
+              which-key-nvim
+              { name = "LuaSnip"; path = luasnip; }
+              { name = "catppuccin"; path = catppuccin-nvim; }
+              { name = "mini.ai"; path = mini-nvim; }
+              { name = "mini.bufremove"; path = mini-nvim; }
+              { name = "mini.comment"; path = mini-nvim; }
+              { name = "mini.indentscope"; path = mini-nvim; }
+              { name = "mini.pairs"; path = mini-nvim; }
+              { name = "mini.surround"; path = mini-nvim; }
             ];
             mkEntryFromDrv = drv:
               if lib.isDerivation drv then

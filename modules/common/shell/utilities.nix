@@ -11,6 +11,7 @@
         # difftastic # Other fancy diffs
         # dig # DNS lookup
         fd # find
+        fontconfig
         htop # Show system processes
         inkscape # Vector
         imagemagick # Image manipulation

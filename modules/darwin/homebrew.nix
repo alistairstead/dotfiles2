@@ -29,7 +29,7 @@
     homebrew = {
       enable = true;
       onActivation = {
-        autoUpdate = false; # Don't update during rebuild
+        autoUpdate = true;
         cleanup = "zap"; # Uninstall all programs not declared
         upgrade = true;
       };
@@ -59,6 +59,7 @@
         "nordvpn"
         "orbstack"
         "readdle-spark"
+        "sizzy"
         "todoist"
       ];
       caskArgs = {
