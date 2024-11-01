@@ -11,14 +11,6 @@ inputs.darwin.lib.darwinSystem {
   system = "aarch64-darwin";
   specialArgs = { };
   modules = [
-    {
-      config = {
-        # minimal configuration for nix-darwin
-        system = {
-          stateVersion = 5;
-        };
-      };
-    }
     globals
     inputs.home-manager.darwinModules.home-manager
     ../../modules/common

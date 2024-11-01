@@ -25,6 +25,8 @@
     security.pam.enablePamReattach = true;
 
     system = {
+      stateVersion = 5;
+
       keyboard = {
         remapCapsLockToControl = true;
         enableKeyMapping = true; # Allows for skhd

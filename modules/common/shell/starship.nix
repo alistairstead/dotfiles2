@@ -14,6 +14,12 @@
       };
       # A continuation prompt that displays two filled-in arrows
       continuation_prompt = "..❯ ";
+        nix_shell = {
+        symbol = "";
+        impure_msg = "*";
+        pure_msg = "";
+        format = "[$symbol $name]($style) ";
+      };
     };
   };
 }

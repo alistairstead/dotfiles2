@@ -8,7 +8,7 @@
 
       programs.bash = {
         enable = true;
-        shellAliases = config.home-manager.users.${config.user}.programs.fish.shellAliases;
+        # shellAliases = config.home-manager.users.${config.user}.programs.fish.shellAliases;
         initExtra = "";
         profileExtra = "";
       };
