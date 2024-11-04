@@ -1,59 +1,62 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    dependencies = {
-      "jose-elias-alvarez/typescript.nvim",
-      {
-        "OlegGulevskyy/better-ts-errors.nvim",
-        enabled = false,
-        dependencies = { "MunifTanjim/nui.nvim" },
-        opts = {
-          keymaps = {
-            toggle = "<leader>dd", -- default '<leader>dd'
-            go_to_definition = "<leader>dx", -- default '<leader>dx'
-          },
-        },
-      },
-    },
     opts = {
+      -- make sure mason installs the server
       servers = {
-        tsserver = {
-          -- root_dir = require("lspconfig").util.root_pattern(
-          --   ".git",
-          --   "pnpm-workspace.yaml",
-          --   "pnpm-lock.yaml",
-          --   "yarn.lock",
-          --   "package-lock.json",
-          --   "bun.lockb"
-          -- ),
-          -- single_file_support = false,
-          -- settings = {
-          --   typescript = {
-          --     implementationsCodeLens = { enabled = true },
-          --     referencesCodeLens = { enabled = true, showOnAllFunctions = true },
-          --     inlayHints = {
-          --       -- taken from https://github.com/typescript-language-server/typescript-language-server#workspacedidchangeconfiguration
-          --       includeInlayParameterNameHints = "literal",
-          --       includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-          --       includeInlayFunctionParameterTypeHints = false,
-          --       includeInlayVariableTypeHints = false,
-          --       includeInlayPropertyDeclarationTypeHints = false,
-          --       includeInlayFunctionLikeReturnTypeHints = false,
-          --       includeInlayEnumMemberValueHints = true,
-          --     },
-          --   },
-          --   javascript = {
-          --     inlayHints = {
-          --       includeInlayParameterNameHints = "all",
-          --       includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-          --       includeInlayFunctionParameterTypeHints = true,
-          --       includeInlayVariableTypeHints = true,
-          --       includeInlayPropertyDeclarationTypeHints = true,
-          --       includeInlayFunctionLikeReturnTypeHints = false,
-          --       includeInlayEnumMemberValueHints = true,
-          --     },
-          --   },
-          -- },
+        vtsls = {
+          keys = {
+            {
+              "gd",
+              function()
+                local params = vim.lsp.util.make_position_params()
+                LazyVim.lsp.execute({
+                  command = "typescript.goToSourceDefinition",
+                  arguments = { params.textDocument.uri, params.position },
+                  open = true,
+                })
+              end,
+              desc = "Goto Source Definition",
+            },
+            {
+              "gr",
+              function()
+                LazyVim.lsp.execute({
+                  command = "typescript.findAllFileReferences",
+                  arguments = { vim.uri_from_bufnr(0) },
+                  open = true,
+                })
+              end,
+              desc = "File References",
+            },
+            {
+              "<leader>co",
+              LazyVim.lsp.action["source.organizeImports"],
+              desc = "Organize Imports",
+            },
+            {
+              "<leader>cm",
+              LazyVim.lsp.action["source.addMissingImports.ts"],
+              desc = "Add missing imports",
+            },
+            {
+              "<leader>cu",
+              LazyVim.lsp.action["source.removeUnused.ts"],
+              desc = "Remove unused imports",
+            },
+            {
+              "<leader>cd",
+              LazyVim.lsp.action["source.fixAll.ts"],
+              desc = "Fix all diagnostics",
+            },
+            {
+              "<leader>cv",
+              function()
+                LazyVim.lsp.execute({ command = "typescript.selectTypeScriptVersion" })
+              end,
+              desc = "Select TS workspace version",
+            },
+          },
         },
       },
     },

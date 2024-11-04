@@ -7,15 +7,6 @@ return {
       end
     end
 
-    vim.filetype.add({
-      extension = {
-        astro = "astro",
-      },
-      pattern = {
-        [".*/kitty/*.conf"] = "bash",
-      },
-    })
-
     add("git_config")
     add("astro")
     add("twig")

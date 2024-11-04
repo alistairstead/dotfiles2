@@ -48,6 +48,7 @@
       casks = [
         "1password" # 1Password will not launch from Nix on macOS
         "1password-cli" # 1Password CLI
+        "around" # Around - Video calls
         "bartender"
         "choosy" # Choose browser
         "cleanmymac" # Clean up macOS

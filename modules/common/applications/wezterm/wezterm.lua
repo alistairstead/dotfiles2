@@ -55,7 +55,7 @@ return {
   line_height = 1.3,
   cell_width = 1.04,
   warn_about_missing_glyphs = true,
-  -- freetype_load_target = "Light",
+  freetype_load_target = "Light",
   use_cap_height_to_scale_fallback_fonts = true,
 
   -- "Monaspace Argon",
@@ -84,8 +84,8 @@ return {
       }),
     },
     {
-      italic = true,
       intensity = "Half",
+      italic = true,
       font = wezterm.font({
         family = "Monaspace Radon",
         weight = "ExtraLight",
@@ -93,8 +93,8 @@ return {
       }),
     },
     {
-      italic = true,
       intensity = "Normal",
+      italic = true,
       font = wezterm.font({
         family = "Monaspace Radon",
         weight = "ExtraLight",

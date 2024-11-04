@@ -28,8 +28,10 @@ in
       keyMode = "vi";
       newSession = true; # Automatically spawn new session
       resizeAmount = 10;
-      # shell = "${pkgs.fish}/bin/fish";
-      # terminal = "screen-256color";
+      disableConfirmationPrompt = true; # Disable confirmation prompt when closing windows
+      shell = "${pkgs.fish}/bin/fish";
+      terminal = "tmux-256color";
+      # sensibleOnTop = false; # sensible tmux settings 
       extraConfig = ''
 
         # ████████╗███╗   ███╗██╗   ██╗██╗  ██╗

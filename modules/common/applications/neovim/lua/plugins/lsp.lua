@@ -1,12 +1,4 @@
 return {
-  -- {
-  --   "mhanberg/output-panel.nvim",
-  --   event = "VeryLazy",
-  --   keys = {
-  --     { "<leader>uo", "<cmd>OutputPanel<cr>", desc = "Toggle LSP output" },
-  --   },
-  --   config = true,
-  -- },
   {
     "neovim/nvim-lspconfig",
     -- cmd = "LspInfo",
@@ -38,16 +30,9 @@ return {
         enabled = false,
       },
       servers = {
-        -- eslint = {
-        --   root_dir = require("lspconfig.util").root_pattern(
-        --     ".git",
-        --     "pnpm-workspace.yaml",
-        --     "pnpm-lock.yaml",
-        --     "yarn.lock",
-        --     "package-lock.json",
-        --     "bun.lockb"
-        --   ),
-        -- },
+        eslint = {
+          root_dir = require("lspconfig.util").root_pattern(".git", "pnpm-workspace.yaml"),
+        },
         intelephense = {
           init_options = {
             licenceKey = "/Users/alistairstead/Documents/intelephense.txt",
@@ -64,7 +49,7 @@ return {
           },
         },
         tailwindcss = {
-          -- root_dir = require("lspconfig.util").root_pattern(".git"),
+          root_dir = require("lspconfig.util").root_pattern(".git"),
           settings = {
             tailwindCSS = {
               emmetCompletions = true,

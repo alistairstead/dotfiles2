@@ -49,6 +49,7 @@
       # Common overlays to always use
       overlays = [
         (import ./overlays/granted.nix)
+        (import ./overlays/tmux.nix inputs)
       ];
       # System types to support.
       supportedSystems = [

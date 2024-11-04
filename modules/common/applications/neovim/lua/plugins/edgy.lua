@@ -55,8 +55,7 @@ return {
         },
       },
       right = {
-        { title = "Spectre", ft = "spectre_panel" },
-        { title = "CopilotChat.nvim", ft = "copilot-chat", size = { width = 0.4 } },
+        { title = "CopilotChat.nvim", ft = "copilot-chat", size = { width = 0.5 } },
         { title = "Neotest", ft = "neotest" },
         { title = "Neotest Summary", ft = "neotest-summary" },
         { title = "Neotest Output", ft = "neotest-output-panel" },

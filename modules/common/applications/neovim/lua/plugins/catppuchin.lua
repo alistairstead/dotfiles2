@@ -7,39 +7,25 @@ return {
     return {
       flavour = "mocha",
       transparent_background = true,
-      dim_inactive = {
-        enabled = true, -- dims the background color of inactive window
-        shade = "dark",
-        percentage = 0.15, -- percentage of the shade to apply to the inactive window
-      },
       styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
         comments = { "italic" }, -- Change the style of comments
       },
       integrations = {
+        aerial = true,
+        alpha = true,
         cmp = true,
-        fidget = true,
+        dashboard = true,
+        flash = true,
+        grug_far = true,
         gitsigns = true,
-        harpoon = true,
+        headlines = true,
+        illuminate = true,
+        indent_blankline = { enabled = true },
+        leap = true,
         lsp_trouble = true,
         mason = true,
-        neotest = true,
-        noice = true,
-        notify = true,
-        octo = true,
-        telescope = {
-          enabled = true,
-        },
-        treesitter = true,
-        treesitter_context = false,
-        symbols_outline = true,
-        illuminate = true,
-        which_key = true,
-        barbecue = {
-          dim_dirname = true,
-          bold_basename = true,
-          dim_context = false,
-          alt_background = false,
-        },
+        markdown = true,
+        mini = true,
         native_lsp = {
           enabled = true,
           virtual_text = {
@@ -55,6 +41,16 @@ return {
             information = { "underline" },
           },
         },
+        navic = { enabled = true, custom_bg = "lualine" },
+        neotest = true,
+        neotree = true,
+        noice = true,
+        notify = true,
+        semantic_tokens = true,
+        telescope = true,
+        treesitter = true,
+        treesitter_context = true,
+        which_key = true,
       },
     }
   end,

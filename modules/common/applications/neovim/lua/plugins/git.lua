@@ -18,12 +18,12 @@ return {
       telescope_sorter = function()
         return require("telescope").extensions.fzf.native_fzf_sorter()
       end,
-      signs = {
-        -- { CLOSED, OPENED }
-        hunk = { "", "" },
-        item = { "", "" },
-        section = { "", "" },
-      },
+      -- signs = {
+      --   -- { CLOSED, OPENED }
+      --   hunk = { "", "" },
+      --   item = { "", "" },
+      --   section = { "", "" },
+      -- },
     },
     keys = {
       { "<leader>gb", "<cmd>Telescope git_branches<CR>", desc = "Git branches" },
