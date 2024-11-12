@@ -37,6 +37,44 @@ return {
           init_options = {
             licenceKey = "/Users/alistairstead/Documents/intelephense.txt",
           },
+          settings = {
+            intelephense = {
+              telemetry = {
+                enabled = false,
+              },
+              completion = {
+                fullyQualifyGlobalConstantsAndFunctions = true,
+              },
+              format = {
+                enable = true,
+              },
+              filetypes = { "php" },
+              files = {
+                associations = { "*.php" },
+                maxSize = 1000000,
+                exclude = {
+                  "**/.git/**",
+                  "**/.svn/**",
+                  "**/.hg/**",
+                  "**/CVS/**",
+                  "**/.DS_Store/**",
+                  "**/node_modules/**",
+                  "**/bower_components/**",
+                  "**/vendor/**/{Tests,tests}/**",
+                  "**/.history/**",
+                  "**/vendor/**/vendor/**",
+                },
+              },
+            },
+          },
+        },
+        phpactor = {
+          enable = false,
+          mason = false,
+        },
+        phpcs = {
+          enable = false,
+          mason = false,
         },
         yamlls = {
           settings = {

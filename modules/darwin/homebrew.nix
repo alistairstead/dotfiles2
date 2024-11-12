@@ -43,6 +43,7 @@
       ];
       brews = [
         "trash" # Delete files and folders to trash instead of rm
+        "lazydocker" # Docker in a terminal
         "neovim"
       ];
       casks = [

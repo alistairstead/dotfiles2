@@ -104,10 +104,10 @@ return {
   },
 
   window_padding = {
-    left = 20,
-    right = 20,
-    top = 65,
-    bottom = 5,
+    left = 0,
+    right = 0,
+    top = 60,
+    bottom = 0,
   },
 
   -- general options
