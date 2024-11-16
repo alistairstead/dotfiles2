@@ -18,6 +18,7 @@ local prompts = {
 return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
+    optional = true,
     opts = {
       prompts = prompts,
     },

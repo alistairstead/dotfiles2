@@ -1,6 +1,7 @@
 return {
   {
     "akinsho/bufferline.nvim",
+    optional = true,
     opts = {
       options = {
         color_icons = false,

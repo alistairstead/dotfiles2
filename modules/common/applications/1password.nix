@@ -20,13 +20,12 @@ in
 
   config = lib.mkIf (!config.ci.enable && config.gui.enable && config._1password.enable) {
     unfreePackages = [
-      "1password"
       "_1password-gui"
-      "1password-cli"
+      "_1password-cli"
     ];
     home-manager.users.${config.user} = {
       home.packages = [
-        pkgs._1password
+        pkgs._1password-cli
       ] ++ (if pkgs.stdenv.isLinux then [ pkgs._1password-gui ] else [ ]);
 
       programs.ssh = {

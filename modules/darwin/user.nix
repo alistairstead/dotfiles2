@@ -21,6 +21,8 @@
 
     home-manager.users.${config.user} = {
 
+      home.sessionPath = [ "$HOME/.cargo/bin" ];
+
       # Default shell setting doesn't work
       home.sessionVariables = {
         SHELL = "${pkgs.fish}/bin/fish";

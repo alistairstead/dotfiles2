@@ -203,7 +203,7 @@ return {
         function()
           require("gitlinker").get_buf_range_url("n")
         end,
-        desc = "Yank GitHub URL",
+        desc = "Yank Repo URL",
       },
     },
   },

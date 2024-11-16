@@ -30,6 +30,7 @@ end
 return {
   {
     "kevinhwang91/nvim-ufo",
+    enable = false,
     dependencies = {
       "kevinhwang91/promise-async",
     },
@@ -48,6 +49,7 @@ return {
   -- When preview is opened, the l key will close it and open fold. In all other cases these keys will work as usual.
   {
     "anuvyklack/fold-preview.nvim",
+    -- enable = false,
     event = "BufReadPost",
     dependencies = "anuvyklack/keymap-amend.nvim",
     config = true,

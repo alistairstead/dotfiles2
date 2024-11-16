@@ -19,9 +19,10 @@
     '';
 
     # Add homebrew paths to CLI path
-    home-manager.users.${config.user}.home.sessionPath = [ "/opt/homebrew/bin/" ];
+    home-manager.users.${config.user}.home.sessionPath = [ "/opt/homebrew/bin/"  ];
 
     environment.systemPath = [ "/opt/homebrew/bin" ];
+
     environment.variables = {
       HOMEBREW_NO_ANALYTICS = "1";
     };

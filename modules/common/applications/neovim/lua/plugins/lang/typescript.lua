@@ -1,4 +1,5 @@
 return {
+  { import = "lazyvim.plugins.extras.lang.typescript" },
   {
     "neovim/nvim-lspconfig",
     opts = {
@@ -62,11 +63,22 @@ return {
     },
   },
   {
-    "dmmulroy/tsc.nvim",
-    config = true,
-    cmd = "TSC",
-    keys = {
-      { "<leader>tc", "<cmd>TSC<cr>", desc = "Type-check" },
+    "nvim-neotest/neotest",
+    optional = true,
+    dependencies = {
+      "marilari88/neotest-vitest",
     },
+    keys = {
+      {
+        "<leader>tL",
+        function()
+          require("neotest").run.run_last({ strategy = "dap", suite = true })
+        end,
+        desc = "Debug Last Test",
+      },
+    },
+    opts = function(_, opts)
+      table.insert(opts.adapters, require("neotest-vitest"))
+    end,
   },
 }

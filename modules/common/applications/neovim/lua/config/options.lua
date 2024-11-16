@@ -27,4 +27,4 @@ opt.listchars = {
 vim.o.cmdheight = 0
 vim.o.showcmdloc = "statusline"
 
-vim.g.lazyvim_php_lsp = "intelephense"
+-- vim.g.lazyvim_php_lsp = "intelephense"

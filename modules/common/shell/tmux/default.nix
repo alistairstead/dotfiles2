@@ -13,8 +13,8 @@ let
       src = pkgs.fetchFromGitHub {
         owner = "joshmedeski";
         repo = "tmux-nerd-font-window-name";
-        rev = "be794baa114de855bf3069c60765a49508935edc";
-        sha256 = "sha256-pHciRdF/t/h2geOPI0d6URgPmA0mlLb3fNEbU5NRNKY=";
+        rev = "e0f3946227e5e7b5a94a24f973c842fa5a385e7f";
+        sha256 = "sha256-Iv5XmJZzT20c1dkTaHZkHcxiAKEnzuNy/P22grKJrhg=";
       };
     };
 in
@@ -110,8 +110,8 @@ in
         set -g pane-active-border-style 'fg=brightblack,bg=default'
         set -g pane-border-style 'fg=brightblack,bg=default'
 
-        set -g status-bg default
-        set -g status-style bg=default
+        # set -g status-bg default
+        # set -g status-style bg=default
       '';
 
       plugins = with pkgs; [
@@ -158,7 +158,7 @@ in
             set -g @catppuccin_icon_window_silent "null"
             set -g @catppuccin_icon_window_activity "󰖲"
             set -g @catppuccin_icon_window_bell "󰂞"
-            set -g @catppuccin_status_modules_right "application session date_time"
+            set -g @catppuccin_status_modules_right "application session"
             set -g @catppuccin_status_right_separator "█"
             set -g @catppuccin_status_left_separator "null"
             set -g @catppuccin_status_right_separator_inverse "no"
