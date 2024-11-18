@@ -44,4 +44,11 @@ return {
     },
     opts = { use_default_keymaps = false, max_join_length = 150 },
   },
+  {
+    "anuvyklack/fold-preview.nvim",
+    -- enable = false,
+    event = "BufReadPost",
+    dependencies = "anuvyklack/keymap-amend.nvim",
+    config = true,
+  },
 }
