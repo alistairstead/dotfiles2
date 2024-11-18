@@ -207,3 +207,8 @@ run = ['layout floating']
 if.app-id = 'com.apple.MobileSMS'
 check-further-callbacks = true
 run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'co.teamport.around'
+check-further-callbacks = true
+run = ['layout floating']

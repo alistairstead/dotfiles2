@@ -6,6 +6,7 @@
     ./devenv.nix
     ./go.nix
     ./node.nix
+    ./php
     ./terraform.nix
   ];
 

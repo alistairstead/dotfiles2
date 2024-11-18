@@ -1,30 +1,9 @@
 return {
   {
+    optional = true,
     "nvim-telescope/telescope.nvim",
-    dependencies = {
-      {
-        "debugloop/telescope-undo.nvim",
-        keys = { { "<leader>su", "<cmd>Telescope undo<cr>", "Undo tree" } },
-      },
-      { "natecraddock/telescope-zf-native.nvim" },
-      { "ThePrimeagen/harpoon" },
-      {
-        "ThePrimeagen/git-worktree.nvim",
-      },
-    },
-    config = function(_, opts)
-      local telescope = require("telescope")
-      telescope.setup(opts)
-      telescope.load_extension("git_worktree")
-      telescope.load_extension("undo")
-      telescope.load_extension("zf-native")
-    end,
     opts = {
       defaults = {
-        get_selection_window = function()
-          require("edgy").goto_main()
-          return 0
-        end,
         path_display = { "smart" },
         prompt_position = "top",
         prompt_prefix = " ",
@@ -67,14 +46,6 @@ return {
               preview_width = 0.9,
             },
           },
-        },
-        file_ignore_patters = {
-          ".git/",
-          "yarn.lock",
-          "package-lock.json",
-          "node_Modules",
-          ".build",
-          ".sst",
         },
         mappings = {
           i = {
@@ -122,75 +93,11 @@ return {
           file_ignore_patterns = { "yarn.lock", "node_modules/*" },
         },
       },
-      extensions = {
-        ["zf-native"] = {
-          file = { -- options for sorting file-like items
-            enable = true, -- override default telescope file sorter
-            highlight_results = true, -- highlight matching text in results
-            match_filename = true, -- enable zf filename match priority
-          },
-          generic = { -- options for sorting all other items
-            enable = true, -- override default telescope generic item sorter
-            highlight_results = true, -- highlight matching text in results
-            match_filename = false, -- disable zf filename match priority
-          },
-        },
-        ["ui-select"] = {
-          require("telescope.themes").get_dropdown({
-            -- even more opts
-          }),
-        },
-        -- smart_open = {
-        --   cwd_only = true,
-        --   filename_first = true,
-        -- },
-        project = {
-          base_dirs = {
-            "~/code",
-          },
-          theme = "dropdown",
-        },
-      },
     },
     keys = {
       { "<C-t>", "<cmd>Telescope<cr>", desc = "Telescope" },
       { "<C-p>", "<cmd>Telescope git_files<CR>", desc = "git files" },
       { "<leader>:", "<cmd>Telescope command_history<cr>", desc = "Command History" },
-      -- find
-      { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find existing buffers" },
-      { "<leader>bb", "<cmd>Telescope buffers<cr>", desc = "Find existing buffers" },
-      { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-      { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Find recently opened files" },
-      -- git
-      { "<leader>gc", "<cmd>Telescope git_commits<CR>", desc = "Git commits" },
-      { "<leader>gf", "<cmd>Telescope git_files<CR>", desc = "Git files" },
-      -- search
-      { "<leader>s.", "<cmd>Telescope find_files search_dirs=~/.dotfiles<cr>", desc = "Auto Commands" },
-      { "<leader>sa", "<cmd>Telescope autocommands<cr>", desc = "Auto Commands" },
-      { "<leader>sb", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Buffer" },
-      { "<leader>sc", "<cmd>Telescope command_history<cr>", desc = "Command History" },
-      { "<leader>sC", "<cmd>Telescope commands<cr>", desc = "Commands" },
-      { "<leader>sd", "<cmd>Telescope diagnostics bufnr=0<cr>", desc = "Document diagnostics" },
-      { "<leader>sD", "<cmd>Telescope diagnostics<cr>", desc = "Workspace diagnostics" },
-      { "<leader>sg", "<cmd>Telescope live_grep<cr>", desc = "Grep (root dir)" },
-      { "<leader>/", "<cmd>Telescope live_grep<cr>", desc = "Grep (root dir)" },
-      { "<leader>sh", "<cmd>Telescope help_tags<cr>", desc = "Help Pages" },
-      { "<leader>sH", "<cmd>Telescope highlights<cr>", desc = "Search Highlight Groups" },
-      { "<leader>sk", "<cmd>Telescope keymaps<cr>", desc = "Key Maps" },
-      { "<leader>sM", "<cmd>Telescope man_pages<cr>", desc = "Man Pages" },
-      { "<leader>sm", "<cmd>Telescope marks<cr>", desc = "Jump to Mark" },
-      { "<leader>so", "<cmd>Telescope vim_options<cr>", desc = "Options" },
-      { "<leader>sR", "<cmd>Telescope resume<cr>", desc = "Resume" },
-      { "<leader>sw", "<cmd>Telescope grep_string<cr>", desc = "Word" },
-      {
-        "<leader>sp",
-        function()
-          require("telescope.builtin").find_files({
-            cwd = require("lazy.core.config").options.root,
-          })
-        end,
-        desc = "Find Plugin File",
-      },
     },
   },
 }

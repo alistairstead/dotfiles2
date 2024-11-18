@@ -18,9 +18,8 @@ return {
       },
     },
   },
-  { import = "lazyvim.plugins.extras.linting.eslint" },
-  { import = "lazyvim.plugins.extras.formatting.prettier" },
   { "lukas-reineke/indent-blankline.nvim", enabled = false },
-  { "echasnovski/mini.indentscope", enabled = false },
+  { "echasnovski/mini.indentscope", enabled = false }, -- animate the block indent
   { "SmiteshP/nvim-navic", enabled = false },
+  { "RRethy/vim-illuminate", enabled = false },
 }
