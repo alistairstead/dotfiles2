@@ -60,6 +60,9 @@ in
           init = {
             defaultBranch = "main";
           };
+          merge = {
+            conflictStyle = "diff3";
+          };
           rebase = {
             autosquash = true;
             autostash = true;
@@ -116,7 +119,13 @@ in
           "node_modules"
           "result"
           "result-*"
-          ".direnv/**"
+          ".devenv/"
+          ".direnv/"
+          ".devenv.flake.nix"
+          ".envrc"
+          "devenv.lock"
+          "devenv.nix"
+          "devenv.yaml"
         ];
       };
 

@@ -1,12 +1,50 @@
 return {
   {
+    "neotest",
+    opts = {
+      icons = {
+        child_indent = "│",
+        child_prefix = "├",
+        collapsed = "",
+        expanded = "",
+        failed = "",
+        final_child_indent = " ",
+        final_child_prefix = "└",
+        non_collapsible = "─",
+        notify = "",
+        passed = "",
+        running = "",
+        running_animated = {
+          "⠋",
+          "⠙",
+          "⠹",
+          "⠸",
+          "⠼",
+          "⠴",
+          "⠦",
+          "⠧",
+          "⠇",
+          "⠏",
+        },
+        skipped = "",
+        unknown = "",
+        watching = "",
+      },
+      status = {
+        enabled = true,
+        signs = true,
+        virtual_text = true,
+      },
+    },
+  },
+  {
     "andythigpen/nvim-coverage",
     dependencies = {
       "nvim-lua/plenary.nvim",
-      "folke/tokyonight.nvim",
       {
         -- needed for nvim-coverage PHP cobertura parser. Requires `brew install luajit`
         "vhyrro/luarocks.nvim",
+        priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
         opts = {
           rocks = { "lua-xmlreader" },
         },
@@ -26,10 +64,11 @@ return {
       {
         "<leader>tc",
         function()
-          if require("coverage.signs").is_enabled() then
-            require("coverage").clear()
+          local coverage = require("coverage")
+          if coverage.is_enabled() then
+            coverage.clear()
           else
-            require("coverage").load(true)
+            coverage.load(true)
           end
         end,
         noremap = true,

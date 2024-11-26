@@ -2,8 +2,13 @@ return {
   {
     "TimUntersberger/neogit",
     dependencies = {
-      "nvim-lua/plenary.nvim",
-      "sindrets/diffview.nvim",
+      "nvim-lua/plenary.nvim", -- required
+      "sindrets/diffview.nvim", -- optional - Diff integration
+
+      -- Only one of these is needed.
+      -- "nvim-telescope/telescope.nvim", -- optional
+      "ibhagwan/fzf-lua", -- optional
+      -- "echasnovski/mini.pick", -- optional
     },
     opts = {
       disable_hint = false,
@@ -12,12 +17,25 @@ return {
       auto_show_console = false,
       disable_insert_on_commit = false,
       integrations = {
-        telescope = true,
-        diffview = true,
+        -- If enabled, use telescope for menu selection rather than vim.ui.select.
+        -- Allows multi-select and some things that vim.ui.select doesn't.
+        telescope = nil,
+        -- Neogit only provides inline diffs. If you want a more traditional way to look at diffs, you can use `diffview`.
+        -- The diffview integration enables the diff popup.
+        --
+        -- Requires you to have `sindrets/diffview.nvim` installed.
+        diffview = nil,
+
+        -- If enabled, uses fzf-lua for menu selection. If the telescope integration
+        -- is also selected then telescope is used instead
+        -- Requires you to have `ibhagwan/fzf-lua` installed.
+        fzf_lua = true,
+
+        -- If enabled, uses mini.pick for menu selection. If the telescope integration
+        -- is also selected then telescope is used instead
+        -- Requires you to have `echasnovski/mini.pick` installed.
+        mini_pick = nil,
       },
-      telescope_sorter = function()
-        return require("telescope").extensions.fzf.native_fzf_sorter()
-      end,
       -- signs = {
       --   -- { CLOSED, OPENED }
       --   hunk = { "", "" },
@@ -49,7 +67,6 @@ return {
       "DiffviewFileHistory",
     },
     opts = function()
-      local actions = require("diffview.actions")
       return {
         keymaps = {
           file_panel = {
@@ -157,13 +174,18 @@ return {
   {
     "lewis6991/gitsigns.nvim",
     opts = {
+      signs_staged = {
+        delete = { text = "" },
+        topdelete = { text = "" },
+      },
       signs = {
-        add = { text = "┊" },
-        change = { text = "┊" },
-        delete = { text = "┊" },
-        topdelete = { text = "┊" },
-        changedelete = { text = "┊" },
-        untracked = { text = "┊" },
+        delete = { text = "" },
+        topdelete = { text = "" },
+        untracked = { text = "┆" },
+        --   add = { text = "┊" },
+        --   change = { text = "┊" },
+        --   delete = { text = "┊" },
+        --   topdelete = { text = "┊" },
       },
       on_attach = function(buffer)
         local gs = package.loaded.gitsigns

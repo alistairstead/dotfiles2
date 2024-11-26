@@ -14,7 +14,6 @@
     programs.fish = {
       enable = true;
       shellAliases = {
-
         # Version of bash which works much better on the terminal
         bash = "${pkgs.bashInteractive}/bin/bash";
 

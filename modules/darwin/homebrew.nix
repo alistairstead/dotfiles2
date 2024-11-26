@@ -45,6 +45,7 @@
       brews = [
         "trash" # Delete files and folders to trash instead of rm
         "lazydocker" # Docker in a terminal
+        "mysql-client" # brew link --overwrite --force mysql-client
         "neovim"
       ];
       casks = [

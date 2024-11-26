@@ -30,6 +30,9 @@ return {
             licenceKey = "/Users/alistairstead/Documents/intelephense.txt",
           },
           settings = {
+            phpcs = {
+              enable = false,
+            },
             intelephense = {
               telemetry = {
                 enabled = false,
@@ -71,7 +74,7 @@ return {
     optional = true,
     opts = {
       linters_by_ft = {
-        php = { "phpcs" },
+        php = {},
       },
     },
   },
@@ -125,18 +128,20 @@ return {
             {
               type = "php",
               request = "launch",
-              name = "Symfony",
+              name = "Local",
               port = 9003,
-              pathMappings = {
-                ["${workspaceFolder}"] = "${workspaceFolder}",
-                ["/var/www/html"] = "${workspaceFolder}",
-              },
             },
             {
               type = "php",
               request = "launch",
-              name = "Docker",
+              name = "Remote Docker",
               port = 9003,
+              phpunit_cmd = "dphpunit",
+              php = "",
+              env = {
+                XDEBUG_CONFIG = "idekey=neotest",
+                CONTAINER = "broadbandgenie-website-app-1",
+              },
               pathMappings = {
                 ["/var/www/html"] = "${workspaceFolder}",
               },
@@ -152,15 +157,6 @@ return {
     opts = function()
       local opts = require("lazyvim.plugins.extras.editor.dial").opts()
       local augend = require("dial.augend")
-
-      local checkboxes = augend.constant.new({
-        -- pattern_regexp = "\\[.]\\s", -- TODO: doesn't work
-        elements = { "[ ]", "[x]", "[-]" },
-        word = false,
-        cyclic = true,
-      })
-
-      table.insert(opts.groups.markdown, checkboxes)
 
       opts.dials_by_ft.php = "php"
       opts.groups.php = opts.groups.php or {}

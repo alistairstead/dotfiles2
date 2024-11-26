@@ -45,18 +45,34 @@ return {
 
   -- Set default shell to Fish
   -- default_prog = {
-  --   "${pkgs.tmux}/bin/tmux",
+  --   "tmux",
   -- },
+  --
+  -- front_end = "WebGpu",
+  -- front_end = "OpenGL",  -- current work-around for https://github.com/wez/wezterm/issues/4825
   -- See: https://github.com/wez/wezterm/issues/5990#issuecomment-2295721814
   front_end = "WebGpu",
+  enable_wayland = true,
+  webgpu_power_preference = "HighPerformance",
+  -- config.animation_fps = 1
+  cursor_blink_ease_in = "Constant",
+  cursor_blink_ease_out = "Constant",
+  default_cursor_style = "BlinkingBar",
+  force_reverse_video_cursor = true,
+
   macos_window_background_blur = 15,
   color_scheme = "Catppuccin Mocha",
-  font_size = 18,
-  line_height = 1.3,
+  font_size = 16,
+  line_height = 1.4,
   cell_width = 1.04,
   warn_about_missing_glyphs = true,
-  freetype_load_target = "Light",
+  -- freetype_load_target = "ExtraLight",
   use_cap_height_to_scale_fallback_fonts = true,
+  bold_brightens_ansi_colors = true,
+
+  underline_thickness = 3,
+  cursor_thickness = 4,
+  underline_position = -6,
 
   -- "Monaspace Argon",
   -- "Monaspace Krypton",
@@ -70,7 +86,7 @@ return {
       weight = "ExtraLight",
       harfbuzz_features = { "calt", "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07", "ss08", "liga" },
     },
-    { family = "Symbols Nerd Font Mono", scale = 0.75 },
+    { family = "Symbols Nerd Font Mono", scale = 0.9 },
   }),
 
   font_rules = {
@@ -106,7 +122,7 @@ return {
   window_padding = {
     left = 0,
     right = 0,
-    top = 60,
+    top = 0,
     bottom = 0,
   },
 
@@ -117,6 +133,7 @@ return {
   native_macos_fullscreen_mode = true,
   window_close_confirmation = "NeverPrompt",
   window_decorations = "INTEGRATED_BUTTONS|RESIZE",
+  -- window_decorations = "NONE",
   -- fix left alt key to type special characters such as #
   send_composed_key_when_left_alt_is_pressed = true,
   -- keys

@@ -6,9 +6,9 @@ return {
     version = "2.*",
     -- commit = "6e98757",
     opts = {
-      hint = "statusline-winbar",
-      show_prompt = true,
-      selection_chars = "dfghjkl;",
+      hint = "floating-big-letter",
+      show_prompt = false,
+      selection_chars = "fghj",
       filter_rules = {
         -- filter using buffer options
         bo = {
@@ -18,12 +18,6 @@ return {
           buftype = {},
         },
       },
-      fg_color = "#EF87BD",
-      -- if you have include_current_win == true, then current_win_hl_color will
-      -- be highlighted using this background color
-      current_win_hl_color = "#454158",
-      -- all the windows except the current window will be highlighted using this color
-      other_win_hl_color = "#454158",
     },
   },
   {
@@ -38,21 +32,6 @@ return {
       enable_git_status = true,
       enable_diagnostics = true,
       sync_root_with_cwd = false,
-      -- source_selector = {
-      --   winbar = true,
-      --   statusline = true,
-      -- },
-      filesystem = {
-        use_libuv_file_watcher = true,
-        follow_current_file = {
-          enabled = true, -- This will find and focus the file in the active buffer every time
-          leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
-        },
-      },
-      update_focused_file = {
-        enable = true,
-        update_root = false,
-      },
       default_component_configs = {
         indent = {
           indent_marker = " ",
@@ -69,10 +48,10 @@ return {
         git_status = {
           symbols = {
             -- Change type
-            added = "", -- ", -- or "✚", but this is redundant info if you use git_status_colors on the name
+            added = "", -- ", -- or "✚", but this is redundant info if you use git_status_colors on the name
             modified = "◦", -- "", -- or "", but this is redundant info if you use git_status_colors on the name
-            deleted = "", -- "◦", -- this can only be used in the git_status source
-            renamed = "", -- "", -- this can only be used in the git_status source
+            deleted = "", -- "◦", -- this can only be used in the git_status source
+            renamed = "", -- "", -- this can only be used in the git_status source
             -- Status type
             untracked = "◦",
             ignored = "",
@@ -81,40 +60,17 @@ return {
             conflict = "",
           },
         },
-        event_handlers = {
-          {
-            event = "file_opened",
-            handler = function(file_path)
-              -- auto close
-              -- vimc.cmd("Neotree close")
-              -- OR
-              require("neo-tree.command").execute({ action = "close" })
-            end,
-          },
-          {
-            event = "neo_tree_buffer_enter",
-            handler = function()
-              vim.cmd("highlight! Cursor blend=100")
-            end,
-          },
-          {
-            event = "neo_tree_buffer_leave",
-            handler = function()
-              vim.cmd("highlight! Cursor guibg=#5f87af blend=0")
-            end,
-          },
-        },
       },
       window = {
         mappings = {
           ["e"] = function()
-            vim.api.nvim_exec("Neotree focus filesystem left", true)
+            vim.cmd("Neotree focus filesystem left", true)
           end,
           ["b"] = function()
-            vim.api.nvim_exec("Neotree focus buffers left", true)
+            vim.cmd("Neotree focus buffers left", true)
           end,
           ["g"] = function()
-            vim.api.nvim_exec("Neotree focus git_status left", true)
+            vim.cmd("Neotree focus git_status left", true)
           end,
           ["l"] = "open",
           ["L"] = "open_with_window_picker",
@@ -137,7 +93,7 @@ return {
         show_buffer_close_icons = false,
         show_close_icon = false,
         modified_icon = "◦",
-        close_icon = "",
+        close_icon = "",
         left_trunc_marker = "",
         right_trunc_marker = "",
         groups = {
@@ -150,13 +106,99 @@ return {
   },
   {
     "catppuccin/nvim",
-    name = "catppuccin",
-    priority = 2000,
+    optional = true,
     ---@class CatppuccinOptions
     opts = function()
       return {
         flavour = "mocha",
         transparent_background = false,
+        no_bold = false,
+        dim_inactive = {
+          enabled = false, -- dims the background color of inactive window
+          shade = "dark",
+          percentage = 0.15, -- percentage of the shade to apply to the inactive window
+        },
+        color_overrides = {
+          all = {
+            -- rosewater = "#f5e0dc",
+            -- flamingo = "#f2cdcd",
+            -- pink = "#f5c2e7",
+            -- mauve = "#cba6f7",
+            -- red = "#f38ba8",
+            -- maroon = "#eba0ac",
+            -- peach = "#fab387",
+            -- yellow = "#f9e2af",
+            -- green = "#a6e3a1",
+            -- teal = "#94e2d5",
+            -- sky = "#89dceb",
+            -- sapphire = "#74c7ec",
+            -- blue = "#89b4fa",
+            -- lavender = "#b4befe",
+            -- text = "#cdd6f4",
+            -- subtext1 = "#bac2de",
+            -- subtext0 = "#a6adc8",
+            -- overlay2 = "#9399b2",
+            -- overlay1 = "#7f849c",
+            -- overlay0 = "#6c7086",
+            -- surface2 = "#585b70",
+            -- surface1 = "#45475a",
+            -- surface0 = "#313244",
+            -- base = "#1e1e2e",
+            -- mantle = "#181825",
+            -- crust = "#11111b",
+            --
+            -- overlay2 = "#585b70",
+            -- overlay1 = "#585b70",
+            -- overlay0 = "#2B2C30",
+            -- surface2 = "#2B2C30",
+            -- surface1 = "#262626",
+            -- surface0 = "#1D1E23",
+            crust = "#2B2C30",
+            mantle = "#262626",
+            base = "#1D1E23",
+          },
+        },
+        -- highlight_overrides = {
+        --   all = function(cp)
+        --     return {
+        --       -- BufferLineFill = { bg = "#1e1e2e" },
+        --       -- TabLineFill = { bg = "#1e1e2e" },
+        --       -- BufferLineBackground = { bg = "#1e1e2e" },
+        --       -- For base configs
+        --       -- NormalFloat = { fg = cp.text, bg = cp.mantle },
+        --       -- FloatBorder = {
+        --       --   fg = cp.mantle,
+        --       --   bg = cp.mantle,
+        --       -- },
+        --       -- CursorLineNr = { fg = cp.green },
+        --
+        --       -- For nvim-tree
+        --       -- NvimTreeRootFolder = { fg = cp.pink },
+        --       -- NvimTreeIndentMarker = { fg = cp.surface2 },
+        --       -- NeoTreeTabInactive = { bg = cp.surface2, fg = cp.overlay0 },
+        --
+        --       -- For trouble.nvim
+        --       -- TroubleNormal = { bg = cp.base },
+        --       -- TroubleNormalNC = { bg = cp.base },
+        --     }
+        --   end,
+        -- },
+        integrations = {
+          dadbod_ui = true,
+          dap = true,
+          dap_ui = true,
+          diffview = true,
+          fzf = true,
+          harpoon = true,
+          lsp_saga = true,
+          lsp_trouble = true,
+          mason = true,
+          native_lsp = true,
+          neogit = true,
+          octo = true,
+          overseer = true,
+          window_picker = true,
+        },
       }
     end,
   },
@@ -173,31 +215,6 @@ return {
         },
         opts = { skip = true },
       })
-      local focused = true
-      vim.api.nvim_create_autocmd("FocusGained", {
-        callback = function()
-          focused = true
-        end,
-      })
-      vim.api.nvim_create_autocmd("FocusLost", {
-        callback = function()
-          focused = false
-        end,
-      })
-
-      table.insert(opts.routes, 1, {
-        filter = {
-          ["not"] = {
-            event = "lsp",
-            kind = "progress",
-          },
-          cond = function()
-            return not focused
-          end,
-        },
-        view = "notify_send",
-        opts = { stop = false },
-      })
 
       return opts
     end,
@@ -205,68 +222,78 @@ return {
   {
     "folke/edgy.nvim",
     optional = true,
-    opts = {
-      wo = {
-        spell = false,
-      },
-      animate = {
-        enabled = true,
-      },
-      bottom = {
-        {
-          ft = "lazyterm",
-          title = "LazyTerm",
-          size = { height = 0.4 },
-          filter = function(buf)
-            return not vim.b[buf].lazyterm_cmd
-          end,
+    opts = function()
+      local opts = {
+        options = {
+          left = { size = 40 },
+          bottom = { size = 10 },
+          right = { size = 40 },
+          top = { size = 10 },
         },
-        "Trouble",
-        { ft = "qf", title = "QuickFix" },
-        {
-          ft = "help",
-          size = { height = 20 },
-          -- only show help buffers
-          filter = function(buf)
-            return vim.bo[buf].buftype == "help"
-          end,
+        animate = {
+          enabled = false,
         },
-        {
-          title = "DB Query Result",
-          ft = "dbout",
+        bottom = {
+          {
+            title = "Messages",
+            ft = "noice",
+            size = { height = 0.4 },
+            filter = function(buf, win)
+              return vim.api.nvim_win_get_config(win).relative == ""
+            end,
+          },
+          "Trouble",
+          { ft = "qf", title = "QuickFix" },
+          {
+            ft = "help",
+            title = "Help",
+            size = { height = 20 },
+            -- don't open help files in edgy that we're editing
+            filter = function(buf)
+              return vim.bo[buf].buftype == "help"
+            end,
+          },
+          {
+            title = "Test Output",
+            ft = "neotest-output-panel",
+            size = { height = 15 },
+          },
         },
-      },
-      left = {
-        {
-          title = "Neo-Tree",
-          ft = "neo-tree",
-          filter = function(buf)
-            return vim.b[buf].neo_tree_source == "filesystem"
-          end,
-          open = function()
-            require("neo-tree.command").execute({ dir = LazyVim.root() })
-          end,
-          size = { width = 0.3 },
+        left = {
+          {
+            title = "Files",
+            ft = "neo-tree",
+            filter = function(buf)
+              return vim.b[buf].neo_tree_source == "filesystem"
+            end,
+            open = function()
+              require("neo-tree.command").execute({ dir = LazyVim.root() })
+            end,
+          },
+          { title = "Test Summary", ft = "neotest-summary" },
         },
-        {
-          title = "Database",
-          ft = "dbui",
-          open = function()
-            vim.cmd("DBUI")
-          end,
+        right = {
+          {
+            title = "Databases",
+            ft = "dbui",
+            open = function()
+              vim.cmd("DBUI")
+            end,
+          },
+          { title = "Search & Replace", ft = "grug-far", size = { width = 0.4 } },
+          { title = "Copilot Chat", ft = "copilot-chat", size = { width = 0.4 } },
+          { title = "Tests", ft = "neotest", size = { width = 0.4 } },
+          { title = "Test Summary", ft = "neotest-summary", size = { width = 0.3 } },
+          { title = "Test Output", ft = "neotest-output-panel", size = { width = 0.4 } },
+          {
+            ft = "Outline",
+            open = "SymbolsOutlineOpen",
+          },
         },
-      },
-      right = {
-        { title = "CopilotChat.nvim", ft = "copilot-chat", size = { width = 0.5 } },
-        { title = "Neotest", ft = "neotest", size = { width = 0.5 } },
-        { title = "Neotest Summary", ft = "neotest-summary", size = { width = 0.3 } },
-        { title = "Neotest Output", ft = "neotest-output-panel", size = { width = 0.5 } },
-        {
-          ft = "Outline",
-          open = "SymbolsOutlineOpen",
-        },
-      },
-    },
+      }
+
+      return opts
+    end,
   },
   {
     "folke/zen-mode.nvim",
@@ -298,107 +325,6 @@ return {
         mode = "virtualtext", -- Set the display mode.
         virtualtext = "■",
       },
-    },
-  },
-  {
-    optional = true,
-    "nvim-telescope/telescope.nvim",
-    opts = {
-      defaults = {
-        path_display = { "smart" },
-        prompt_position = "top",
-        prompt_prefix = " ",
-        selection_caret = " ",
-        sorting_strategy = "ascending",
-        color_devicons = true,
-        selection_strategy = "reset",
-        scroll_strategy = "cycle",
-        vimgrep_arguments = {
-          "rg",
-          "--color=never",
-          "--no-heading",
-          "--hidden",
-          "--with-filename",
-          "--line-number",
-          "--column",
-          "--smart-case",
-          "--trim", -- add this value
-        },
-        layout_config = {
-          width = 0.95,
-          height = 0.85,
-          prompt_position = "top",
-          horizontal = {
-            preview_width = function(_, cols, _)
-              if cols > 200 then
-                return math.floor(cols * 0.4)
-              else
-                return math.floor(cols * 0.6)
-              end
-            end,
-          },
-          vertical = {
-            width = 0.9,
-            height = 0.95,
-            preview_height = 0.5,
-          },
-          flex = {
-            horizontal = {
-              preview_width = 0.9,
-            },
-          },
-        },
-        mappings = {
-          i = {
-            ["<C-n>"] = require("telescope.actions").cycle_history_next,
-            ["<C-p>"] = require("telescope.actions").cycle_history_prev,
-            ["<C-j>"] = require("telescope.actions").move_selection_next,
-            ["<C-k>"] = require("telescope.actions").move_selection_previous,
-            ["<C-c>"] = require("telescope.actions").close,
-            ["<CR>"] = require("telescope.actions").select_default,
-            ["<Tab>"] = require("telescope.actions").toggle_selection
-              + require("telescope.actions").move_selection_worse,
-            ["<S-Tab>"] = require("telescope.actions").toggle_selection
-              + require("telescope.actions").move_selection_better,
-            ["<C-q>"] = require("telescope.actions").send_to_qflist + require("telescope.actions").open_qflist,
-            ["<C-l>"] = require("telescope.actions").complete_tag,
-          },
-          n = {
-            ["<esc>"] = require("telescope.actions").close,
-            ["<CR>"] = require("telescope.actions").select_default,
-          },
-        },
-      },
-      pickers = {
-        git_files = {
-          prompt_prefix = "󰊢 ",
-          hidden = true,
-          show_untracked = true,
-        },
-        find_files = {
-          prompt_prefix = " ",
-          hidden = true,
-          theme = "dropdown",
-          previewer = false,
-        },
-        buffers = {
-          prompt_prefix = " ",
-          previewer = false,
-          theme = "dropdown",
-        },
-        lsp_references = {
-          prompt_prefix = " ",
-          previewer = true,
-        },
-        defaults = {
-          file_ignore_patterns = { "yarn.lock", "node_modules/*" },
-        },
-      },
-    },
-    keys = {
-      { "<C-t>", "<cmd>Telescope<cr>", desc = "Telescope" },
-      { "<C-p>", "<cmd>Telescope git_files<CR>", desc = "git files" },
-      { "<leader>:", "<cmd>Telescope command_history<cr>", desc = "Command History" },
     },
   },
 }

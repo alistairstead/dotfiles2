@@ -15,19 +15,20 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 vim.cmd([[command! -nargs=0 GoToCommand :Telescope commands]])
-vim.cmd([[command! -nargs=0 GoToFile :Telescope smart_open]])
+vim.cmd([[command! -nargs=0 GoToFile :Telescope find_files]])
 vim.cmd([[command! -nargs=0 GoToSymbol :Telescope lsp_document_symbols]])
 vim.cmd([[command! -nargs=0 Grep :Telescope live_grep]])
 vim.o.cursorlineopt = "number"
 
 require("lazy").setup({
+  concurrency = 8,
   spec = {
     -- add LazyVim and import its plugins
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
     -- import/override with your plugins
+    { import = "plugins" },
     { import = "plugins.lang" },
     { import = "plugins.util" },
-    { import = "plugins" },
   },
   defaults = {
     -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
@@ -43,6 +44,7 @@ require("lazy").setup({
   -- dev = {
   --   path = "~/code/",
   -- },
+  rocks = { hererocks = true },
   performance = {
     rtp = {
       -- disable some rtp plugins
