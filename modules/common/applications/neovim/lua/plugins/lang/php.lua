@@ -1,9 +1,11 @@
 local lsp = vim.g.lazyvim_php_lsp or "phpactor"
 
+---@return LazyPluginSpec[]
 return {
   { import = "lazyvim.plugins.extras.lang.php" },
   {
     "nvim-treesitter/nvim-treesitter",
+    optional = true,
     opts = function(_, opts)
       local function add(lang)
         if type(opts.ensure_installed) == "table" then
@@ -16,6 +18,7 @@ return {
   },
   {
     "neovim/nvim-lspconfig",
+    optional = true,
     opts = {
       servers = {
         -- phpcs = function()
@@ -84,25 +87,24 @@ return {
     dependencies = {
       "olimorris/neotest-phpunit",
     },
-    opts = function()
-      return {
-        adapters = {
-          ["neotest-phpunit"] = {
-            phpunit_cmd = function()
-              local config_path = vim.fn.stdpath("config")
-              return config_path .. "/../bin/dphpunit"
-            end,
-            root_files = { "composer.json", "phpunit.xml" },
-            filter_dirs = { ".git", "node_modules" },
-            env = {
-              XDEBUG_CONFIG = "idekey=neotest",
-              CONTAINER = "broadbandgenie-website-app-1",
-              REMOTE_PHPUNIT_BIN = "bin/phpunit",
-            },
-            dap = require("dap").configurations.php[1],
+    opts = function(_, opts)
+      table.insert(
+        opts.adapters,
+        require("neotest-phpunit")({
+          phpunit_cmd = function()
+            local config_path = vim.fn.stdpath("config")
+            return config_path .. "/../bin/dphpunit"
+          end,
+          root_files = { "composer.json", "phpunit.xml" },
+          filter_dirs = { ".git", "node_modules" },
+          env = {
+            XDEBUG_CONFIG = "idekey=neotest",
+            DEBUG = "true",
+            CONTAINER = "app",
           },
-        },
-      }
+          dap = require("dap").configurations.php[1],
+        })
+      )
     end,
   },
   {

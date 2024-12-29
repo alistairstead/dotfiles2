@@ -1,3 +1,4 @@
+---@return LazyPluginSpec[]
 return {
   {
     "LazyVim/LazyVim",
@@ -18,8 +19,16 @@ return {
       },
     },
   },
-  { "lukas-reineke/indent-blankline.nvim", enabled = false },
-  { "echasnovski/mini.indentscope", enabled = false }, -- animate the block indent
+  {
+    "saghen/blink.cmp",
+    version = "0.7.6",
+  },
+  {
+    "snacks.nvim",
+    opts = {
+      indent = { enabled = false },
+    },
+  },
   { "SmiteshP/nvim-navic", enabled = false },
   { "RRethy/vim-illuminate", enabled = false },
 }

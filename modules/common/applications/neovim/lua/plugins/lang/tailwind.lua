@@ -1,6 +1,8 @@
+---@return LazyPluginSpec[]
 return {
   {
     "neovim/nvim-lspconfig",
+    optional = true,
     opts = {
       servers = {
         tailwindcss = {

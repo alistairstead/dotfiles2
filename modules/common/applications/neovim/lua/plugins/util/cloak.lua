@@ -1,3 +1,4 @@
+---@return LazyPluginSpec[]
 return {
   {
     "laytan/cloak.nvim",

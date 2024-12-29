@@ -2,12 +2,12 @@
 
 # Customize the following:
 containerName=$CONTAINER
-phpunitPath=$REMOTE_PHPUNIT_BIN
 xdbugArgs=$XDEBUG_CONFIG
 
 # detect local path and remove from args
 localPhpUnitResultPath='/tmp/phpunit-result.xml'
-argsInput=${@}
+localPhpUnitCoveragePath=''
+argsInput=${*}
 runFile=$(echo "$argsInput" | awk '{print $1}')
 phpTestPath=$(dirname "$runFile")
 pushd "$phpTestPath" >/dev/null || exit
@@ -15,7 +15,6 @@ projectPath="$(git rev-parse --show-toplevel)"
 pushd >/dev/null || exit
 
 subPath=$(awk -F '/vendor/' '{print $1}' <<<"$projectPath")
-# containerName=$(sed 's#.*/##' <<< $subPath | sed s/-/_/g)
 
 ## detect test result output
 for i in $argsInput; do
@@ -33,21 +32,24 @@ args=("${args//(*/}")
 
 # Detect path
 container=$(docker ps -n=-1 --filter name="$containerName" --format="{{.ID}}")
-phpunitPath=$(docker exec -it "$container" /bin/bash -c "if [ -f vendor/bin/phpunit ]; then echo vendor/bin/phpunit; else echo bin/phpunit; fi" | tr -d '\r')
 execPath=$(docker exec -it "$container" /bin/bash -c "if [ -f /bin/sh ]; then echo /bin/sh; else echo /bin/bash; fi" | tr -d '\r')
-dockerPath=$(docker inspect --format {{.Config.WorkingDir}} "$container")
+dockerPath=$(docker inspect --format "{{.Config.WorkingDir}}" "$container")
+
+cmd="XDEBUG_CONFIG=$xdbugArgs vendor/bin/phpunit"
 
 ## debug
-# echo "Raw ARGS: "${@}
-# echo "Params:   "${args[@]}
-# echo "Docker:   "$dockerPath
-# echo "Local:    "$projectPath
-# echo "Result:   "$outputPath
-# echo "docker exec -i "$container" php -d memory_limit=-1 "$phpunitPath" "${args[@]}
+if [ "$DEBUG" = "true" ]; then
+  echo "Raw ARGS: ${*}"
+  echo "Params:   ${args[*]}"
+  echo "Docker:   $dockerPath"
+  echo "Local:    $projectPath"
+  echo "Result:   $outputPath"
+  echo "docker exec -it $container php -d memory_limit=-1 vendor/bin/phpunit ${args[*]}"
+  echo "docker exec -it $container $execPath -c $cmd  ${args[*]} --log-junit=${localPhpUnitResultPath}"
+fi
 
 # Run the tests
-docker exec -it "$container" "$execPath" -c "SYMFONY_DEPRECATIONS_HELPER=weak XDEBUG_CONFIG=$xdbugArgs $phpunitPath -d memory_limit=-1 ${args} --log-junit=${localPhpUnitResultPath}"
-# docker exec -it $container $phpunitPath -d memory_limit=-1 ${args[@]}
+docker exec -it "$container" "$execPath" -c "$cmd  ${args[*]} --log-junit=${localPhpUnitResultPath}"
 
 # copy results
 docker cp -a "$container:$localPhpUnitResultPath" "$outputPath" &>/dev/null

@@ -1,3 +1,4 @@
+---@return LazyPluginSpec[]
 return {
   {
     "ray-x/lsp_signature.nvim",

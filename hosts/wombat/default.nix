@@ -30,6 +30,7 @@ inputs.darwin.lib.darwinSystem {
       _1password.enable = true;
       slack.enable = true;
       wezterm.enable = true;
+      ghostty.enable = true;
       raycast.enable = true;
       devenv.enable = true;
       node.enable = true;

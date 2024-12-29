@@ -1,3 +1,4 @@
+---@return LazyPluginSpec[]
 return {
   {
     "s1n7ax/nvim-window-picker",
@@ -205,19 +206,34 @@ return {
   {
     "folke/noice.nvim",
     optional = true,
-    opts = function(_, opts)
-      opts.debug = false
-      opts.routes = opts.routes or {}
-      table.insert(opts.routes, {
-        filter = {
-          event = "notify",
-          find = "No information available",
+    opts = {
+      presets = {
+        lsp_doc_border = true,
+      },
+      ---@class NoiceConfigViews
+      -- views = {
+      --   notify = {
+      --     backend = "notify_send",
+      --   },
+      -- },
+      -- https://github.com/folke/noice.nvim/discussions/364
+      routes = {
+        {
+          filter = {
+            event = "notify",
+            find = "No information available",
+          },
+          opts = { skip = true },
         },
-        opts = { skip = true },
-      })
-
-      return opts
-    end,
+        {
+          filter = {
+            event = "lsp",
+            find = "snyk",
+          },
+          opts = { skip = true },
+        },
+      },
+    },
   },
   {
     "folke/edgy.nvim",
@@ -270,7 +286,6 @@ return {
               require("neo-tree.command").execute({ dir = LazyVim.root() })
             end,
           },
-          { title = "Test Summary", ft = "neotest-summary" },
         },
         right = {
           {
@@ -284,7 +299,6 @@ return {
           { title = "Copilot Chat", ft = "copilot-chat", size = { width = 0.4 } },
           { title = "Tests", ft = "neotest", size = { width = 0.4 } },
           { title = "Test Summary", ft = "neotest-summary", size = { width = 0.3 } },
-          { title = "Test Output", ft = "neotest-output-panel", size = { width = 0.4 } },
           {
             ft = "Outline",
             open = "SymbolsOutlineOpen",
@@ -294,14 +308,6 @@ return {
 
       return opts
     end,
-  },
-  {
-    "folke/zen-mode.nvim",
-    dependencies = {
-      "b0o/incline.nvim",
-    },
-    cmd = "ZenMode",
-    keys = { { "<leader>z", "<cmd>ZenMode<cr>", desc = "Zen Mode" } },
   },
   {
     "NvChad/nvim-colorizer.lua",

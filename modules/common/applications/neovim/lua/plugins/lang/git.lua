@@ -1,12 +1,10 @@
+---@return LazyPluginSpec[]
 return {
   {
     "TimUntersberger/neogit",
     dependencies = {
       "nvim-lua/plenary.nvim", -- required
-      "sindrets/diffview.nvim", -- optional - Diff integration
-
       -- Only one of these is needed.
-      -- "nvim-telescope/telescope.nvim", -- optional
       "ibhagwan/fzf-lua", -- optional
       -- "echasnovski/mini.pick", -- optional
     },
@@ -44,7 +42,6 @@ return {
       -- },
     },
     keys = {
-      { "<leader>gb", "<cmd>Telescope git_branches<CR>", desc = "Git branches" },
       { "<leader>gc", "<cmd>lua require('neogit').open({'commit'})<CR>", desc = "Git commit" },
       {
         "<leader>gg",
@@ -78,101 +75,8 @@ return {
     keys = { { "<leader>gd", "<cmd>DiffviewOpen<cr>", desc = "Diffview Open" } },
   },
   {
-    "ThePrimeagen/git-worktree.nvim",
-    dependencies = {
-      {
-        "nvim-telescope/telescope.nvim",
-        config = function()
-          require("telescope").load_extension("git_worktree")
-        end,
-      },
-    },
-    config = function(_, opts)
-      require("git-worktree").setup(opts)
-      local Worktree = require("git-worktree")
-      local function file_exists(filename)
-        local file = io.open(filename, "r")
-        if file then
-          -- Obviously close the file if it did successfully open.
-          file:close()
-          return true
-        end
-        return false
-      end
-
-      -- op = Operations.Switch, Operations.Create, Operations.Delete
-      -- metadata = table of useful values (structure dependent on op)
-      --      Switch
-      --          path = path you switched to
-      --          prev_path = previous worktree path
-      --      Create
-      --          path = path where worktree created
-      --          branch = branch name
-      --          upstream = upstream remote name
-      --      Delete
-      --          path = path where worktree deleted
-
-      Worktree.on_tree_change(function(op, metadata)
-        if op == Worktree.Operations.Switch then
-          print("Switched from " .. metadata.prev_path .. " to " .. metadata.path)
-          if file_exists(".envrc") then
-            local handle = io.popen([["/opt/homebrew/bin/direnv allow ."]])
-            if handle == nil then
-              print("direnv allow . failed")
-              return
-            end
-            local result = handle:read("*a")
-            local ok, _, _ = handle:close()
-            if ok then
-              print("direnv allow .")
-              print(result)
-            else
-              print("direnv allow . failed")
-            end
-          end
-          if file_exists("pnpm-lock.yaml") then
-            local handle = io.popen([["/opt/homebrew/bin/pnpm i"]])
-            if handle == nil then
-              print("pnpm install failed")
-              return
-            end
-            local result = handle:read("*a")
-            local ok, _, _ = handle:close()
-            if ok then
-              print("phpm install")
-              print(result)
-            else
-              print("pnpm install failed")
-            end
-          end
-        end
-      end)
-    end,
-    keys = function()
-      local wk = require("which-key")
-      wk.add({
-        { "<leader>gw", group = "Worktree", nowait = false, remap = false },
-      })
-      return {
-        {
-          "<leader>gww",
-          function()
-            require("telescope").extensions.git_worktree.git_worktrees()
-          end,
-          desc = "Worktree switch and delete <c-d>",
-        },
-        {
-          "<leader>gwc",
-          function()
-            require("telescope").extensions.git_worktree.create_git_worktree()
-          end,
-          desc = "Worktree create",
-        },
-      }
-    end,
-  },
-  {
     "lewis6991/gitsigns.nvim",
+    optional = true,
     opts = {
       signs_staged = {
         delete = { text = "" },

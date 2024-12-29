@@ -12,6 +12,11 @@ opt.swapfile = false
 opt.mouse = ""
 opt.spelllang = "en_gb"
 
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_node_provider = 0
+
 -- this is necessary because nvim-treesitter is first in the runtimepath
 vim.o.spellfile = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
 vim.o.spelloptions = table.concat({
@@ -41,6 +46,10 @@ vim.opt.list = false
 --   80,
 --   120,
 -- }, ",")
+
+vim.api.nvim_create_user_command("Macro", function(args)
+  vim.cmd("normal! q" .. args.args)
+end, { nargs = 1, desc = "Create macro" })
 
 -- italic comments https://stackoverflow.com/questions/3494435/vimrc-make-comments-italic
 vim.cmd("highlight! Comment cterm=italic, gui=italic")
@@ -82,6 +91,15 @@ vim.api.nvim_create_autocmd(norelative_events, {
 })
 -- }}}
 
+-- make all keymaps silent by default
+local keymap_set = vim.keymap.set
+---@diagnostic disable-next-line: duplicate-set-field
+vim.keymap.set = function(mode, lhs, rhs, opts)
+  opts = opts or {}
+  opts.silent = opts.silent ~= false
+  return keymap_set(mode, lhs, rhs, opts)
+end
+
 vim.filetype.add({ pattern = { ["compose%.yml"] = "yaml.docker-compose" } })
 vim.filetype.add({ pattern = { ["docker-compose%.yml"] = "yaml.docker-compose" } })
 vim.filetype.add({ pattern = { ["Dockerfile-.*"] = "dockerfile" } })
@@ -90,4 +108,5 @@ vim.filetype.add({ pattern = { [".env"] = "sh" } })
 vim.filetype.add({ pattern = { [".envrc"] = "sh" } })
 vim.filetype.add({ pattern = { [".env.example"] = "sh" } })
 
+vim.g.lazyvim_picker = "fzf"
 -- vim.g.lazyvim_php_lsp = "intelephense"

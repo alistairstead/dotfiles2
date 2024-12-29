@@ -14,10 +14,10 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.cmd([[command! -nargs=0 GoToCommand :Telescope commands]])
-vim.cmd([[command! -nargs=0 GoToFile :Telescope find_files]])
-vim.cmd([[command! -nargs=0 GoToSymbol :Telescope lsp_document_symbols]])
-vim.cmd([[command! -nargs=0 Grep :Telescope live_grep]])
+vim.cmd([[command! -nargs=0 GoToCommand :FzfLua builtin]])
+vim.cmd([[command! -nargs=0 GoToFile :FzfLua files]])
+vim.cmd([[command! -nargs=0 GoToSymbol :FzfLua btags]])
+vim.cmd([[command! -nargs=0 Grep :FzfLua grep]])
 vim.o.cursorlineopt = "number"
 
 require("lazy").setup({
@@ -27,6 +27,7 @@ require("lazy").setup({
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
     -- import/override with your plugins
     { import = "plugins" },
+    { import = "plugins.extras" },
     { import = "plugins.lang" },
     { import = "plugins.util" },
   },
@@ -44,7 +45,7 @@ require("lazy").setup({
   -- dev = {
   --   path = "~/code/",
   -- },
-  rocks = { hererocks = true },
+  rocks = { hererocks = false },
   performance = {
     rtp = {
       -- disable some rtp plugins

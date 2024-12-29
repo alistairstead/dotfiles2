@@ -20,6 +20,8 @@
     # Catppuccino theme
     catppuccin.url = "github:catppuccin/nix";
 
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+
     # Better App install management in macOS
     mac-app-util = {
       url = "github:hraban/mac-app-util";
@@ -48,6 +50,7 @@
         };
       # Common overlays to always use
       overlays = [
+        inputs.neovim-nightly-overlay.overlays.default
         (import ./overlays/granted.nix)
         (import ./overlays/tmux.nix inputs)
       ];

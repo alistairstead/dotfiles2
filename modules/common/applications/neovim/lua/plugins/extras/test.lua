@@ -1,16 +1,20 @@
+---@return LazyPluginSpec[]
 return {
   {
-    "neotest",
+    "nvim-neotest/neotest",
+    optional = true,
+    dependencies = { "nvim-neotest/nvim-nio" },
+    ---@class neotest.Config
     opts = {
       icons = {
-        child_indent = "│",
-        child_prefix = "├",
+        child_indent = " ",
+        child_prefix = " ",
         collapsed = "",
         expanded = "",
         failed = "",
         final_child_indent = " ",
-        final_child_prefix = "└",
-        non_collapsible = "─",
+        final_child_prefix = " ",
+        non_collapsible = " ",
         notify = "",
         passed = "",
         running = "",
@@ -30,11 +34,11 @@ return {
         unknown = "",
         watching = "",
       },
-      status = {
-        enabled = true,
-        signs = true,
-        virtual_text = true,
-      },
+      -- status = {
+      --   enabled = true,
+      --   signs = true,
+      --   virtual_text = true,
+      -- },
     },
   },
   {
@@ -42,7 +46,7 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       {
-        -- needed for nvim-coverage PHP cobertura parser. Requires `brew install luajit`
+        -- needed for nvim-coverage PHP cobertura parser. Requires luajit
         "vhyrro/luarocks.nvim",
         priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
         opts = {
@@ -50,27 +54,18 @@ return {
         },
       },
     },
-    opts = function()
-      return {
-        highlights = {
-          covered = { fg = LazyVim.ui.fg("DiagnosticOk").fg },
-          uncovered = { fg = LazyVim.ui.fg("DiagnosticError").fg },
-        },
-        auto_reload = true,
-        lcov_file = "./coverage/lcov.info",
-      }
-    end,
+    opts = {
+      -- highlights = {
+      --   covered = { fg = Snacks.util.color("DiagnosticOk") },
+      --   uncovered = { fg = Snacks.util.color("DiagnosticError") },
+      -- },
+      auto_reload = true,
+      lcov_file = "./coverage/lcov.info",
+    },
     keys = {
       {
         "<leader>tc",
-        function()
-          local coverage = require("coverage")
-          if coverage.is_enabled() then
-            coverage.clear()
-          else
-            coverage.load(true)
-          end
-        end,
+        "<cmd>CoverageToggle<cr>",
         noremap = true,
         desc = "Toggle Coverage",
       },

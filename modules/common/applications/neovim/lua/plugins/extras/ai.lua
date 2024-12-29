@@ -15,6 +15,7 @@ local prompts = {
   Concise = "Please rewrite the following text to make it more concise.",
 }
 
+---@return LazyPluginSpec[]
 return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",

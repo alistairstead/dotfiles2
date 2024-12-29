@@ -5,7 +5,6 @@
 }:
 let
   onePassPath = "\"~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock\"";
-  # onePassPath = "~/.1password/agent.sock";
 in
 {
 
@@ -30,10 +29,15 @@ in
 
       programs.ssh = {
         enable = true;
+        forwardAgent = true;
+        addKeysToAgent = "yes";
         extraConfig = ''
           IdentityAgent ${onePassPath}
         '';
       };
+
+      # xdg.configFile."1password/agent".source = config.lib.file.mkOutOfStoreSymlink toString "${config.homePath}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock}";
+
     };
   };
 

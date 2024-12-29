@@ -44,9 +44,9 @@
       ];
       brews = [
         "trash" # Delete files and folders to trash instead of rm
-        "lazydocker" # Docker in a terminal
-        "mysql-client" # brew link --overwrite --force mysql-client
-        "neovim"
+        "mysql-client@8.4" # brew link --overwrite --force mysql-client@8.4
+        "sqlite"
+        # "neovim"
       ];
       casks = [
         "1password" # 1Password will not launch from Nix on macOS
@@ -58,8 +58,9 @@
         "cleanshot" # screen shots sorted
         "figma"
         "font-symbols-only-nerd-font" # Nerd Font with only symbols
+        "ghostty"
         "google-chrome" # Chrome
-        "home-assistant" # Home Assistant
+        # "home-assistant" # Home Assistant
         "nordvpn"
         "orbstack"
         "readdle-spark"

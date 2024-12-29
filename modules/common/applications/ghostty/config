@@ -1,0 +1,84 @@
+#
+#  ██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗████████╗██╗   ██╗
+# ██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝╚══██╔══╝╚██╗ ██╔╝
+# ██║  ███╗███████║██║   ██║███████╗   ██║      ██║    ╚████╔╝
+# ██║   ██║██╔══██║██║   ██║╚════██║   ██║      ██║     ╚██╔╝
+# ╚██████╔╝██║  ██║╚██████╔╝███████║   ██║      ██║      ██║
+#  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝      ╚═╝      ╚═╝
+#
+# Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.
+# https://ghostty.org/docs/config/reference
+
+# visuals
+font-family = "Monaspace Neon Var Regular SemiWide"
+font-family-italic = "Monaspace Radon Var Regular SemiWide"
+font-style = "ExtraLight"
+font-style-bold = "Light"
+font-style-italic = "ExtraLight" 
+font-style-bold-italic = "Light"
+
+font-size = 14
+adjust-underline-position = 4
+
+macos-window-shadow = false
+mouse-hide-while-typing = true
+
+theme = light:catppuccin-latte,dark:catppuccin-mocha
+cursor-invert-fg-bg = true
+background-opacity = 0.95
+background-blur-radius = 20
+
+window-decoration = false
+window-padding-x = 0
+window-padding-y = 0
+
+# clipboard
+clipboard-read = "allow"
+clipboard-trim-trailing-spaces = true
+clipboard-write = "allow"
+
+# keybindings
+
+keybind = super+f=text:\x3a\x47\x72\x65\x70\x0a
+keybind = super+g=text:\x02\x67
+keybind = super+k=text:\x02\x54
+keybind = super+l=text:\x02\x4C
+keybind = super+n=text:\x02\x25
+keybind = super+shift+n=text:\x02\x22
+keybind = super+o=text:\x02\x75 
+keybind = super+p=text:\x3a\x47\x6f\x54\x6f\x46\x69\x6c\x65\x0a 
+keybind = super+q=text:\x3a\x1b\x1b\x3a\x71\x61\x21\x0a 
+keybind = super+s=text:\x3a\x77\x0a 
+keybind = super+t=text:\x02\x63 
+keybind = super+w=text:\x02\x78 
+# keybind = super+x= # cut
+# keybind = super+y=
+# keybind = super+z= # undo?
+
+# :GotoSymbol
+keybind = super+shift+o=text:\x3a\x47\x6f\x54\x6f\x53\x79\x6d\x62\x6f\x6c\x0a 
+# :GotoCommand
+keybind = super+shift+p=text:\x3a\x47\x6f\x54\x6f\x43\x6f\x6d\x6d\x61\x6e\x64\x0a 
+
+
+keybind = super+one=text:\x02\x31
+keybind = super+two=text:\x02\x32
+keybind = super+three=text:\x02\x33
+keybind = super+four=text:\x02\x34
+keybind = super+five=text:\x02\x35
+keybind = super+six=text:\x02\x36
+keybind = super+seven=text:\x02\x37
+keybind = super+eight=text:\x02\x38
+keybind = super+nine=text:\x02\x39
+
+# special characters
+# jump back
+keybind = super+left_bracket=text:<C-o> 
+# jump forward
+keybind = super+right_bracket=text:<C-i> 
+
+# special characters (shift)
+# <prefix>+n (next window)
+keybind = super+shift+left_bracket=text:\x02\x6e 
+# <prefix>+p (previous window)
+keybind = super+shift+right_bracket=text:\x02\x70 

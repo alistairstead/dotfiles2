@@ -1,3 +1,4 @@
+---@return LazyPluginSpec[]
 return {
   "TobinPalmer/rayso.nvim",
   cmd = { "Rayso" },

@@ -1,3 +1,4 @@
+---@return LazyPluginSpec[]
 return {
   {
     "2kabhishek/nerdy.nvim",

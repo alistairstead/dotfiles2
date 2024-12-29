@@ -9,9 +9,9 @@
       icons = "auto";
 
       extraOptions = [
-        "--group-directories-first"
-        "--no-quotes"
-        "--git-ignore"
+        # "--group-directories-first"
+        # "--no-quotes"
+        # "--git-ignore"
       ];
     };
 

@@ -1,7 +1,9 @@
+---@return LazyPluginSpec[]
 return {
   { import = "lazyvim.plugins.extras.lang.typescript" },
   {
     "neovim/nvim-lspconfig",
+    optional = true,
     opts = {
       -- make sure mason installs the server
       servers = {

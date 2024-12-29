@@ -1,6 +1,8 @@
+---@return LazyPluginSpec[]
 return {
   {
     "nvim-treesitter/nvim-treesitter",
+    optional = true,
     opts = function(_, opts)
       local function add(lang)
         if type(opts.ensure_installed) == "table" then
@@ -11,26 +13,6 @@ return {
       add("markdown")
       add("markdown_inline")
     end,
-  },
-  {
-    "toppair/peek.nvim",
-    build = "deno task --quiet build:fast",
-    ft = "markdown",
-    keys = {
-      {
-        "<leader>up",
-        function()
-          local peek = require("peek")
-          if peek.is_open() then
-            peek.close()
-          else
-            peek.open()
-          end
-        end,
-        desc = "Toggle Peek (Markdown Preview)",
-      },
-    },
-    opts = { theme = "dark", app = "browser" },
   },
   {
     "epwalsh/obsidian.nvim",

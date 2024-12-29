@@ -112,7 +112,7 @@ in
 
         # set -g status-bg default
         # set -g status-style bg=default
-        set -g status-left "       "
+        set -g status-left "" # Add spaces to avoid window decorations
       '';
 
       plugins = with pkgs; [
@@ -146,7 +146,7 @@ in
             # Catppuccino theme config
             set -g @catppuccin_flavor "mocha"
             set -g @catppuccin_window_default_fill "number"
-            set -g @catppuccin_window_default_text " #W "
+            set -g @catppuccin_window_default_text "e "
             set -g @catppuccin_window_left_separator "█"
             set -g @catppuccin_window_right_separator "█ "
             set -g @catppuccin_window_middle_separator "█ "

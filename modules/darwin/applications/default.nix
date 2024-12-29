@@ -8,6 +8,7 @@
     };
 
   imports = [
+    ./1password.nix
     ./aerospace
     ./hammerspoon
     ./raycast.nix

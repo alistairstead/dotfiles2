@@ -1,3 +1,4 @@
+---@return LazyPluginSpec[]
 return {
   {
     "nvim-neotest/neotest",

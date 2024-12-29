@@ -21,7 +21,7 @@ in
       };
 
       programs.awscli = {
-        enable = true;
+        enable = false;
       };
 
       programs.fish = {

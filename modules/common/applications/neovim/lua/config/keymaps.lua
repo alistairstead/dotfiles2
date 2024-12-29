@@ -18,5 +18,6 @@ map("n", "<leader>wh", "<C-W>s", { desc = "Split window below", remap = true })
 map("n", "<leader>wv", "<C-W>v", { desc = "Split window right", remap = true })
 
 -- macro
--- map("n", "q", "<Nop>", { remap = true })
--- map("n", "<leader>r", "q", { desc = "Start recording macro", remap = true })
+map("n", "q", "<Nop>", { noremap = true, silent = true })
+map("n", "Q", "q", { noremap = true, desc = "Record macro" })
+map("n", "<M-q>", "Q", { noremap = true, desc = "Replay last register" })

@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }:
+{
+  inputs,
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   options = {
     neovim = {
@@ -13,21 +19,36 @@
       home.packages = with pkgs; [
         go
         cargo
+        (lua5_1.withPackages(ps: with ps; [
+          luarocks 
+          luajit
+        ]))
+
+        # lua5_1
+        # luajit
+        # lua51Packages.lua
+        # lua51Packages.luarocks-nix
+        # lua51Packages.luarocks
       ];
 
       programs.ripgrep = {
         enable = true;
       };
       programs.neovim = {
+        enable = true;
         extraPackages = with pkgs; [
           # LazyVim
           stylua
-          # Telescope
           ripgrep
           nil
         ];
 
+
         plugins = with pkgs.vimPlugins; [
+          {
+            plugin = sqlite-lua;
+            config = "let g:sqlite_clib_path = '${pkgs.sqlite.out}/lib/libsqlite3.dylib'";
+          }
           lazy-nvim
         ];
       };

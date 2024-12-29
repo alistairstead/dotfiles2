@@ -1,3 +1,4 @@
+---@return LazyPluginSpec[]
 return {
   {
     "mfussenegger/nvim-dap",
