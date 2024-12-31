@@ -66,8 +66,11 @@ in
         bind '%' split-window -h -c "#{pane_current_path}"
         bind c new-window -c '#{pane_current_path}'
 
+        bind -N "⌘+d lazydocker " d new-window -c "#{pane_current_path}" -n " " "lazydocker 2> /dev/null"
         bind -N "⌘+g lazygit " g new-window -c "#{pane_current_path}" -n " " "lazygit 2> /dev/null"
         bind -N "⌘+G gh-dash " G new-window -c "#{pane_current_path}" -n " " "ghd 2> /dev/null"
+        bind -N "⌘+⇧+t break pane" B break-pane
+        bind -N "⌘+^+t join pane" J join-pane -t 1
 
         bind -n WheelUpPane if -t = "test $(echo #{pane_current_command} |grep -iE '(n?vim|man|less)')" "select-pane -t = ; send-keys Up Up Up" "if-shell -F -t = '#{?mouse_any_flag,1,#{pane_in_mode}}' 'send-keys -M' 'select-pane -t = ; copy-mode -e; send-keys -M'"
         bind -n WheelDownPane if -t = "test $(echo #{pane_current_command} |grep -iE '(n?vim|man|less)')" "select-pane -t = ; send-keys Down Down Down" "if-shell -F -t = '#{?mouse_any_flag,1,#{pane_in_mode}}' 'send-keys -M' 'select-pane -t = ; copy-mode -e; send-keys -M'"
@@ -129,6 +132,22 @@ in
         {
           plugin = tmuxPlugins.tmux-fzf;
           extraConfig = ''
+            bind-key "K" display-popup -E -w 33% -h 63% "sesh connect $(
+              sesh list -i | gum filter --limit 1 --fuzzy --no-sort --placeholder 'Pick a sesh' --prompt='⚡'
+            )"
+
+            bind-key "R" display-popup -E -w 40% "sesh connect $(
+              sesh list -i -H | gum filter --value \"\$(sesh root)\" --limit 1 --fuzzy --no-sort --placeholder 'Pick a sesh' --prompt='⚡'
+            )"
+
+            # bind-key "K" display-popup -E -w 40% "sesh connect $(
+            #   sesh list -i | gum filter --limit 1 --fuzzy --no-sort --placeholder 'Pick a sesh' --prompt='⚡'
+            # )"
+
+            bind-key "A" display-popup -E -w 40% "sesh connect $(
+              fabric -l | gum filter --limit 1 --fuzzy --no-sort --placeholder 'Pick a fabric pattern' --prompt='🧠'
+            )"
+
             bind-key "T" run-shell "sesh connect $(sesh list -tz | fzf-tmux -p 55%,60% \
               --no-sort --border-label ' sesh ' --prompt '⚡ ' \
               --header '  ^a all ^t tmux ^x zoxide ^f find' \
@@ -136,7 +155,8 @@ in
               --bind 'ctrl-a:change-prompt(⚡)+reload(sesh list)' \
               --bind 'ctrl-t:change-prompt( )+reload(sesh list -t)' \
               --bind 'ctrl-x:change-prompt( )+reload(sesh list -z)' \
-              --bind 'ctrl-f:change-prompt( )+reload(fd -H -d 2 -t d -E .Trash . ~)'
+              --bind 'ctrl-f:change-prompt( )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
+              --bind 'ctrl-d:execute(tmux kill-session -t {})+change-prompt(⚡  )+reload(sesh list)'
             )"
           '';
         }

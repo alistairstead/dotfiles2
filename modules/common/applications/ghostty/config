@@ -10,15 +10,33 @@
 # https://ghostty.org/docs/config/reference
 
 # visuals
-font-family = "Monaspace Neon Var Regular SemiWide"
-font-family-italic = "Monaspace Radon Var Regular SemiWide"
-font-style = "ExtraLight"
-font-style-bold = "Light"
-font-style-italic = "ExtraLight" 
-font-style-bold-italic = "Light"
+font-family = Monaspace Neon Var
+font-family-bold  = Monaspace Neon Var
+font-family-italic = Monaspace Radon Var
+font-family-bold-italic  = Monaspace Radon Var
+window-title-font-family = Monaspace Neon Var
+
+font-variation = wght = 200
+font-variation-italic = wght = 200
+font-variation-bold = wght = 400
+font-variation-bold-italic = wght = 400
+
+font-feature = calt
+font-feature = liga
+font-feature = ss01
+font-feature = ss02
+font-feature = ss03
+font-feature = ss04
+font-feature = ss05
+font-feature = ss06
+font-feature = ss07
+font-feature = ss08
+font-feature = ss09
 
 font-size = 14
-adjust-underline-position = 4
+adjust-cell-width = 5%
+adjust-cell-height = 15%
+adjust-underline-position = 15%
 
 macos-window-shadow = false
 mouse-hide-while-typing = true
@@ -39,28 +57,7 @@ clipboard-write = "allow"
 
 # keybindings
 
-keybind = super+f=text:\x3a\x47\x72\x65\x70\x0a
-keybind = super+g=text:\x02\x67
-keybind = super+k=text:\x02\x54
-keybind = super+l=text:\x02\x4C
-keybind = super+n=text:\x02\x25
-keybind = super+shift+n=text:\x02\x22
-keybind = super+o=text:\x02\x75 
-keybind = super+p=text:\x3a\x47\x6f\x54\x6f\x46\x69\x6c\x65\x0a 
-keybind = super+q=text:\x3a\x1b\x1b\x3a\x71\x61\x21\x0a 
-keybind = super+s=text:\x3a\x77\x0a 
-keybind = super+t=text:\x02\x63 
-keybind = super+w=text:\x02\x78 
-# keybind = super+x= # cut
-# keybind = super+y=
-# keybind = super+z= # undo?
-
-# :GotoSymbol
-keybind = super+shift+o=text:\x3a\x47\x6f\x54\x6f\x53\x79\x6d\x62\x6f\x6c\x0a 
-# :GotoCommand
-keybind = super+shift+p=text:\x3a\x47\x6f\x54\x6f\x43\x6f\x6d\x6d\x61\x6e\x64\x0a 
-
-
+# tmux keybinding
 keybind = super+one=text:\x02\x31
 keybind = super+two=text:\x02\x32
 keybind = super+three=text:\x02\x33
@@ -70,6 +67,45 @@ keybind = super+six=text:\x02\x36
 keybind = super+seven=text:\x02\x37
 keybind = super+eight=text:\x02\x38
 keybind = super+nine=text:\x02\x39
+# <prefix>d lazydocker
+keybind = super+d=text:\x02\x64
+# <prefix>g lazygit
+keybind = super+g=text:\x02\x67
+# <prefix>T sess
+keybind = super+k=text:\x02\x4b
+# <prefix>l last session
+keybind = super+l=text:\x02\x4C
+#<prefix>% split vertical
+keybind = super+n=text:\x02\x25
+#<prefix>" split horizontal
+keybind = super+shift+n=text:\x02\x22
+#<prefix>" split horizontal
+keybind = super+o=text:\x02\x75 
+#<prefix>" rename window
+keybind = super+r=text:\x02\x24 
+#<prefix>t new window
+keybind = super+t=text:\x02\x63 
+#<prefix>t close window
+keybind = super+w=text:\x02\x78 
+# special characters (shift)
+# <prefix>+n (next window)
+keybind = super+shift+left_bracket=text:\x02\x6e 
+# <prefix>+p (previous window)
+keybind = super+shift+right_bracket=text:\x02\x70 
+
+# :Grepfor
+keybind = super+f=text:\x3a\x47\x72\x65\x70\x0a
+# :Findfiles
+keybind = super+p=text:\x3a\x47\x6f\x54\x6f\x46\x69\x6c\x65\x0a 
+# :wq!
+keybind = super+q=text:\x3a\x1b\x1b\x3a\x71\x61\x21\x0a 
+# :w
+keybind = super+s=text:\x3a\x77\x0a 
+
+# :GotoSymbol
+keybind = super+shift+o=text:\x3a\x47\x6f\x54\x6f\x53\x79\x6d\x62\x6f\x6c\x0a 
+# :GotoCommand
+keybind = super+shift+p=text:\x3a\x47\x6f\x54\x6f\x43\x6f\x6d\x6d\x61\x6e\x64\x0a 
 
 # special characters
 # jump back
@@ -77,8 +113,3 @@ keybind = super+left_bracket=text:<C-o>
 # jump forward
 keybind = super+right_bracket=text:<C-i> 
 
-# special characters (shift)
-# <prefix>+n (next window)
-keybind = super+shift+left_bracket=text:\x02\x6e 
-# <prefix>+p (previous window)
-keybind = super+shift+right_bracket=text:\x02\x70 

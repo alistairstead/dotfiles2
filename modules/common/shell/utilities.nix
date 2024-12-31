@@ -12,6 +12,7 @@
         # dig # DNS lookup
         fd # find
         fontconfig
+        gum
         htop # Show system processes
         inkscape # Vector
         imagemagick # Image manipulation

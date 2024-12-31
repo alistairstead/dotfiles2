@@ -1,5 +1,4 @@
 {
-  inputs,
   config,
   lib,
   pkgs,
@@ -23,12 +22,7 @@
           luarocks 
           luajit
         ]))
-
-        # lua5_1
-        # luajit
-        # lua51Packages.lua
-        # lua51Packages.luarocks-nix
-        # lua51Packages.luarocks
+        viu
       ];
 
       programs.ripgrep = {

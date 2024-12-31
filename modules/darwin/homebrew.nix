@@ -30,9 +30,9 @@
     homebrew = {
       enable = true;
       onActivation = {
-        autoUpdate = true;
+        autoUpdate = false;
         cleanup = "zap"; # Uninstall all programs not declared
-        upgrade = true;
+        upgrade = false;
       };
       global = {
         brewfile = true; # Run brew bundle from anywhere
@@ -60,7 +60,7 @@
         "font-symbols-only-nerd-font" # Nerd Font with only symbols
         "ghostty"
         "google-chrome" # Chrome
-        # "home-assistant" # Home Assistant
+        "home-assistant" # Home Assistant
         "nordvpn"
         "orbstack"
         "readdle-spark"

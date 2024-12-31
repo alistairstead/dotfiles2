@@ -19,16 +19,17 @@ return {
       },
     },
   },
-  {
-    "saghen/blink.cmp",
-    version = "0.7.6",
-  },
+  -- {
+  --   "saghen/blink.cmp",
+  --   version = "0.7.6",
+  -- },
   {
     "snacks.nvim",
     opts = {
       indent = { enabled = false },
     },
   },
+  { "rafamadriz/friendly-snippets", enabled = false },
   { "SmiteshP/nvim-navic", enabled = false },
   { "RRethy/vim-illuminate", enabled = false },
 }
