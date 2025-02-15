@@ -86,6 +86,8 @@ info "INFO: Setting up nix-darwin for $USER"
 info "INFO: CI = $CI"
 
 export NIXPKGS_ALLOW_BROKEN=1
+export HOSTNAME=$(hostname)
+export USER=$(whoami)
 
 # Move a file that will conflict with nix-darwin
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin

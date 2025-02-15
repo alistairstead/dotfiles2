@@ -37,7 +37,7 @@
       };
 
       unstable = import inputs.nixpkgs-unstable { inherit system; };
-      envUsername = builtins.getEnv "USERNAME";
+      envUsername = builtins.getEnv "USER";
       envHostname = builtins.getEnv "HOSTNAME";
       user = if envUsername == "" then "alistairstead" else envUsername;
       hostname = if envHostname == "" then "wombat" else envHostname;
