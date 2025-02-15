@@ -112,7 +112,7 @@ return {
     opts = function()
       return {
         flavour = "mocha",
-        transparent_background = false,
+        transparent_background = true,
         no_bold = false,
         dim_inactive = {
           enabled = false, -- dims the background color of inactive window
@@ -153,7 +153,7 @@ return {
             -- overlay0 = "#2B2C30",
             -- surface2 = "#2B2C30",
             -- surface1 = "#262626",
-            -- surface0 = "#1D1E23",
+            surface0 = "#1D1E23",
             crust = "#2B2C30",
             mantle = "#262626",
             base = "#1D1E23",
@@ -310,6 +310,15 @@ return {
     end,
   },
   {
+    "eero-lehtinen/oklch-color-picker.nvim",
+    event = "VeryLazy",
+    opts = {},
+    keys = {
+      -- One handed keymap recommended, you will be using the mouse
+      { "<leader>v", "<cmd>ColorPickOklch<cr>", desc = "Color pick under cursor" },
+    },
+  },
+  {
     "NvChad/nvim-colorizer.lua",
     enabled = false,
     event = "BufReadPre",
@@ -317,19 +326,31 @@ return {
       filetypes = { "*", "!lazy" },
       buftype = { "*", "!prompt", "!nofile" },
       user_default_options = {
-        RGB = true, -- #RGB hex codes
-        RRGGBB = true, -- #RRGGBB hex codes
         names = false, -- "Name" codes like Blue
+        RGB = true, -- #RGB hex codes
+        RGBA = true, -- #RGBA hex codes
+        RRGGBB = true, -- #RRGGBB hex codes
         RRGGBBAA = true, -- #RRGGBBAA hex codes
         AARRGGBB = true, -- 0xAARRGGBB hex codes
         rgb_fn = true, -- CSS rgb() and rgba() functions
         hsl_fn = true, -- CSS hsl() and hsla() functions
-        css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+        css = true, -- Enable all CSS *features*:
+        -- names, RGB, RGBA, RRGGBB, RRGGBBAA, AARRGGBB, rgb_fn, hsl_fn
         css_fn = true, -- Enable all CSS *functions*: rgb_fn, hsl_fn
-        -- Available modes: foreground, background
-        -- Available modes for `mode`: foreground, background,  virtualtext
+
+        -- Tailwind colors.  boolean|'normal'|'lsp'|'both'.  True sets to 'normal'
+        tailwind = true, -- Enable tailwind colors
+        tailwind_opts = { -- Options for highlighting tailwind names
+          update_names = true, -- When using tailwind = 'both', update tailwind names from LSP results.  See tailwind section
+        },
+        -- parsers can contain values used in `user_default_options`
+        sass = { enable = false, parsers = { "css" } }, -- Enable sass colors
+        -- Highlighting mode.  'background'|'foreground'|'virtualtext'
         mode = "virtualtext", -- Set the display mode.
+        -- Virtualtext character to use
         virtualtext = "■",
+        -- Display virtualtext inline with color.  boolean|'before'|'after'.  True sets to 'after'
+        virtualtext_inline = false,
       },
     },
   },

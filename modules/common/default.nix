@@ -4,11 +4,8 @@
 , ...
 }:
 {
-
   imports = [
     ./applications
-    # ./mail
-    # ./neovim
     ./programming
     ./repositories
     ./shell
@@ -74,40 +71,21 @@
     };
   };
 
-  config =
-    let
-      stateVersion = "24.05";
-    in
-    {
+  config = {
+    # Basic common system packages for all devices
+    environment.systemPackages = with pkgs; [
+      git
+      vim
+      wget
+      curl
+    ];
 
-      # Basic common system packages for all devices
-      environment.systemPackages = with pkgs; [
-        git
-        vim
-        wget
-        curl
-      ];
 
-      # Use the system-level nixpkgs instead of Home Manager's
-      home-manager.useGlobalPkgs = true;
+    # Allow specified unfree packages (identified elsewhere)
+    # Retrieves package object based on string name
+    nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) config.unfreePackages;
 
-      # Install packages to /etc/profiles instead of ~/.nix-profile, useful when
-      # using multiple profiles for one user
-      home-manager.useUserPackages = true;
-
-      # Move files to backup instead of erroring on collision
-      home-manager.backupFileExtension = "backup";
-
-      # Allow specified unfree packages (identified elsewhere)
-      # Retrieves package object based on string name
-      nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) config.unfreePackages;
-
-      # Allow broken packages.
-      nixpkgs.config.allowBroken = false;
-
-      # Pin a state version to prevent warnings
-      home-manager.users.${config.user}.home.stateVersion = stateVersion;
-      home-manager.users.root.home.stateVersion = stateVersion;
-
-    };
+    # Allow broken packages.
+    nixpkgs.config.allowBroken = false;
+  };
 }

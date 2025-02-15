@@ -9,7 +9,8 @@
         # age # Encryption
         # bc # Calculator
         # difftastic # Other fancy diffs
-        # dig # DNS lookup
+        dig # DNS lookup
+        fastfetch
         fd # find
         fontconfig
         gum
@@ -17,7 +18,7 @@
         inkscape # Vector
         imagemagick # Image manipulation
         killall # Force quit
-        # inetutils # Includes telnet, whois
+        inetutils # Includes telnet, whois
         # jless # JSON viewer
         # jo # JSON output
         jq # A lightweight and flexible command-line JSON processor

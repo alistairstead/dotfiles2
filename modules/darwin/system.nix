@@ -25,8 +25,9 @@
     security.pam.enablePamReattach = true;
 
     system = {
-      stateVersion = 5;
-
+      startup = {
+        chime = false;
+      };
       keyboard = {
         remapCapsLockToControl = true;
         enableKeyMapping = true; # Allows for skhd
@@ -87,6 +88,8 @@
 
           # Disable autocorrect spellcheck
           NSAutomaticSpellingCorrectionEnabled = false;
+
+          "com.apple.springing.enabled" = true;
         };
 
         dock = {
@@ -122,8 +125,12 @@
         };
 
         finder = {
+          # Whether to always show hidden files. The default is false.
+          AppleShowAllFiles = true;
 
           # Default Finder window set to column view
+          # Change the default finder view. “icnv” = Icon view, “Nlsv” = List view, 
+          # “clmv” = Column View, “Flwv” = Gallery View The default is icnv.
           FXPreferredViewStyle = "clmv";
 
           # Finder search in current folder by default

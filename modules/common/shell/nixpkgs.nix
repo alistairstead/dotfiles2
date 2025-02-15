@@ -78,11 +78,6 @@
         ''
       );
 
-    # Set automatic generation cleanup for home-manager
-    nix.gc = {
-      automatic = config.nix.gc.automatic;
-      options = config.nix.gc.options;
-    };
   };
 
   nix = {
@@ -96,22 +91,11 @@
       path = builtins.toString pkgs.path;
     };
 
-    # For security, only allow specific users
-    settings.allowed-users = [
-      "@wheel"
-      config.user
-    ];
-
     # Enable features in Nix commands
     extraOptions = ''
       experimental-features = nix-command flakes
       warn-dirty = false
     '';
-
-    gc = {
-      automatic = true;
-      options = "--delete-older-than 10d";
-    };
 
     settings = {
 

@@ -82,12 +82,9 @@ fi
 #
 # cd ~/dotfiles || echo "Cloning dotfiles failed" exit
 
-USERNAME="$(whoami)"
-
-info "INFO: Setting up nix-darwin for $USERNAME"
+info "INFO: Setting up nix-darwin for $USER"
 info "INFO: CI = $CI"
 
-export USERNAME
 export NIXPKGS_ALLOW_BROKEN=1
 
 # Move a file that will conflict with nix-darwin
@@ -95,10 +92,10 @@ sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 
 if $CI; then
   info "INFO: Running nix-darwin in CI mode..."
-  nix run nix-darwin --experimental-features 'nix-command flakes' -- switch --impure --no-write-lock-file --flake github:alistairstead/dotfiles2#wombat
+  nix run nix-darwin --experimental-features 'nix-command flakes' -- switch --impure --no-write-lock-file --flake github:alistairstead/dotfiles2
 else
   info "INFO: Running nix-darwin in normal mode..."
-  nix run nix-darwin --experimental-features 'nix-command flakes' -- switch --impure --flake github:alistairstead/dotfiles2#wombat
+  nix run nix-darwin --experimental-features 'nix-command flakes' -- switch --impure --flake github:alistairstead/dotfiles2
 fi
 
 success "Done!"

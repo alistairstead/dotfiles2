@@ -1,4 +1,4 @@
-{ ... }:
+{ config, pkgs, ... }:
 {
   config =
     {
@@ -10,7 +10,8 @@
   imports = [
     ./1password.nix
     ./aerospace
-    ./hammerspoon
+    # ./hammerspoon
+    ./karabiner
     ./raycast.nix
   ];
 }

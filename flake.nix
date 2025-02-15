@@ -2,8 +2,8 @@
   description = "My system flake";
 
   inputs = {
-    # Used for system packages
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Used for MacOS system config
     darwin = {
@@ -29,111 +29,163 @@
     };
   };
 
-  outputs = inputs@{ nixpkgs, ... }:
+  outputs = { self, nixpkgs, darwin, home-manager, ... }@inputs:
     let
-      # Global configuration for my systems
+      nixpkgsConfig = {
+        allowUnfree = true;
+        allowUnsupportedSystem = false;
+      };
+
+      unstable = import inputs.nixpkgs-unstable { inherit system; };
+      envUsername = builtins.getEnv "USERNAME";
+      envHostname = builtins.getEnv "HOSTNAME";
+      user = if envUsername == "" then "alistairstead" else envUsername;
+      hostname = if envHostname == "" then "wombat" else envHostname;
+      isCI = builtins.getEnv "CI" == "true";
       globals =
-        let
-          envUsername = builtins.getEnv "USERNAME";
-          username = if envUsername == "" then "alistairstead" else envUsername;
-          loggedUsername = builtins.trace "The value of USERNAME environment variable is: ${toString username}" username;
-          isCI = builtins.getEnv "CI" == "true";
-          loggedIsCI = builtins.trace "The value of CI environment variable is: ${toString isCI}" isCI;
-        in
         rec {
-          user = loggedUsername;
+          inherit user;
           fullName = "Alistair Stead";
           gitName = fullName;
           gitEmail = "62936+alistairstead@users.noreply.github.com";
           dotfilesRepo = "https://github.com/alistairstead/dotfiles2";
-          ci.enable = loggedIsCI;
+          ci.enable = isCI;
         };
+
       # Common overlays to always use
       overlays = [
         inputs.neovim-nightly-overlay.overlays.default
         (import ./overlays/granted.nix)
         (import ./overlays/tmux.nix inputs)
       ];
-      # System types to support.
-      supportedSystems = [
-        "x86_64-linux"
-        "x86_64-darwin"
-        "aarch64-linux"
-        "aarch64-darwin"
-      ];
-
-      # Helper function to generate an attrset '{ x86_64-linux = f "x86_64-linux"; ... }'.
-      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
-
-    in
-    rec {
+      system = "aarch64-darwin";
+    in {
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;
       # Contains my full Mac system builds, including home-manager
       # darwin-rebuild switch --flake .#wombat
-      darwinConfigurations = {
-        wombat = import ./hosts/wombat { inherit inputs globals overlays; };
+      darwinConfigurations.${hostname} = darwin.lib.darwinSystem {
+        inherit system;
+        # makes all inputs available in imported files
+        specialArgs = { inherit inputs; inherit unstable; };
+          modules = [
+            ({ pkgs, inputs, ... }: {
+              nixpkgs.config = nixpkgsConfig;
+              nixpkgs.overlays = overlays;
+
+              system = {
+                stateVersion = 4;
+                configurationRevision = self.rev or self.dirtyRev or null;
+              };
+
+              users.users.${user} = {
+                home = "/Users/${user}";
+              };
+
+              networking = {
+                computerName = hostname;
+                hostName = hostname;
+                localHostName = hostname;
+              };
+
+              nix = {
+                # enable flakes per default
+                package = pkgs.nixVersions.stable;
+                # Set automatic generation cleanup for home-manager
+                gc = {
+                  automatic = false;
+                  user = user;
+                  options = "--delete-older-than 30d";
+                };
+                settings = {
+                  allowed-users = [ user ];
+                  experimental-features = [ "nix-command" "flakes" ];
+                  warn-dirty = false;
+                  # produces linking issues when updating on macOS
+                  # https://github.com/NixOS/nix/issues/7273
+                  auto-optimise-store = false;
+                };
+              };
+            })
+            inputs.home-manager.darwinModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                backupFileExtension = "backup";
+                # makes all inputs available in imported files for hm
+                extraSpecialArgs = {
+                  inherit inputs;
+                  inherit unstable;
+                  pkgs-zsh-fzf-tab =
+                    import inputs.nixpkgs-zsh-fzf-tab { inherit system; };
+                };
+                users.${user} = { ... }: {
+                    home.stateVersion = "23.11";
+                  };
+                users.root = { ... }: {
+                    home.stateVersion = "23.11";
+                  };
+              };
+            }
+            {
+              gui.enable = true;
+
+              # charm.enable = true;
+              neovim.enable = true;
+              discord.enable = true;
+              dotfiles.enable = true;
+              aws.enable = true;
+              obsidian.enable = true;
+              _1password.enable = true;
+              slack.enable = true;
+              wezterm.enable = false;
+              ghostty.enable = true;
+              raycast.enable = true;
+              devenv.enable = true;
+              node.enable = true;
+              php.enable = true;
+              go.enable = true;
+              aerospace.enable = false;
+              terraform.enable = true;
+            }
+            (globals)
+            ./modules/common
+            ./modules/darwin
+            inputs.mac-app-util.darwinModules.default
+          ];
+
       };
 
       # For quickly applying home-manager settings with:
       # home-manager switch --flake .#wombat
-      homeConfigurations = {
-        wombat = darwinConfigurations.wombat.config.home-manager.users.${globals.user}.home;
-      };
+      # homeConfigurations = {
+      #   wombat = darwinConfigurations.wombat.config.home-manager.users.${globals.user}.home;
+      # };
 
       # Programs that can be run by calling this flake
-      apps = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system overlays; };
-        in
-        import ./apps { inherit pkgs; }
-      );
+      # apps = forAllSystems (
+      #   system:
+      #   let
+      #     pkgs = import nixpkgs { inherit system overlays; };
+      #   in
+      #   import ./apps { inherit pkgs; }
+      # );
 
       # Development environments
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system overlays; };
-        in
-        {
-
-          # Used to run commands and edit files in this repo
-          default = pkgs.mkShell {
-            buildInputs = with pkgs; [
-              git
-            ];
-          };
-        }
-      );
-
-      checks = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system overlays; };
-        in
-        {
-          neovim =
-            pkgs.runCommand "neovim-check-health" { buildInputs = [ inputs.self.packages.${system}.neovim ]; }
-              ''
-                mkdir -p $out
-                export HOME=$TMPDIR
-                nvim -c "checkhealth" -c "write $out/health.log" -c "quitall"
-
-                # Check for errors inside the health log
-                if $(grep "ERROR" $out/health.log); then
-                  cat $out/health.log
-                  exit 1
-                fi
-              '';
-        }
-      );
-
-      formatter = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system overlays; };
-        in
-        pkgs.nixfmt-rfc-style
-      );
+      # devShells = forAllSystems (
+      #   system:
+      #   let
+      #     pkgs = import nixpkgs { inherit system overlays; };
+      #   in
+      #   {
+      #     # Used to run commands and edit files in this repo
+      #     default = pkgs.mkShell {
+      #       buildInputs = with pkgs; [
+      #         git
+      #       ];
+      #     };
+      #   }
+      # );
     };
 }
 

@@ -13,7 +13,8 @@ return {
       disable_commit_confirmation = "auto",
       console_timeout = 2000,
       auto_show_console = false,
-      disable_insert_on_commit = false,
+      disable_insert_on_commit = true,
+      graph_style = "unicode",
       integrations = {
         -- If enabled, use telescope for menu selection rather than vim.ui.select.
         -- Allows multi-select and some things that vim.ui.select doesn't.

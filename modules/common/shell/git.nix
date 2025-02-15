@@ -64,6 +64,7 @@ in
             conflictStyle = "diff3";
           };
           rebase = {
+            updateRefs = true;
             autosquash = true;
             autostash = true;
             stat = true;
