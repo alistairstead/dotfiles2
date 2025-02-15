@@ -1,6 +1,4 @@
-{ config, pkgs, ... }:
-{
-
+{ config, pkgs, ... }: {
   imports = [
     ./aws.nix
     ./devenv.nix

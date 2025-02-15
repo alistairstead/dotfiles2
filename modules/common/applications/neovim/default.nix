@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-{
+{config, lib, pkgs, ... }: {
   options = {
     neovim = {
       enable = lib.mkEnableOption {

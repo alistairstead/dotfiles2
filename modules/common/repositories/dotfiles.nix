@@ -1,20 +1,10 @@
-{ config
-, pkgs
-, lib
-, ...
-}:
-{
-
+{ config, pkgs, lib, ... }: {
   # Allows me to make sure I can work on my dotfiles locally
 
   options.dotfiles.enable = lib.mkEnableOption "Clone dotfiles.";
-
   config = lib.mkIf config.dotfiles.enable {
-
     home-manager.users.${config.user} = {
-
       home.activation = {
-
         # Always clone dotfiles repository if it doesn't exist
         cloneDotfiles = config.home-manager.users.${config.user}.lib.dag.entryAfter [ "writeBoundary" ] ''
           if [ ! -d "${config.dotfilesPath}" ]; then

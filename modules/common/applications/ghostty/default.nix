@@ -1,9 +1,4 @@
-{ config
-, lib
-, ...
-}:
-{
-
+{ config, lib , ... }: {
   options = {
     ghostty = {
       enable = lib.mkEnableOption {
@@ -15,10 +10,7 @@
 
   config =
     lib.mkIf (!config.ci.enable && config.gui.enable && config.ghostty.enable) {
-
-
       home-manager.users.${config.user} = {
-
         xdg.configFile."ghostty/config".source = ./config;
       };
     };

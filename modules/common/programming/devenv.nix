@@ -1,10 +1,4 @@
-{ config
-, pkgs
-, lib
-, ...
-}:
-{
-
+{ config, pkgs , lib , ... }: {
   options.devenv.enable = lib.mkEnableOption "Devenv tools.";
   config = lib.mkIf config.devenv.enable {
     nix.settings = {

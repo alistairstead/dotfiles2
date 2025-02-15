@@ -1,8 +1,4 @@
-{ config
-, lib
-, pkgs
-, ...
-}:
+{ config, lib , pkgs , ...}:
 let
   inherit (pkgs.stdenv) isDarwin;
 in
@@ -24,10 +20,13 @@ in
         enable = true;
       };
 
+      home.shellAliases = {
+        granted-refresh = lib.mkIf isDarwin "granted sso populate --sso-region eu-west-2 https://kodehort.awsapps.com/start";
+      };
+
       programs.fish = {
         shellAliases = {
           assume = lib.mkIf isDarwin "source ${pkgs.granted}/share/assume.fish";
-          granted-refresh = lib.mkIf isDarwin "granted sso populate --sso-region eu-west-2 https://kodehort.awsapps.com/start";
         };
 
         interactiveShellInit = ''

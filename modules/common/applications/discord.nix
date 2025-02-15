@@ -1,10 +1,4 @@
-{ config
-, pkgs
-, lib
-, ...
-}:
-{
-
+{ config, pkgs , lib , ... }: {
   options = {
     discord = {
       enable = lib.mkEnableOption {
