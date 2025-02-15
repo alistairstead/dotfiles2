@@ -1,8 +1,4 @@
-{ config
-, pkgs
-, lib
-, ...
-}:
+{ config, pkgs , lib , ...}:
 # let
 #   # util = (import ./util.nix) { config = config; };
 # in

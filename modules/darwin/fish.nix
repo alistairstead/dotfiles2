@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-{
-
+{ pkgs, ... }: {
   config = {
     # MacOS-specific settings for Fish
     programs.fish.useBabelfish = true;

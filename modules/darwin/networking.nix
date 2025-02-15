@@ -1,17 +1,5 @@
-{ config
-, pkgs
-, lib
-, ...
-}:
-{
-
+{ config, pkgs , lib , ... }: {
   config = lib.mkIf pkgs.stdenv.isDarwin {
-    networking = {
-      computerName = config.networking.hostName;
-      # Adjust if necessary
-      # hostName = "";
-    };
-
     system.activationScripts.hostname.text = ''
       echo >&2 "setting up hostname in /etc/hosts..."
       if grep -q nix-darwin /etc/hosts

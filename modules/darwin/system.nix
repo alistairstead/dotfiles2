@@ -1,11 +1,5 @@
-{ pkgs
-, lib
-, ...
-}:
-{
-
+{ pkgs, lib , ... }: {
   config = lib.mkIf pkgs.stdenv.isDarwin {
-
     services.nix-daemon.enable = true;
 
     # This setting only applies to Darwin, different on NixOS
@@ -28,6 +22,7 @@
       startup = {
         chime = false;
       };
+
       keyboard = {
         remapCapsLockToControl = true;
         enableKeyMapping = true; # Allows for skhd
@@ -120,7 +115,6 @@
             "${pkgs.slack}/Applications/Slack.app"
             "/System/Applications/Messages.app"
             "${pkgs.obsidian}/Applications/Obsidian.app"
-            "${pkgs.wezterm}/Applications/WezTerm.app"
           ];
         };
 

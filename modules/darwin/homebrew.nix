@@ -1,13 +1,6 @@
-{ config
-, pkgs
-, lib
-, ...
-}:
-{
-
+{ config, pkgs , lib , ... }: {
   # Homebrew - Mac-specific packages that aren't in Nix
   config = lib.mkIf pkgs.stdenv.isDarwin {
-
     # Requires Homebrew to be installed
     system.activationScripts.preUserActivation.text = ''
       if ! xcode-select --version 2>/dev/null; then
@@ -19,12 +12,15 @@
     '';
 
     # Add homebrew paths to CLI path
-    home-manager.users.${config.user}.home.sessionPath = [ "/opt/homebrew/bin/"  ];
+    home-manager.users.${config.user} = {
+      home.sessionPath = [ "/opt/homebrew/bin/"  ];
+    };
 
-    environment.systemPath = [ "/opt/homebrew/bin" ];
-
-    environment.variables = {
-      HOMEBREW_NO_ANALYTICS = "1";
+    environment = {
+      systemPath = [ "/opt/homebrew/bin" ];
+      variables = {
+        HOMEBREW_NO_ANALYTICS = "1";
+      };
     };
 
     homebrew = {

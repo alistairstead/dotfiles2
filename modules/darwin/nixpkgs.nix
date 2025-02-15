@@ -1,12 +1,5 @@
-{ config
-, pkgs
-, lib
-, ...
-}:
-{
-
+{ config, pkgs , lib , ... }: {
   home-manager.users.${config.user} = lib.mkIf pkgs.stdenv.isDarwin {
-
     programs.fish = {
       shellAbbrs = {
         nr = lib.mkForce "rebuild-darwin";
