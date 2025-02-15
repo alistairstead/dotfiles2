@@ -1,32 +1,9 @@
-{ config, pkgs, ... }:
-{
-
+{ config, ... }: {
   # FZF is a fuzzy-finder for the terminal
-
   home-manager.users.${config.user} = {
-
     programs.fzf.enable = true;
-
-    programs.fish = {
-      functions = {
-        projects = {
-          description = "Jump to a project";
-          body = ''
-            set projdir ( \
-                fd \
-                    --search-path $HOME/dev \
-                    --type directory \
-                    --exact-depth 2 \
-                | ${pkgs.proximity-sort}/bin/proximity-sort $PWD \
-                | sed 's/\\/$//' \
-                | fzf --tiebreak=index \
-            )
-            and cd $projdir
-            and commandline -f execute
-          '';
-        };
-      };
-      shellAbbrs = {
+    home = {
+      shellAliases = {
         lsf = "ls -lh | fzf";
       };
     };

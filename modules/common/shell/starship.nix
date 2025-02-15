@@ -1,8 +1,4 @@
-{ config
-, ...
-}:
-{
-
+{ config, ... }: {
   home-manager.users.${config.user}.programs.starship = {
     enable = true;
     settings = {

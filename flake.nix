@@ -33,6 +33,7 @@
     let
       nixpkgsConfig = {
         allowUnfree = true;
+        allowBroken = false;
         allowUnsupportedSystem = false;
       };
 
@@ -68,7 +69,7 @@
         # makes all inputs available in imported files
         specialArgs = { inherit inputs; inherit unstable; };
           modules = [
-            ({ pkgs, inputs, ... }: {
+            ({ pkgs, lib, inputs, ... }: {
               nixpkgs.config = nixpkgsConfig;
               nixpkgs.overlays = overlays;
 
@@ -90,20 +91,42 @@
               nix = {
                 # enable flakes per default
                 package = pkgs.nixVersions.stable;
+
                 # Set automatic generation cleanup for home-manager
                 gc = {
                   automatic = false;
                   user = user;
                   options = "--delete-older-than 30d";
                 };
+
                 settings = {
                   allowed-users = [ user ];
                   experimental-features = [ "nix-command" "flakes" ];
                   warn-dirty = false;
+
                   # produces linking issues when updating on macOS
                   # https://github.com/NixOS/nix/issues/7273
-                  auto-optimise-store = false;
+                  auto-optimise-store = lib.mkIf (!pkgs.stdenv.isDarwin) true;
+
+                  # Add community Cachix to binary cache
+                  # Don't use with macOS because blocked by corporate firewall
+                  builders-use-substitutes = true;
+                  substituters = [ "https://nix-community.cachix.org" ];
+                  trusted-public-keys = lib.mkIf (!pkgs.stdenv.isDarwin) [
+                    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+                  ];
+
                 };
+
+                # Set channel to flake packages, used for nix-shell commands
+                nixPath = [ "nixpkgs=${pkgs.path}" ];
+
+                # Set registry to this flake's packages, used for nix X commands
+                registry.nixpkgs.to = {
+                  type = "path";
+                  path = builtins.toString pkgs.path;
+                };
+
               };
             })
             inputs.home-manager.darwinModules.home-manager

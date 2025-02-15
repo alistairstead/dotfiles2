@@ -1,5 +1,4 @@
-{ config, pkgs, ... }:
-{
+{ config, ... }: {
   home-manager.users.${config.user} = {
 
     # `toINIWithGlobalSection` will escape `[shell]` to `\[shell\]`, use home.file.<name>.txt here
