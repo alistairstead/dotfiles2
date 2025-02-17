@@ -27,6 +27,12 @@
       url = "github:hraban/mac-app-util";
       inputs.nixpkgs.follows = "nixpkgs"; # Use system packages list for their inputs
     };
+
+    # sketchybar config
+    sketchybar = {
+      url = "github:FelixKratz/dotfiles";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, darwin, home-manager, ... }@inputs:
@@ -135,6 +141,7 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 backupFileExtension = "backup";
+                verbose = true;
                 # makes all inputs available in imported files for hm
                 extraSpecialArgs = {
                   inherit inputs;
@@ -152,7 +159,6 @@
             }
             {
               gui.enable = true;
-
               # charm.enable = true;
               neovim.enable = true;
               discord.enable = true;
@@ -160,15 +166,18 @@
               aws.enable = true;
               obsidian.enable = true;
               _1password.enable = true;
+              sketchybar.enable = true;
               slack.enable = true;
               wezterm.enable = false;
               ghostty.enable = true;
+              karabiner.enable = true;
               raycast.enable = true;
               devenv.enable = true;
               node.enable = true;
               php.enable = true;
               go.enable = true;
               aerospace.enable = false;
+              yabai.enable = true;
               terraform.enable = true;
             }
             (globals)
@@ -179,36 +188,12 @@
 
       };
 
-      # For quickly applying home-manager settings with:
-      # home-manager switch --flake .#wombat
-      # homeConfigurations = {
-      #   wombat = darwinConfigurations.wombat.config.home-manager.users.${globals.user}.home;
-      # };
-
       # Programs that can be run by calling this flake
-      # apps = forAllSystems (
-      #   system:
-      #   let
-      #     pkgs = import nixpkgs { inherit system overlays; };
-      #   in
-      #   import ./apps { inherit pkgs; }
-      # );
-
-      # Development environments
-      # devShells = forAllSystems (
-      #   system:
-      #   let
-      #     pkgs = import nixpkgs { inherit system overlays; };
-      #   in
-      #   {
-      #     # Used to run commands and edit files in this repo
-      #     default = pkgs.mkShell {
-      #       buildInputs = with pkgs; [
-      #         git
-      #       ];
-      #     };
-      #   }
-      # );
+      apps = 
+        let
+          pkgs = import nixpkgs { inherit system overlays; };
+        in
+        import ./apps { inherit pkgs; };
     };
 }
 

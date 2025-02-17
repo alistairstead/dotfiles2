@@ -1,14 +1,15 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
-{
-
+{ config, lib, ... }: {
   # Hammerspoon - MacOS custom automation scripting
+  options = {
+    hammerspoon = {
+      enable = lib.mkEnableOption {
+        description = "Enable Hammerspoon.";
+        default = false;
+      };
+    };
+  };
 
-  config = lib.mkIf pkgs.stdenv.isDarwin {
+  config = lib.mkIf (!config.ci.enable && config.gui.enable && config.hammerspoon.enable) {
 
     home-manager.users.${config.user} = {
       xdg.configFile."hammerspoon/init.lua".source = ./init.lua;

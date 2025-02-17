@@ -6,14 +6,13 @@ in
   options.aws.enable = lib.mkEnableOption "AWS tools.";
 
   config = lib.mkIf config.aws.enable {
-    environment.systemPackages = with pkgs; [
-      granted
-    ];
-
     home-manager.users.${config.user} = {
       home.sessionVariables = {
-        GRANTED_ALIAS_CONFIGURED = "true";
         GRANTED_ENABLE_AUTO_REASSUME = "true";
+      };
+
+      programs.granted = {
+        enable = true;
       };
 
       programs.awscli = {

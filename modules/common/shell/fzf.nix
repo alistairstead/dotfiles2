@@ -1,22 +1,22 @@
 { config, ... }: {
   # FZF is a fuzzy-finder for the terminal
   home-manager.users.${config.user} = {
-    programs.fzf.enable = true;
+    programs.fzf = {
+      enable = true;
+      defaultCommand =
+          "fd --type f --hidden --follow --exclude .git --exclude .vim --exclude .cache --exclude vendor --exclude node_modules";
+      defaultOptions = [
+          "--height 50%"
+          "--border sharp"
+          "--inline-info"
+        ];
+    };
+
     home = {
       shellAliases = {
         lsf = "ls -lh | fzf";
       };
     };
 
-    # Global fzf configuration
-    home.sessionVariables =
-      let
-        fzfCommand = "fd --type file";
-      in
-      {
-        FZF_DEFAULT_COMMAND = fzfCommand;
-        FZF_CTRL_T_COMMAND = fzfCommand;
-        FZF_DEFAULT_OPTS = "-m --height 50% --border";
-      };
   };
 }

@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ config, ... }: {
   config = {
     home-manager.users.root.programs.git = {
       enable = true;
@@ -8,6 +8,7 @@
     home-manager.users.${config.user} = {
       programs.git = {
         enable = true;
+        delta.enable = true;
         userName = config.gitName;
         userEmail = config.gitEmail;
         extraConfig = {
@@ -28,9 +29,6 @@
             remotes = "remote -v";
 
             undo = "reset --soft HEAD^";
-          };
-          core = {
-            pager = "delta";
           };
           interactive = {
             difffilter = "delta --color-only";
@@ -118,11 +116,6 @@
           "devenv.yaml"
         ];
       };
-
-      # Required for git config
-      home.packages = with pkgs; [
-        delta
-      ];
 
     };
   };

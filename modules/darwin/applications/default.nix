@@ -1,17 +1,11 @@
 { config, pkgs, ... }:
 {
-  config =
-    {
-      unfreePackages = [
-        "raycast"
-      ];
-    };
-
   imports = [
-    ./1password.nix
     ./aerospace
-    # ./hammerspoon
+    ./hammerspoon
     ./karabiner
+    ./sketchybar
+    ./1password.nix
     ./raycast.nix
   ];
 }

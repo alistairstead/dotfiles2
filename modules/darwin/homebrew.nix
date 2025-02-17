@@ -13,7 +13,10 @@
 
     # Add homebrew paths to CLI path
     home-manager.users.${config.user} = {
-      home.sessionPath = [ "/opt/homebrew/bin/"  ];
+      home.sessionPath = [
+        "/opt/homebrew/bin/" 
+        "/opt/homebrew/opt/trash/bin/"
+      ];
     };
 
     environment = {
@@ -28,14 +31,14 @@
       onActivation = {
         autoUpdate = false;
         cleanup = "zap"; # Uninstall all programs not declared
-        upgrade = false;
+        upgrade = true;
       };
       global = {
+        autoUpdate = false;
         brewfile = true; # Run brew bundle from anywhere
         lockfiles = false; # Don't save lockfile (since running from anywhere)
       };
       taps = [
-        "1password/tap"
         "neovim/neovim"
       ];
       brews = [
@@ -45,8 +48,6 @@
         # "neovim"
       ];
       casks = [
-        "1password" # 1Password will not launch from Nix on macOS
-        "1password-cli" # 1Password CLI
         "around" # Around - Video calls
         "bartender"
         "choosy" # Choose browser
@@ -66,11 +67,6 @@
       caskArgs = {
         appdir = "/Applications";
       };
-      # This requires a prior login to the App Store so will not
-      # run on CI
-      # masApps = {
-      #   "1Password for Safari" = 1569813296;
-      # };
     };
   };
 }

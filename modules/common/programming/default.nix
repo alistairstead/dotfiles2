@@ -10,9 +10,13 @@
 
   config = {
     home-manager.users.${config.user} = {
+      programs = {
+        # shell integrations are enabled by default
+        lazygit.enable = true; # git tui
+      };
+
       home.packages = with pkgs; [
         lazydocker
-        lazygit
         lazysql
         prettierd
       ];

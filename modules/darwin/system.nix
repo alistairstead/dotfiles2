@@ -22,170 +22,161 @@
       startup = {
         chime = false;
       };
-
       keyboard = {
         remapCapsLockToControl = true;
         enableKeyMapping = true; # Allows for skhd
       };
-
       defaults = {
-
-        loginwindow = {
-          # Text to be shown on the login window. Default is “\\U03bb”.
-          LoginwindowText = "Reward available for return call +44 (0)7788 107333";
-        };
-
-        NSGlobalDomain = {
-
-          # Set to dark mode
-          AppleInterfaceStyle = "Dark";
-
-          # Don't change from dark to light automatically
-          AppleInterfaceStyleSwitchesAutomatically = false;
-
-          # Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
-          AppleKeyboardUIMode = 3;
-
-          # Hide menu bar
-          _HIHideMenuBar = true;
-
-          # Expand save panel by default
-          NSNavPanelExpandedStateForSaveMode = true;
-
-          # Expand print panel by default
-          PMPrintingExpandedStateForPrint = true;
-
-          # Replace press-and-hold with key repeat
-          ApplePressAndHoldEnabled = false;
-
-          # Set a fast key repeat rate
-          # KeyRepeat: 120, 90, 60, 30, 12, 6, 2
-          KeyRepeat = 2;
-
-          # Shorten delay before key repeat begins
-          # InitialKeyRepeat: 120, 94, 68, 35, 25, 15
-          InitialKeyRepeat = 15;
-
-          # Save to iCLoud by default, not local disk
-          NSDocumentSaveNewDocumentsToCloud = true;
-
-          # Disable autocorrect capitalization
-          NSAutomaticCapitalizationEnabled = false;
-
-          # Disable autocorrect smart dashes
-          NSAutomaticDashSubstitutionEnabled = false;
-
-          # Disable autocorrect adding periods
-          NSAutomaticPeriodSubstitutionEnabled = false;
-
-          # Disable autocorrect smart quotation marks
-          NSAutomaticQuoteSubstitutionEnabled = false;
-
-          # Disable autocorrect spellcheck
-          NSAutomaticSpellingCorrectionEnabled = false;
-
-          "com.apple.springing.enabled" = true;
-        };
-
-        dock = {
-          # Automatically show and hide the dock
-          autohide = true;
-
-          # Add translucency in dock for hidden applications
-          showhidden = true;
-
-          # Enable spring loading on all dock items
-          enable-spring-load-actions-on-all-items = true;
-
-          # Highlight hover effect in dock stack grid view
-          mouse-over-hilite-stack = true;
-
-          # Set the minimize/maximize window effect. The default is genie.
-          # mineffect = "scale";
-
-          orientation = "bottom";
-          # Animate opening applications from the Dock. The default is true.
-          launchanim = false;
-
-          show-recents = false;
-          tilesize = 44;
-
-          persistent-apps = [
-            "/Applications/1Password.app"
-            "${pkgs.slack}/Applications/Slack.app"
-            "/System/Applications/Messages.app"
-            "${pkgs.obsidian}/Applications/Obsidian.app"
-          ];
-        };
-
-        finder = {
-          # Whether to always show hidden files. The default is false.
-          AppleShowAllFiles = true;
-
-          # Default Finder window set to column view
-          # Change the default finder view. “icnv” = Icon view, “Nlsv” = List view, 
-          # “clmv” = Column View, “Flwv” = Gallery View The default is icnv.
-          FXPreferredViewStyle = "clmv";
-
-          # Finder search in current folder by default
-          FXDefaultSearchScope = "SCcf";
-
-          # Disable warning when changing file extension
-          FXEnableExtensionChangeWarning = false;
-
-          # Allow quitting of Finder application
-          QuitMenuItem = true;
-
-          # Show path breadcrumbs in finder windows. The default is false.
-          ShowPathbar = true;
-
-          # Show status bar at bottom of finder windows with item/disk space stats. The default is false.
-          ShowStatusBar = true;
-        };
-
         # Disable "Are you sure you want to open" dialog
         LaunchServices.LSQuarantine = false;
 
         # Enable trackpad tap to click
         trackpad.Clicking = true;
-
-        # Where to save screenshots
-        screencapture.location = "~/Downloads";
-
-        CustomUserPreferences = {
-          # Disable disk image verification
-          "com.apple.frameworks.diskimages" = {
-            skip-verify = true;
-            skip-verify-locked = true;
-            skip-verify-remote = true;
+        CustomSystemPreferences = {
+          finder = {
+            DisableAllAnimations = true;
+            ShowExternalHardDrivesOnDesktop = false;
+            ShowHardDrivesOnDesktop = false;
+            ShowMountedServersOnDesktop = false;
+            ShowRemovableMediaOnDesktop = false;
+            _FXSortFoldersFirst = true;
           };
-          # Avoid creating .DS_Store files on network or USB volumes
-          "com.apple.desktopservices" = {
-            DSDontWriteNetworkStores = true;
-            DSDontWriteUSBStores = true;
-          };
-          "com.apple.dock" = {
-            magnification = true;
-            largesize = 48;
-          };
-          # Require password immediately after screen saver begins
-          "com.apple.screensaver" = {
-            askForPassword = 1;
-            askForPasswordDelay = 0;
-          };
-          "com.apple.finder" = {
-            # Disable the warning before emptying the Trash
-            WarnOnEmptyTrash = false;
 
-            # Finder search in current folder by default
-            FXDefaultSearchScope = "SCcf";
-
-            # Default Finder window set to column view
-            FXPreferredViewStyle = "clmv";
+          NSGlobalDomain = {
+            AppleAccentColor = 1;
+            AppleHighlightColor = "0.65098 0.85490 0.58431";
+            AppleSpacesSwitchOnActivate = true;
+            WebKitDeveloperExtras = true;
+            AppleFontSmoothing = 1;
           };
         };
-      };
 
+        # login window settings
+        loginwindow = {
+          # disable guest account
+          GuestEnabled = false;
+          # show name instead of username
+          SHOWFULLNAME = false;
+          LoginwindowText = "Reward available for return call +44 (0)7788 107333";
+        };
+
+        # file viewer settings
+        finder = {
+          AppleShowAllExtensions = true;
+          AppleShowAllFiles = true;
+          CreateDesktop = false;
+          FXDefaultSearchScope = "SCcf";
+          FXEnableExtensionChangeWarning = false;
+          # NOTE: Four-letter codes for the other view modes: `icnv`, `clmv`, `glyv`
+          FXPreferredViewStyle = "clmv";
+          QuitMenuItem = true;
+          ShowStatusBar = true;
+          _FXShowPosixPathInTitle = true;
+        };
+
+        # dock settings
+        dock = {
+          # Enable spring loading on all dock items
+          enable-spring-load-actions-on-all-items = true;
+          # Animate opening applications from the Dock. The default is true.
+          launchanim = false;
+          # auto show and hide dock
+          autohide = true;
+          # remove delay for showing dock
+          autohide-delay = 0.0;
+          # how fast is the dock showing animation
+          autohide-time-modifier = 1.0;
+          mineffect = "scale";
+          minimize-to-application = true;
+          mouse-over-hilite-stack = true;
+          mru-spaces = false;
+          orientation = "bottom";
+          show-process-indicators = true;
+          show-recents = false;
+          showhidden = false;
+          static-only = false;
+          tilesize = 50;
+
+          # Hot corners
+          # Possible values:
+          #  0: no-op
+          #  2: Mission Control
+          #  3: Show application windows
+          #  4: Desktop
+          #  5: Start screen saver
+          #  6: Disable screen saver
+          #  7: Dashboard
+          # 10: Put display to sleep
+          # 11: Launchpad
+          # 12: Notification Center
+          # 13: Lock Screen
+          # 14: Quick Notes
+          wvous-tl-corner = 0;
+          wvous-tr-corner = 0;
+          wvous-bl-corner = 0;
+          wvous-br-corner = 0;
+
+          # sudo su "$USER" -c "defaults write com.apple.dock persistent-apps -array 	\
+          # '$launchpad' '$settings' '$appstore' '$small_blank' 																		\
+          # '$messages' '$messenger' '$teams' '$discord' '$mail' '$small_blank' 										\
+          # '$firefox' '$safari' '$fantastical' '$reminders' '$notes' '$small_blank' 								\
+          # '$music' '$spotify' '$plex' '$small_blank' 																							\
+          # '$code' '$github' '$gitkraken' '$small_blank' 													\
+          # '$alacritty' '$kitty'"
+          persistent-apps = [
+            "/System/Applications/System Settings.app"
+            "/System/Applications/App Store.app"
+            "/Applications/Safari.app"
+            "/System/Applications/Music.app"
+          ];
+        };
+
+        screencapture = {
+          disable-shadow = true;
+          location = "$HOME/Pictures/screenshots/";
+          type = "png";
+        };
+
+        NSGlobalDomain = {
+          "com.apple.sound.beep.feedback" = 0;
+          "com.apple.sound.beep.volume" = 0.0;
+          AppleShowAllExtensions = true;
+          AppleShowScrollBars = "Automatic";
+          NSAutomaticWindowAnimationsEnabled = false;
+          _HIHideMenuBar = true;
+          # Set to dark mode
+          AppleInterfaceStyle = "Dark";
+          # Don't change from dark to light automatically
+          AppleInterfaceStyleSwitchesAutomatically = false;
+          # Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
+          AppleKeyboardUIMode = 3;
+          # Expand save panel by default
+          NSNavPanelExpandedStateForSaveMode = true;
+          # Expand print panel by default
+          PMPrintingExpandedStateForPrint = true;
+          # Replace press-and-hold with key repeat
+          ApplePressAndHoldEnabled = false;
+          # Set a fast key repeat rate
+          # KeyRepeat: 120, 90, 60, 30, 12, 6, 2
+          KeyRepeat = 2;
+          # Shorten delay before key repeat begins
+          # InitialKeyRepeat: 120, 94, 68, 35, 25, 15
+          InitialKeyRepeat = 15;
+          # Save to iCLoud by default, not local disk
+          NSDocumentSaveNewDocumentsToCloud = true;
+          # Disable autocorrect capitalization
+          NSAutomaticCapitalizationEnabled = false;
+          # Disable autocorrect smart dashes
+          NSAutomaticDashSubstitutionEnabled = false;
+          # Disable autocorrect adding periods
+          NSAutomaticPeriodSubstitutionEnabled = false;
+          # Disable autocorrect smart quotation marks
+          NSAutomaticQuoteSubstitutionEnabled = false;
+          # Disable autocorrect spellcheck
+          NSAutomaticSpellingCorrectionEnabled = false;
+          "com.apple.springing.enabled" = true;
+        };
+      };
     };
   };
 }

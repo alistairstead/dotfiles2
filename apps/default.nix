@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-rec {
-
+{ pkgs, ... }: {
   # Show quick helper
   default = import ./help.nix { inherit pkgs; };
 

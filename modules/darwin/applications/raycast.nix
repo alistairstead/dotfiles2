@@ -1,9 +1,4 @@
-{ config
-, pkgs
-, lib
-, ...
-}:
-{
+{ config, lib , ... }: {
   options = {
     raycast = {
       enable = lib.mkEnableOption {
@@ -20,6 +15,10 @@
     #     pkgs.raycast
     #   ];
     # };
+    #
+    unfreePackages = [
+      "raycast"
+    ];
 
     homebrew = {
       enable = true;

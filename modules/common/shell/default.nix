@@ -17,6 +17,30 @@
   ];
   config = {
     home-manager.users.${config.user} = {
+      programs = {
+        home-manager.enable = true;
+
+        # shell integrations are enabled by default
+        jq.enable = true; # json parser
+        bat = {
+          enable = true; # cat replacement
+          config = {
+            pager = "less -R"; # Don't auto-exit if one screen
+          };
+        };
+        btop.enable = true; # htop alternative
+
+        htop = {
+          enable = true;
+          settings = {
+            tree_view = true;
+            show_cpu_frequency = true;
+            show_cpu_usage = true;
+            show_program_path = false;
+          };
+        };
+
+      };
       home = {
         sessionVariables =
         {
@@ -36,14 +60,12 @@
           fd # find
           fontconfig
           gum
-          htop # Show system processes
           inkscape # Vector
           imagemagick # Image manipulation
           killall # Force quit
           inetutils # Includes telnet, whois
           # jless # JSON viewer
           # jo # JSON output
-          jq # A lightweight and flexible command-line JSON processor
           yq # Command-line YAML/XML/TOML processor - jq wrapper for YAML, XML, TOML documents
           # lf # File viewer
           # qrencode # Generate qr codes
@@ -58,6 +80,8 @@
           # du-dust # Disk usage tree (ncdu)
           # duf # Basic disk information (df)
         ];
+
+
 
         shellAliases = {
 
@@ -104,11 +128,11 @@
           null = "/dev/null";
 
           # overrides
-          # cat = "bat";
-          # top = "btop";
-          # htop = "btop";
+          cat = "bat";
+          top = "btop";
+          htop = "btop";
           # ping = "gping";
-          # diff = "delta";
+          diff = "delta";
 
           # programs
           d = "docker";
@@ -128,12 +152,6 @@
         ".digrc".text = "+noall +answer"; # Cleaner dig commands
       };
 
-      programs.bat = {
-        enable = true; # cat replacement
-        config = {
-          pager = "less -R"; # Don't auto-exit if one screen
-        };
-      };
     };
   };
 }
