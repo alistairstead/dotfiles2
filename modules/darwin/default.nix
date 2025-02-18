@@ -10,6 +10,5 @@
     ./shell
     ./system.nix
     ./user.nix
-    ./yabai.nix
   ];
 }

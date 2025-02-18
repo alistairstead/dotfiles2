@@ -49,6 +49,8 @@ in {
         # A tiling window manager for macOS
         # https://github.com/koekeishiya/yabai
 
+        sudo yabai --load-sa
+
         # Set external_bar here in case we launch after sketchybar
         BAR_HEIGHT=$(${getExe sketchybar} -m --query bar | jq -r '.height')
         ${getExe config.services.yabai.package} -m config external_bar all:"$BAR_HEIGHT":0
@@ -66,9 +68,6 @@ in {
           local name="$2"
           yabai -m space "$idx" --label "$name"
         }
-
-        yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
-        sudo yabai --load-sa
 
         # yabai -m signal --add event=window_resized action='sleep 2'
         # yabai -m signal --add event=window_moved action='sleep 2'
@@ -147,6 +146,8 @@ in {
         yabai -m rule --add app="^Slack$" space=^4
         yabai -m rule --add app="^Calendar$" space=^5
         yabai -m rule --add app="^Music$" space=^9
+
+        sudo yabai --load-sa
 
         echo "yabai configuration loaded.."
       '';

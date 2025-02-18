@@ -1,6 +1,10 @@
 { config, pkgs , lib , ... }: {
   config = lib.mkIf pkgs.stdenv.isDarwin {
     networking = {
+      knownNetworkServices = [
+        "Wi-Fi"
+        "Thunderbolt Bridge"
+      ];
       dns = [
         "1.1.1.1"
         "8.8.8.8"
