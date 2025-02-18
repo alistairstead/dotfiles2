@@ -1,4 +1,4 @@
-inputs: final: prev: 
+_inputs: final: prev: 
 {
   tmuxPlugins = prev.tmuxPlugins // {
     sensible = prev.tmuxPlugins.sensible.overrideAttrs (prev: {

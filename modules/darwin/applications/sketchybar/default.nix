@@ -1,7 +1,5 @@
 { config, lib, inputs, ... }:
-let 
-  folder = "${inputs.sketchybar}/.config/sketchybar";
-in {
+{
   options = {
     sketchybar = {
       enable = lib.mkEnableOption {
