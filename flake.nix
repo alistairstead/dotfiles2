@@ -73,7 +73,7 @@
         # makes all inputs available in imported files
         specialArgs = { inherit inputs; inherit unstable; };
           modules = [
-            ({ pkgs, lib, inputs, ... }: {
+            ({ pkgs, lib, ... }: {
               nixpkgs.config = nixpkgsConfig;
               nixpkgs.overlays = overlays;
 
