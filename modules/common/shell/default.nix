@@ -16,7 +16,7 @@
     ./zoxide.nix
   ];
   config = {
-    home-manager.users.${config.user} = {
+    home-manager.users.${config.user} = { pkgs, lib, ... }: {
       programs = {
         home-manager.enable = true;
 

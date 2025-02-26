@@ -116,6 +116,9 @@ export const toSymbol = (v) => {
     '.': toKey('.'),
     '<': toKey(',', '⇧'),
     '>': toKey('.', '⇧'),
+    '~': toKey('`', '⇧'),
+    '"': toKey("'", '⇧'),
+    '|': toKey('\\', '⇧'),
   }
   return symbols[v] || toKey(v)
 }

@@ -55,6 +55,7 @@
         "cleanshot" # screen shots sorted
         "figma"
         "font-symbols-only-nerd-font" # Nerd Font with only symbols
+        "github@beta"
         "ghostty"
         "google-chrome" # Chrome
         "home-assistant" # Home Assistant

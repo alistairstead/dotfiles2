@@ -143,7 +143,7 @@
           AppleShowAllExtensions = true;
           AppleShowScrollBars = "Automatic";
           NSAutomaticWindowAnimationsEnabled = false;
-          _HIHideMenuBar = true;
+          _HIHideMenuBar = false;
           # Set to dark mode
           AppleInterfaceStyle = "Dark";
           # Don't change from dark to light automatically

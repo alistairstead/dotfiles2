@@ -1,6 +1,6 @@
 import { rule, map, writeToProfile } from 'karabiner.ts'
 // import { raycastLayer } from './layers/raycast'
-// import { yabaiLayer } from './layers/yabai'
+import { yabaiLayer } from './layers/yabai'
 // import { openLayer } from './layers/open'
 // import { emojiLayer } from './layers/emoji'
 // import { appsMapping } from './apps'
@@ -13,11 +13,11 @@ writeToProfile(
     rule('Caps Lock → Control || Escape').manipulators([
       map('caps_lock').to('left_control').toIfAlone('escape'),
     ]),
-    rule('Spacebar → Hyper || Space').manipulators([
-      map('spacebar')
-        .toIfHeldDown('left_command', ['⌥', '⌃', '⇧'])
-        .toIfAlone('spacebar'),
-    ]),
+    // rule('Spacebar → Hyper || Space').manipulators([
+    //   map('spacebar')
+    //     .toIfHeldDown('left_command', ['⌥', '⌃', '⇧'])
+    //     .toIfAlone('spacebar'),
+    // ]),
     // rule('Command → Space').manipulators([
     //   map({
     //     key_code: 'spacebar',
@@ -35,7 +35,7 @@ writeToProfile(
     // ...openLayer(),
     // ...emojiLayer(),
     // ...raycastLayer(),
-    // ...yabaiLayer(),
+    ...yabaiLayer(),
     // ...vimLayer(),
     // ...appsMapping(),
     ...homerow(),

@@ -14,11 +14,14 @@
     # Used for user packages and dotfiles
     home-manager = {
       url = "github:nix-community/home-manager/master";
-      inputs.nixpkgs.follows = "nixpkgs"; # Use system packages list for their inputs
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Catppuccino theme
-    catppuccin.url = "github:catppuccin/nix";
+    catppuccin = {
+      url = "github:catppuccin/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
@@ -28,11 +31,6 @@
       inputs.nixpkgs.follows = "nixpkgs"; # Use system packages list for their inputs
     };
 
-    # sketchybar config
-    sketchybar = {
-      url = "github:FelixKratz/dotfiles";
-      flake = false;
-    };
   };
 
   outputs = { self, nixpkgs, darwin, home-manager, ... }@inputs:
@@ -141,7 +139,7 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 backupFileExtension = "backup";
-                verbose = true;
+                verbose = false;
                 # makes all inputs available in imported files for hm
                 extraSpecialArgs = {
                   inherit inputs;
@@ -151,6 +149,9 @@
                 };
                 users.${user} = { ... }: {
                     home.stateVersion = "23.11";
+                    imports = [
+                      inputs.catppuccin.homeManagerModules.catppuccin
+                    ];
                   };
                 users.root = { ... }: {
                     home.stateVersion = "23.11";
@@ -166,7 +167,6 @@
               aws.enable = true;
               obsidian.enable = true;
               _1password.enable = true;
-              sketchybar.enable = true;
               slack.enable = true;
               wezterm.enable = false;
               ghostty.enable = true;

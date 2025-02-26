@@ -20,41 +20,41 @@ return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     optional = true,
-    opts = {
-      prompts = prompts,
-    },
-    keys = {
-      -- Code related commands
-      { "<leader>ae", "<cmd>CopilotChatExplain<cr>", desc = "Explain code" },
-      { "<leader>at", "<cmd>CopilotChatTests<cr>", desc = "Generate tests" },
-      { "<leader>ar", "<cmd>CopilotChatReview<cr>", desc = "Review code" },
-      { "<leader>aR", "<cmd>CopilotChatRefactor<cr>", desc = "Refactor code" },
-      { "<leader>an", "<cmd>CopilotChatBetterNamings<cr>", desc = "Better Naming" },
-      -- Custom input for CopilotChat
-      {
-        "<leader>ai",
-        function()
-          local input = vim.fn.input("Ask Copilot: ")
-          if input ~= "" then
-            vim.cmd("CopilotChat " .. input)
-          end
-        end,
-        desc = "Ask input",
-      },
-      -- Generate commit message based on the git diff
-      {
-        "<leader>aM",
-        "<cmd>CopilotChatCommit<cr>",
-        desc = "Generate commit message for all changes",
-      },
-      {
-        "<leader>am",
-        "<cmd>CopilotChatCommitStaged<cr>",
-        desc = "Generate commit message for staged changes",
-      },
-      -- Create documentation
-      { "<leader>ad", "<cmd>CopilotChatDocs<cr>", desc = "Draft documentation" },
-    },
+    -- opts = {
+    --   prompts = prompts,
+    -- },
+    -- keys = {
+    --   -- Code related commands
+    --   { "<leader>ae", "<cmd>CopilotChatExplain<cr>", desc = "Explain code" },
+    --   { "<leader>at", "<cmd>CopilotChatTests<cr>", desc = "Generate tests" },
+    --   { "<leader>ar", "<cmd>CopilotChatReview<cr>", desc = "Review code" },
+    --   { "<leader>aR", "<cmd>CopilotChatRefactor<cr>", desc = "Refactor code" },
+    --   { "<leader>an", "<cmd>CopilotChatBetterNamings<cr>", desc = "Better Naming" },
+    --   -- Custom input for CopilotChat
+    --   {
+    --     "<leader>ai",
+    --     function()
+    --       local input = vim.fn.input("Ask Copilot: ")
+    --       if input ~= "" then
+    --         vim.cmd("CopilotChat " .. input)
+    --       end
+    --     end,
+    --     desc = "Ask input",
+    --   },
+    --   -- Generate commit message based on the git diff
+    --   {
+    --     "<leader>aM",
+    --     "<cmd>CopilotChatCommit<cr>",
+    --     desc = "Generate commit message for all changes",
+    --   },
+    --   {
+    --     "<leader>am",
+    --     "<cmd>CopilotChatCommitStaged<cr>",
+    --     desc = "Generate commit message for staged changes",
+    --   },
+    --   -- Create documentation
+    --   { "<leader>ad", "<cmd>CopilotChatDocs<cr>", desc = "Draft documentation" },
+    -- },
     -- config = function(_, opts)
     --   local chat = require("CopilotChat")
     --   -- disable so we can use blink instead of cmp
