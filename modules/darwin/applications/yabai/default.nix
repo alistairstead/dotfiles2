@@ -15,7 +15,7 @@ in {
   };
   config = lib.mkIf (!config.ci.enable && config.gui.enable && config.yabai.enable) {
 
-    home-manager.users.${config.user} = { pkgs, lib, ... }: {
+    home-manager.users.${config.user} = { pkgs, ... }: {
       home.shellAliases = {
         restart-yabai = ''launchctl kickstart -k gui/"$(id -u)"/org.nixos.yabai'';
       };
