@@ -1,7 +1,6 @@
 { pkgs, lib , ... }: {
   config = lib.mkIf pkgs.stdenv.isDarwin {
-    services.nix-daemon.enable = true;
-
+    nix.enable = false;
     # This setting only applies to Darwin, different on NixOS
     nix.gc.interval = {
       Hour = 12;
@@ -15,8 +14,8 @@
       zsh
     ];
 
-    security.pam.enableSudoTouchIdAuth = true;
     security.pam.enablePamReattach = true;
+    security.pam.services.sudo_local.touchIdAuth = true;
 
     system = {
       startup = {

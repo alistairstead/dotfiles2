@@ -99,7 +99,6 @@
                 # Set automatic generation cleanup for home-manager
                 gc = {
                   automatic = false;
-                  user = user;
                   options = "--delete-older-than 30d";
                 };
 

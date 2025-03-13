@@ -17,6 +17,13 @@
         "/opt/homebrew/bin/" 
         "/opt/homebrew/opt/trash/bin/"
       ];
+
+      home.activation = {
+        linkMysqlClient = ''
+          run /opt/homebrew/bin/brew link --overwrite --force mysql-client@8.4
+        '';
+      };
+
     };
 
     environment = {
@@ -25,6 +32,7 @@
         HOMEBREW_NO_ANALYTICS = "1";
       };
     };
+
 
     homebrew = {
       enable = true;
@@ -45,6 +53,7 @@
         "trash" # Delete files and folders to trash instead of rm
         "mysql-client@8.4" # brew link --overwrite --force mysql-client@8.4
         "sqlite"
+        "xh"
         # "neovim"
       ];
       casks = [

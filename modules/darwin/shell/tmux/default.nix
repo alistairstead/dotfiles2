@@ -25,14 +25,14 @@ in
 
   config =
   let
-    isPamEnabled = (cfg.enableSudoTouchIdAuth || cfg.enablePamReattach);
+    isPamEnabled = (cfg.services.sudo_local.touchIdAuth || cfg.enablePamReattach);
   in
   {
     environment.etc."pam.d/sudo_local" = {
       enable = isPamEnabled;
       text = lib.strings.concatStringsSep "\n" [
         (lib.optionalString cfg.enablePamReattach "auth       optional       ${pkgs.pam-reattach}/lib/pam/pam_reattach.so")
-        (lib.optionalString cfg.enableSudoTouchIdAuth "auth       sufficient     pam_tid.so")
+        (lib.optionalString cfg.services.sudo_local.touchIdAuth "auth       sufficient     pam_tid.so")
       ];
     };
   };
