@@ -16,6 +16,7 @@
       };
 
       home.packages = with pkgs; [
+        diff-so-fancy
         lazydocker
         lazysql
         prettierd
