@@ -13,8 +13,8 @@ let
       src = pkgs.fetchFromGitHub {
         owner = "joshmedeski";
         repo = "tmux-nerd-font-window-name";
-        rev = "84284048ef123ae6234280f736bf7f358e40a9ad";
-        sha256 = "sha256-VX3GFoK1/uHo8UMz3vUkusi037dvgQyFVkBsjIhRCYU=";
+        rev = "3def0b9c57b16e2c2fe4ec55555f5698444e5cee";
+        sha256 = "sha256-NcRf4v7QxsWk8w4maWFVlSpq/d+QHrGqFpCw2NxZ/I8=";
       };
     };
 in
@@ -52,13 +52,6 @@ in
         set -g set-clipboard on      # use system clipboard
         set -g status-interval 3     # update the status bar every 3 seconds
         set -g status-position top   # macOS / darwin style
-
-        # set -g xterm-keys on
-        # set -g allow-passthrough on
-        # set -ga update-environment TERM
-        # set -ga update-environment TERM_PROGRAM
-
-        set -g status-left-length 100
 
         bind 'h' split-window -v -c "#{pane_current_path}"
         bind 'v' split-window -h -c "#{pane_current_path}"
@@ -113,14 +106,10 @@ in
         set -g pane-active-border-style 'fg=brightblack,bg=default'
         set -g pane-border-style 'fg=brightblack,bg=default'
 
-        # set -g status-bg default
-        # set -g status-style bg=default
-        set -g status-left "" # Add spaces to avoid window decorations
       '';
 
       plugins = with pkgs; [
         # tmuxPlugins.sensible
-        tmux-nerd-font-window-name
         tmuxPlugins.vim-tmux-navigator
         {
           plugin = tmuxPlugins.yank;
@@ -164,34 +153,39 @@ in
           plugin = tmuxPlugins.catppuccin;
           extraConfig = ''
             # Catppuccino theme config
-            set -g @catppuccin_flavor "mocha"
-            set -g @catppuccin_window_default_fill "number"
-            set -g @catppuccin_window_default_text "e "
-            set -g @catppuccin_window_left_separator "█"
-            set -g @catppuccin_window_right_separator "█ "
-            set -g @catppuccin_window_middle_separator "█ "
-            set -g @catppuccin_window_current_fill "number"
-            set -g @catppuccin_window_status "icon"
-            set -g @catppuccin_icon_window_last "null"
-            set -g @catppuccin_icon_window_current "null"
-            set -g @catppuccin_icon_window_zoom ""
-            set -g @catppuccin_icon_window_mark "null"
-            set -g @catppuccin_icon_window_silent "null"
-            set -g @catppuccin_icon_window_activity "󰖲"
-            set -g @catppuccin_icon_window_bell "󰂞"
-            set -g @catppuccin_status_modules_right "application session"
-            set -g @catppuccin_status_right_separator "█"
-            set -g @catppuccin_status_left_separator "null"
-            set -g @catppuccin_status_right_separator_inverse "no"
-            set -g @catppuccin_status_connect_separator "no"
-            set -g @catppuccin_status_fill "icon"
-            set -g @catppuccin_status_connect_separator "no"
-            set -g @catppuccin_date_time_text "%H:%M"
-            set -g @catppuccin_date_time_icon "null"
-            set -g @catppuccin_session_icon "null"
-            set -g @catppuccin_application_icon "null"
+
+            set -ogq @catppuccin_flavor "mocha"
+            set -ogq @catppuccin_window_status_style "basic"
+            set -ogq @catppuccin_icon_window_last "null"
+            set -ogq @catppuccin_icon_window_current "null"
+            set -ogq @catppuccin_icon_window_zoom ""
+            set -ogq @catppuccin_icon_window_mark "null"
+            set -ogq @catppuccin_icon_window_silent "null"
+            set -ogq @catppuccin_icon_window_activity "󰖲"
+            set -ogq @catppuccin_icon_window_bell "󰂞"
+
+            set -ogq @catppuccin_status_left_separator "█"
+            set -ogq @catppuccin_status_middle_separator ""
+            set -ogq @catppuccin_status_right_separator "█"
+            set -ogq @catppuccin_status_connect_separator "no" # yes, no
+            set -ogq @catppuccin_status_fill "icon"
+            set -ogq @catppuccin_status_module_bg_color "#{@thm_surface_0}"
+            set -ogq @catppuccin_date_time_text "%H:%M"
+            set -ogq @catppuccin_date_time_icon ""
+            set -ogq @catppuccin_session_icon ""
+            set -ogq @catppuccin_application_icon ""
+
+            set -g status-right-length 100
+            set -g status-left-length 100
+            set -g status-left ""
+            set -g status-right "#{E:@catppuccin_status_session}"
+
+            set -g @catppuccin_window_default_text "  #W"
+            set -g @catppuccin_window_current_text "  #W"
+            set -g @catppuccin_window_text "  #W"
           '';
         }
+        tmux-nerd-font-window-name
       ];
 
     };
