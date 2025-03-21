@@ -60,8 +60,7 @@
       # Common overlays to always use
       overlays = [
         inputs.neovim-nightly-overlay.overlays.default
-        (import ./overlays/granted.nix)
-        (import ./overlays/tmux.nix inputs)
+        # (import ./overlays/tmux.nix inputs)
       ];
       system = "aarch64-darwin";
     in {
