@@ -1,21 +1,30 @@
 #!/bin/bash
+
 set -e # Exit on error
 
-# Customize the following:
-containerName=${APP_SERVICE:-"php"}                 # Default if not set
-xdbugArgs=${XDEBUG_CONFIG:-""}                      # Default if not set
+# Determine if stdout is a terminal...
+if test -t 1; then
+  # Determine if colors are supported...
+  ncolors=$(tput colors)
+
+  if test -n "$ncolors" && test "$ncolors" -ge 8; then
+    BOLD="$(tput bold)"
+    RED="$(tput setaf 1)"
+    YELLOW="$(tput setaf 3)"
+    GREEN="$(tput setaf 2)"
+    NC="$(tput sgr0)"
+  fi
+fi
+
+ARGS=("$@")
+containerName=${APP_SERVICE:-"app-test"}            # Default if not set
 composeFile=${COMPOSE_FILE:-"compose.yml"}          # Default compose file
 composeService=${COMPOSE_SERVICE:-"$containerName"} # Default to container name
 autoShutdown=${AUTO_SHUTDOWN:-"true"}               # Whether to shut down container after tests
 
 # detect local path and remove from args
-localPhpUnitResultPath='/tmp/phpunit-result.xml'
-argsInput="$*"
-runFile=$(echo "$argsInput" | awk '{print $1}')
-phpTestPath=$(dirname "$runFile")
-pushd "$phpTestPath" >/dev/null || exit
 projectPath="$(git rev-parse --show-toplevel)"
-popd >/dev/null || exit
+localPhpUnitResultPath="$projectPath/phpunit-result.xml"
 
 # Find compose file if not explicitly set
 if [ ! -f "$composeFile" ] && [ -f "$projectPath/docker-compose.yml" ]; then
@@ -28,7 +37,7 @@ subPath=$(awk -F '/vendor/' '{print $1}' <<<"$projectPath")
 
 ## detect test result output
 outputPath=""
-for i in $argsInput; do
+for i in "${ARGS[@]}"; do
   case $i in
   --log-junit=*)
     outputPath="${i#*=}"
@@ -37,14 +46,27 @@ for i in $argsInput; do
   esac
 done
 
+# Filter out the --log-junit parameter
+filtereCommand=()
+for arg in "${ARGS[@]}"; do
+  if [[ ! "$arg" =~ ^--log-junit= ]]; then
+    filtereCommand+=("$arg")
+  fi
+done
+
+command="${filtereCommand[*]}"
+
 # If no output path specified, use a default
 if [ -z "$outputPath" ]; then
-  outputPath="$projectPath/phpunit-result.xml"
+  outputPath="$localPhpUnitResultPath"
 fi
 
 # replace with local paths
-args="${argsInput/$subPath\//}"
-args="${args//(*/}"
+command="${command/$subPath\//}"
+command="${command//(*/}"
+# Replace dphpunit with ./vendor/bin/phpunit, including when it has a path prefix
+command=$(echo "$command" | sed -E 's|(/[^[:space:]"'\'']*/)?(dphpunit)|./vendor/bin/phpunit|g')
+command="./vendor/bin/phpunit ${command} --log-junit=${localPhpUnitResultPath}"
 
 # Check if container is running
 container=$(docker ps --filter "name=${containerName}" --format="{{.ID}}")
@@ -64,7 +86,7 @@ if [ -z "$container" ]; then
   pushd "$composeDir" >/dev/null || exit
 
   # Start the container
-  docker-compose -f "$(basename "$composeFile")" up -d "$composeService"
+  docker compose -f "$(basename "$composeFile")" up --scale "$composeService"=1 -d "$composeService"
 
   # Mark that we started the container
   containerStarted=true
@@ -82,35 +104,41 @@ if [ -z "$container" ]; then
 
   # Give container a moment to fully initialize
   echo "Waiting for container to initialize..."
-  sleep 3
+  for i in {1..5}; do
+    if docker exec "$container" "$execPath" -c "echo 'ready'" >/dev/null 2>&1; then
+      break
+    fi
+    sleep 1
+  done
+  clear
 fi
 
 # Get shell and working directory
 execPath=$(docker exec "$container" /bin/bash -c "if [ -f /bin/bash ]; then echo /bin/bash; else echo /bin/sh; fi" | tr -d '\r')
 dockerPath=$(docker inspect --format "{{.Config.WorkingDir}}" "$container")
 
-cmd="XDEBUG_MODE=debug XDEBUG_CONFIG=\"$xdbugArgs\" vendor/bin/phpunit"
-
 ## debug
-if [ "$PHPUNIT_DEBUG" = "true" ]; then
-  echo "Raw ARGS: $*"
-  echo "Params:   $args"
-  echo "Docker:   $dockerPath"
-  echo "Local:    $projectPath"
-  echo "Result:   $outputPath"
-  echo "Command:  docker exec $container $execPath -c \"$cmd $args --log-junit=${localPhpUnitResultPath}\""
-fi
+echo "🐳 Using container: $containerName"
+echo "📄 Compose file: $composeFile"
+echo "🔧 Service: $composeService"
+echo "   Local:    $projectPath"
+echo "   Result:   $outputPath"
+echo "   OutPath:  $outputPath"
+echo "  Args: $*"
+echo "🚀 Executing in container: $command"
 
 # Run the tests
-echo "Running PHPUnit tests..."
 testExitCode=0
-docker exec "$container" "$execPath" -c "$cmd $args --log-junit=${localPhpUnitResultPath}" || testExitCode=$?
+docker exec "$container" "$execPath" -c "$command" || testExitCode=$?
 
 # copy results
-echo "Copying test results..."
-docker cp "$container:$localPhpUnitResultPath" "$outputPath" || {
-  echo "Warning: Failed to copy test results from container" >&2
-}
+if output=$(docker cp "$container:$localPhpUnitResultPath" "$outputPath" 2>&1); then
+  echo -e "${GREEN}Successfully copied test results from container${NC}"
+  echo -e "${GREEN}$output${NC}"
+else
+  echo -e "${RED}Warning: Failed to copy test results from container${NC}" >&2
+  echo -e "${RED}$output${NC}" >&2
+fi
 
 # replace docker path to locals in results file
 if [ -f "$outputPath" ]; then
