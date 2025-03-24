@@ -91,18 +91,15 @@ return {
       table.insert(
         opts.adapters,
         require("neotest-phpunit")({
-          phpunit_cmd = function()
-            local config_path = vim.fn.stdpath("config")
-            return config_path .. "/../bin/dphpunit"
-          end,
+          phpunit_cmd = "/etc/profiles/per-user/alistairstead/bin/dphpunit",
           root_files = { "composer.json", "phpunit.xml" },
           filter_dirs = { ".git", "node_modules" },
+          type = "executable",
           env = {
-            XDEBUG_CONFIG = "idekey=neotest",
-            DEBUG = "true",
-            CONTAINER = "app",
+            PHPUNIT_DEBUG = "false",
+            APP_SERVICE = "app",
           },
-          dap = require("dap").configurations.php[1],
+          dap = require("dap").configurations.php[2],
         })
       )
     end,
@@ -128,22 +125,29 @@ return {
         if not dap.configurations[language] then
           dap.configurations[language] = {
             {
+              log = true,
               type = "php",
               request = "launch",
-              name = "Local",
+              name = "Listen for XDebug",
               port = 9003,
+              pathMappings = {
+                ["/var/www/html"] = "${workspaceFolder}",
+              },
             },
             {
               type = "php",
               request = "launch",
-              name = "Remote Docker",
+              name = "Run test on Docker",
               port = 9003,
-              phpunit_cmd = "dphpunit",
-              php = "",
-              env = {
-                XDEBUG_CONFIG = "idekey=neotest",
-                CONTAINER = "broadbandgenie-website-app-1",
-              },
+              log = true,
+              -- hostname = "0.0.0.0",
+              -- proxy = {
+              --   enable = true,
+              --   host = "app.bbg-website.orb.local",
+              --   port = 9001,
+              --   key = "neotest",
+              -- },
+              runtimeExecutable = "/etc/profiles/per-user/alistairstead/bin/dphp",
               pathMappings = {
                 ["/var/www/html"] = "${workspaceFolder}",
               },

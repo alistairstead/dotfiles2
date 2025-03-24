@@ -1,0 +1,98 @@
+#!/bin/bash
+set -eo pipefail # Exit on error, pipe failures
+
+# Script to run commands in a Docker container, starting it if needed
+# Usage: ./script.sh [php_command_and_args]
+
+# Customize the following:
+argsInput="$*"
+export XDEBUG_CONFIG=${XDEBUG_CONFIG:-"client_host=host.docker.internal"} # Default if not set
+containerName=${APP_SERVICE:-"app"}                                       # Container name to use
+composeFile=${COMPOSE_FILE:-"compose.yml"}                                # Docker compose file path
+composeService=${COMPOSE_SERVICE:-"$containerName"}                       # Service name in compose file
+command=${@:-"php -v"}                                                    # Default command to run
+projectPath="$(git rev-parse --show-toplevel)"
+
+subPath=$(awk -F '/vendor/' '{print $1}' <<<"$projectPath")
+
+# replace with local paths
+command="${command/$subPath\//}"
+command="${command//(*/}"
+# Replace dphpunit with ./vendor/bin/phpunit, including when it has a path prefix
+command=$(echo "$command" | sed -E 's|(/[^[:space:]"'\'']*/)?(dphpunit)|./vendor/bin/phpunit|g')
+command="php ${command}"
+
+# Display configuration
+echo "🐳 Using container: $containerName"
+echo "📄 Compose file: $composeFile"
+echo "🔧 Service: $composeService"
+echo "  Args: $argsInput"
+
+# Check if container is running
+container=$(docker ps --filter "name=${containerName}" --format="{{.ID}}" 2>/dev/null || echo "")
+
+# Start container if not running
+containerStarted=false
+if [ -z "$container" ]; then
+  echo "📦 Container '$containerName' not running. Starting with Docker Compose..."
+
+  if [ ! -f "$composeFile" ]; then
+    echo "❌ Error: Docker Compose file not found at $composeFile" >&2
+    exit 1
+  fi
+
+  # Navigate to the directory containing the compose file
+  composeDir=$(dirname "$composeFile")
+  pushd "$composeDir" >/dev/null || exit
+
+  # Try modern docker compose first, fall back to legacy docker-compose
+  if command -v docker >/dev/null && docker compose version >/dev/null 2>&1; then
+    docker compose -f "$(basename "$composeFile")" up -d "$composeService"
+  else
+    docker-compose -f "$(basename "$composeFile")" up -d "$composeService"
+  fi
+
+  # Mark that we started the container
+  containerStarted=true
+
+  # Return to original directory
+  popd >/dev/null || exit
+
+  # Get the container ID now that it's running
+  container=$(docker ps --filter "name=${containerName}" --format="{{.ID}}" 2>/dev/null || echo "")
+
+  if [ -z "$container" ]; then
+    echo "❌ Error: Failed to start container '$containerName'" >&2
+    exit 1
+  fi
+
+  # Give container a moment to fully initialize
+  echo "⏳ Waiting for container to initialize..."
+  sleep 3
+fi
+
+# Get shell in container
+execPath=$(docker exec "$container" /bin/bash -c "if [ -f /bin/bash ]; then echo /bin/bash; else echo /bin/sh; fi" 2>/dev/null | tr -d '\r')
+
+echo "🚀 Executing in container: $command"
+
+# Execute the command with interactive terminal
+docker exec -i -e XDEBUG_TRIGGER=1 -e XDEBUG_CONFIG "$container" "$execPath" -c "$command"
+
+# Optionally stop the container if we started it
+if [ "$containerStarted" = true ] && [ "${KEEP_RUNNING:-false}" != "true" ]; then
+  echo "🛑 Stopping container we started..."
+
+  composeDir=$(dirname "$composeFile")
+  pushd "$composeDir" >/dev/null || exit
+
+  if command -v docker >/dev/null && docker compose version >/dev/null 2>&1; then
+    docker compose -f "$(basename "$composeFile")" stop "$composeService"
+  else
+    docker-compose -f "$(basename "$composeFile")" stop "$composeService"
+  fi
+
+  popd >/dev/null || exit
+fi
+
+echo "✅ Done"
