@@ -97,7 +97,7 @@ return {
           type = "executable",
           env = {
             PHPUNIT_DEBUG = "false",
-            APP_SERVICE = "app",
+            APP_SERVICE = "app-test",
           },
           dap = require("dap").configurations.php[2],
         })

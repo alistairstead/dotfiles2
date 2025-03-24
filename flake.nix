@@ -158,7 +158,7 @@
             }
             {
               gui.enable = true;
-              # charm.enable = true;
+              charm.enable = true;
               neovim.enable = true;
               discord.enable = true;
               dotfiles.enable = true;

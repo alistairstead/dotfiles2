@@ -30,8 +30,8 @@ else
 fi
 
 # Define environment variables...
-export APP_SERVICE=${APP_SERVICE:-"php"}
-export XDEBUG_CONFIG=${XDEBUG_CONFIG:-""} # Default if not set
+export APP_SERVICE=${APP_SERVICE:-"app-test"}
+export XDEBUG_CONFIG=${XDEBUG_CONFIG:-"client_host=host.docker.internal filter_exclude_path=vendor/"} # Default if not set
 
 DOCKER_COMPOSE=(docker compose)
 

@@ -3,7 +3,7 @@
     ./zsh
     ./bash
     ./fish
-    # ./charm.nix
+    ./charm.nix
     ./direnv.nix
     ./editorconfig.nix
     ./eza.nix

@@ -1,24 +1,30 @@
 #!/bin/bash
-set -eo pipefail # Exit on error, pipe failures
 
-# Script to run commands in a Docker container, starting it if needed
-# Usage: ./script.sh [php_command_and_args]
+set -e # Exit on error
 
-# Customize the following:
-argsInput="$*"
 export XDEBUG_CONFIG=${XDEBUG_CONFIG:-"client_host=host.docker.internal filter_exclude_path=vendor/"} # Default if not set
-containerName=${APP_SERVICE:-"app"}                                                                   # Container name to use
-composeFile=${COMPOSE_FILE:-"compose.yml"}                                                            # Docker compose file path
-composeService=${COMPOSE_SERVICE:-"$containerName"}                                                   # Service name in compose file
-command=${@:-"php -v"}                                                                                # Default command to run
-projectPath="$(git rev-parse --show-toplevel)"
 
-localPhpUnitResultPath='/tmp/phpunit-result.xml'
+ARGS=("$@")
+containerName=${APP_SERVICE:-"app-test"}            # Container name to use
+composeFile=${COMPOSE_FILE:-"compose.yml"}          # Docker compose file path
+composeService=${COMPOSE_SERVICE:-"$containerName"} # Service name in compose file
+autoShutdown=${AUTO_SHUTDOWN:-"true"}               # Whether to shut down container after tests
+
+projectPath="$(git rev-parse --show-toplevel)"
+localPhpUnitResultPath="$projectPath/phpunit-result.xml"
+
+# Find compose file if not explicitly set
+if [ ! -f "$composeFile" ] && [ -f "$projectPath/docker-compose.yml" ]; then
+  composeFile="$projectPath/docker-compose.yml"
+elif [ ! -f "$composeFile" ] && [ -f "$projectPath/compose.yml" ]; then
+  composeFile="$projectPath/compose.yml"
+fi
+
 subPath=$(awk -F '/vendor/' '{print $1}' <<<"$projectPath")
 
 ## detect test result output
 outputPath=""
-for i in $argsInput; do
+for i in "${ARGS[@]}"; do
   case $i in
   --log-junit=*)
     outputPath="${i#*=}"
@@ -27,9 +33,19 @@ for i in $argsInput; do
   esac
 done
 
+# Filter out the --log-junit parameter
+filtereCommand=()
+for arg in "${ARGS[@]}"; do
+  if [[ ! "$arg" =~ ^--log-junit= ]]; then
+    filtereCommand+=("$arg")
+  fi
+done
+
+command="${filtereCommand[*]}"
+
 # If no output path specified, use a default
 if [ -z "$outputPath" ]; then
-  outputPath="$projectPath/phpunit-result.xml"
+  outputPath="$localPhpUnitResultPath"
 fi
 
 # replace with local paths
@@ -37,13 +53,7 @@ command="${command/$subPath\//}"
 command="${command//(*/}"
 # Replace dphpunit with ./vendor/bin/phpunit, including when it has a path prefix
 command=$(echo "$command" | sed -E 's|(/[^[:space:]"'\'']*/)?(dphpunit)|./vendor/bin/phpunit|g')
-command="php ${command}"
-
-# Display configuration
-echo "🐳 Using container: $containerName"
-echo "📄 Compose file: $composeFile"
-echo "🔧 Service: $composeService"
-echo "  Args: $argsInput"
+command="php ${command} --log-junit=${localPhpUnitResultPath}"
 
 # Check if container is running
 container=$(docker ps --filter "name=${containerName}" --format="{{.ID}}" 2>/dev/null || echo "")
@@ -51,89 +61,79 @@ container=$(docker ps --filter "name=${containerName}" --format="{{.ID}}" 2>/dev
 # Start container if not running
 containerStarted=false
 if [ -z "$container" ]; then
-  echo "📦 Container '$containerName' not running. Starting with Docker Compose..."
+  gum log --level info "Container '$containerName' not running. Starting with Docker Compose..."
 
   if [ ! -f "$composeFile" ]; then
-    echo "❌ Error: Docker Compose file not found at $composeFile" >&2
+    gum log --level fatal "Docker Compose file not found at $composeFile"
     exit 1
   fi
 
   # Navigate to the directory containing the compose file
   composeDir=$(dirname "$composeFile")
   pushd "$composeDir" >/dev/null || exit
-
-  # Try modern docker compose first, fall back to legacy docker-compose
-  if command -v docker >/dev/null && docker compose version >/dev/null 2>&1; then
-    docker compose -f "$(basename "$composeFile")" up -d "$composeService"
-  else
-    docker-compose -f "$(basename "$composeFile")" up -d "$composeService"
-  fi
-
-  # Mark that we started the container
-  containerStarted=true
-
-  # Return to original directory
+  # Start the container
+  gum spin --spinner dot --title "Starting container..." -- \
+    docker compose -f "$(basename "$composeFile")" up --scale "$composeService"=1 -d "$composeService"
   popd >/dev/null || exit
 
   # Get the container ID now that it's running
-  container=$(docker ps --filter "name=${containerName}" --format="{{.ID}}" 2>/dev/null || echo "")
+  container=$(docker ps --filter "name=${containerName}" --format="{{.ID}}")
 
   if [ -z "$container" ]; then
-    echo "❌ Error: Failed to start container '$containerName'" >&2
+    gum log --level fatal "Failed to start container '$containerName'"
     exit 1
+  else
+    containerStarted=true
   fi
-
-  # Give container a moment to fully initialize
-  echo "⏳ Waiting for container to initialize..."
-  sleep 3
+  clear
 fi
 
 # Get shell in container
 execPath=$(docker exec "$container" /bin/bash -c "if [ -f /bin/bash ]; then echo /bin/bash; else echo /bin/sh; fi" 2>/dev/null | tr -d '\r')
 dockerPath=$(docker inspect --format "{{.Config.WorkingDir}}" "$container")
 
-echo "🚀 Executing in container: $command"
+# Display configuration
+# echo "🐳 Using container: $containerName"
+# echo "📄 Compose file: $composeFile"
+# echo "🔧 Service: $composeService"
+# echo "   Local:    $projectPath"
+# echo "   Result:   $outputPath"
+# echo "  Args: $*"
+# echo "🚀 Executing in container: $command"
 
 # Execute the command with interactive terminal
 testExitCode=0
-docker exec -i -e XDEBUG_TRIGGER=1 -e XDEBUG_CONFIG "$container" "$execPath" -c "$command  --log-junit=${localPhpUnitResultPath}" || testExitCode=$?
+docker exec -i -e XDEBUG_TRIGGER=1 -e XDEBUG_CONFIG "$container" "$execPath" -c "$command" || testExitCode=$?
 
 # copy results
-echo "Copying test results..."
-docker cp "$container:$localPhpUnitResultPath" "$outputPath" || {
-  echo "Warning: Failed to copy test results from container" >&2
-}
+if output=$(docker cp "$container:$localPhpUnitResultPath" "$outputPath" 2>&1); then
+  gum log --level info "Success: copied test results from container"
+else
+  gum log --level warn --structured "Failed to copy test results from container." output "$output"
+fi
 
 # replace docker path to locals in results file
 if [ -f "$outputPath" ]; then
-  sed -i "s#$dockerPath#$projectPath#g" "$outputPath"
+  # Count replacements (GNU sed specific)
+  replacements=$(sed -i "s#$dockerPath#$projectPath#g" "$outputPath" 2>/dev/null || echo "ERROR")
+
+  if [ "$replacements" != "ERROR" ]; then
+    gum log --level info --structured "Path replacement completed in '$outputPath'" from "$dockerPath" to "$projectPath"
+  else
+    gum log --level error "Failed to replace paths in '$outputPath'"
+  fi
 else
-  echo "Warning: Output file '$outputPath' not found" >&2
+  gum log --level warn "Output file '$outputPath' not found"
 fi
 
 # Shut down container if we started it and auto-shutdown is enabled
 if [ "$containerStarted" = true ] && [ "$autoShutdown" = "true" ]; then
-  echo "Shutting down container..."
   composeDir=$(dirname "$composeFile")
   pushd "$composeDir" >/dev/null || exit
-  docker-compose -f "$(basename "$composeFile")" down "$composeService"
+  gum spin --spinner dot --title "Shutting down container..." -- \
+    docker-compose -f "$(basename "$composeFile")" down "$composeService"
   popd >/dev/null || exit
-fi
-
-# Optionally stop the container if we started it
-if [ "$containerStarted" = true ] && [ "${KEEP_RUNNING:-false}" != "true" ]; then
-  echo "🛑 Stopping container we started..."
-
-  composeDir=$(dirname "$composeFile")
-  pushd "$composeDir" >/dev/null || exit
-
-  if command -v docker >/dev/null && docker compose version >/dev/null 2>&1; then
-    docker compose -f "$(basename "$composeFile")" stop "$composeService"
-  else
-    docker-compose -f "$(basename "$composeFile")" stop "$composeService"
-  fi
-
-  popd >/dev/null || exit
+  clear
 fi
 
 # Exit with the test exit code
