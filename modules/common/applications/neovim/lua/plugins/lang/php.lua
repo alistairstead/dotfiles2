@@ -125,7 +125,7 @@ return {
         if not dap.configurations[language] then
           dap.configurations[language] = {
             {
-              log = true,
+              -- log = true,
               type = "php",
               request = "launch",
               name = "Listen for XDebug",
@@ -139,7 +139,7 @@ return {
               request = "launch",
               name = "Run test on Docker",
               port = 9003,
-              log = true,
+              -- log = true,
               -- hostname = "0.0.0.0",
               -- proxy = {
               --   enable = true,

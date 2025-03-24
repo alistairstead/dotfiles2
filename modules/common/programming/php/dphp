@@ -6,14 +6,31 @@ set -eo pipefail # Exit on error, pipe failures
 
 # Customize the following:
 argsInput="$*"
-export XDEBUG_CONFIG=${XDEBUG_CONFIG:-"client_host=host.docker.internal"} # Default if not set
-containerName=${APP_SERVICE:-"app"}                                       # Container name to use
-composeFile=${COMPOSE_FILE:-"compose.yml"}                                # Docker compose file path
-composeService=${COMPOSE_SERVICE:-"$containerName"}                       # Service name in compose file
-command=${@:-"php -v"}                                                    # Default command to run
+export XDEBUG_CONFIG=${XDEBUG_CONFIG:-"client_host=host.docker.internal filter_exclude_path=vendor/"} # Default if not set
+containerName=${APP_SERVICE:-"app"}                                                                   # Container name to use
+composeFile=${COMPOSE_FILE:-"compose.yml"}                                                            # Docker compose file path
+composeService=${COMPOSE_SERVICE:-"$containerName"}                                                   # Service name in compose file
+command=${@:-"php -v"}                                                                                # Default command to run
 projectPath="$(git rev-parse --show-toplevel)"
 
+localPhpUnitResultPath='/tmp/phpunit-result.xml'
 subPath=$(awk -F '/vendor/' '{print $1}' <<<"$projectPath")
+
+## detect test result output
+outputPath=""
+for i in $argsInput; do
+  case $i in
+  --log-junit=*)
+    outputPath="${i#*=}"
+    ;;
+  *) ;;
+  esac
+done
+
+# If no output path specified, use a default
+if [ -z "$outputPath" ]; then
+  outputPath="$projectPath/phpunit-result.xml"
+fi
 
 # replace with local paths
 command="${command/$subPath\//}"
@@ -73,11 +90,35 @@ fi
 
 # Get shell in container
 execPath=$(docker exec "$container" /bin/bash -c "if [ -f /bin/bash ]; then echo /bin/bash; else echo /bin/sh; fi" 2>/dev/null | tr -d '\r')
+dockerPath=$(docker inspect --format "{{.Config.WorkingDir}}" "$container")
 
 echo "🚀 Executing in container: $command"
 
 # Execute the command with interactive terminal
-docker exec -i -e XDEBUG_TRIGGER=1 -e XDEBUG_CONFIG "$container" "$execPath" -c "$command"
+testExitCode=0
+docker exec -i -e XDEBUG_TRIGGER=1 -e XDEBUG_CONFIG "$container" "$execPath" -c "$command  --log-junit=${localPhpUnitResultPath}" || testExitCode=$?
+
+# copy results
+echo "Copying test results..."
+docker cp "$container:$localPhpUnitResultPath" "$outputPath" || {
+  echo "Warning: Failed to copy test results from container" >&2
+}
+
+# replace docker path to locals in results file
+if [ -f "$outputPath" ]; then
+  sed -i "s#$dockerPath#$projectPath#g" "$outputPath"
+else
+  echo "Warning: Output file '$outputPath' not found" >&2
+fi
+
+# Shut down container if we started it and auto-shutdown is enabled
+if [ "$containerStarted" = true ] && [ "$autoShutdown" = "true" ]; then
+  echo "Shutting down container..."
+  composeDir=$(dirname "$composeFile")
+  pushd "$composeDir" >/dev/null || exit
+  docker-compose -f "$(basename "$composeFile")" down "$composeService"
+  popd >/dev/null || exit
+fi
 
 # Optionally stop the container if we started it
 if [ "$containerStarted" = true ] && [ "${KEEP_RUNNING:-false}" != "true" ]; then
@@ -95,4 +136,5 @@ if [ "$containerStarted" = true ] && [ "${KEEP_RUNNING:-false}" != "true" ]; the
   popd >/dev/null || exit
 fi
 
-echo "✅ Done"
+# Exit with the test exit code
+exit $testExitCode
