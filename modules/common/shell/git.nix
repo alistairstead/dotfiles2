@@ -30,6 +30,9 @@
 
             undo = "reset --soft HEAD^";
           };
+          core = {
+            ignoreCase = false;
+          };
           interactive = {
             difffilter = "delta --color-only";
           };
@@ -94,7 +97,6 @@
           # Files that might appear on external disk
           ".Spotlight-V100"
           ".Trashes"
-          "tags"
           "vendor-tags"
           "_ide_helper.php"
           ".lvimrc"
