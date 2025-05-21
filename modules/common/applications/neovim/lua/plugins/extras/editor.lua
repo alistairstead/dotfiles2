@@ -71,4 +71,8 @@ return {
     end,
   },
   { "editorconfig/editorconfig-vim" },
+  {
+    "kevinhwang91/nvim-bqf", -- Better quickfix window,
+    ft = "qf",
+  },
 }

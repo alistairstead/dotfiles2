@@ -29,4 +29,31 @@ return {
     },
     opts = { use_default_keymaps = false, max_join_length = 150 },
   },
+  {
+    "kevinhwang91/nvim-ufo", -- Better folds in Neovim
+    dependencies = "kevinhwang91/promise-async",
+    keys = {
+      {
+        "zR",
+        function()
+          require("ufo").openAllFolds()
+        end,
+        desc = "Open all folds",
+      },
+      {
+        "zM",
+        function()
+          require("ufo").closeAllFolds()
+        end,
+        desc = "Close all folds",
+      },
+    },
+  },
+  {
+    "lukas-reineke/virt-column.nvim", -- Use characters in the color column
+    opts = {
+      char = "│",
+      highlight = "VirtColumn",
+    },
+  },
 }
