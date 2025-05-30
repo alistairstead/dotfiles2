@@ -11,12 +11,16 @@
     home-manager.users.${config.user} = {
       home.packages = with pkgs; [
         go
-        cargo
+        vectorcode
+        pipx
         (lua5_1.withPackages(ps: with ps; [
           luarocks 
           luajit
         ]))
         viu
+        stylua
+        ripgrep
+        nil
       ];
 
       programs.ripgrep = {
@@ -24,13 +28,6 @@
       };
       programs.neovim = {
         enable = true;
-        extraPackages = with pkgs; [
-          # LazyVim
-          stylua
-          ripgrep
-          nil
-        ];
-
 
         plugins = with pkgs.vimPlugins; [
           {

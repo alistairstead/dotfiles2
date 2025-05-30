@@ -11,6 +11,13 @@
         shellAliases = config.home-manager.users.${config.user}.programs.fish.shellAliases;
         initExtra = "";
         profileExtra = "";
+        history = {
+          save = 10000;
+          append = true;
+          expireDuplicatesFirst = true;
+          ignoreDups = true;
+          ignoreSpace = true;
+        };
       };
 
       programs.starship.enableZshIntegration = true;

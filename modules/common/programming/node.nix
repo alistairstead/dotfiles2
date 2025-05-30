@@ -9,6 +9,16 @@
         nodejs
         corepack
         deno
+        bun
+      ];
+      home.sessionVariables = {
+        NPM_CONFIG_PREFIX = "$HOME/.npm-global";
+      };
+
+      home.file.".npmrc".text = "prefix=${config.homePath}/.npm-global";
+
+      home.sessionPath = [
+        "$HOME/.npm-global/bin"
       ];
     };
   };

@@ -1,4 +1,4 @@
-{ pkgs, lib , ... }: {
+{ config, pkgs, lib , ... }: {
   config = lib.mkIf pkgs.stdenv.isDarwin {
     nix.enable = false;
     # This setting only applies to Darwin, different on NixOS
@@ -16,7 +16,7 @@
 
     security.pam.enablePamReattach = true;
     security.pam.services.sudo_local.touchIdAuth = true;
-
+    system.primaryUser = "alistairstead";
     system = {
       startup = {
         chime = false;

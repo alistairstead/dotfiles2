@@ -148,7 +148,7 @@
                 users.${user} = { ... }: {
                     home.stateVersion = "23.11";
                     imports = [
-                      inputs.catppuccin.homeManagerModules.catppuccin
+                      inputs.catppuccin.homeModules.catppuccin
                     ];
                   };
                 users.root = { ... }: {
@@ -177,6 +177,7 @@
               aerospace.enable = false;
               yabai.enable = true;
               terraform.enable = true;
+              granted.enable = true;
             }
             (globals)
             ./modules/common

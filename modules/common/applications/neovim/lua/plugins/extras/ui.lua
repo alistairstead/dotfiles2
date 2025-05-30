@@ -22,6 +22,15 @@ return {
     },
   },
   {
+    "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
+    opts = function(_, opts)
+      opts.options = opts.options or {}
+      opts.options.component_separators = { left = "｜", right = "｜" }
+      opts.options.section_separators = { left = "", right = "" }
+    end,
+  },
+  {
     "nvim-neo-tree/neo-tree.nvim",
     dependencies = {
       {
@@ -103,6 +112,13 @@ return {
           },
         },
       },
+    },
+  },
+  {
+    "lukas-reineke/virt-column.nvim", -- Use characters in the color column
+    opts = {
+      char = "┊",
+      highlight = "VirtColumn",
     },
   },
   {

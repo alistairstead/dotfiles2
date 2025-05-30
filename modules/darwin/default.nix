@@ -3,6 +3,7 @@
     ./applications
     ./fish.nix
     ./fonts.nix
+    ./granted.nix
     # ./hammerspoon.nix
     ./homebrew.nix
     ./networking.nix

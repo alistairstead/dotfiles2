@@ -51,17 +51,22 @@ in
         set -g renumber-windows on   # renumber all windows when any window is closed
         set -g set-clipboard on      # use system clipboard
         set -g status-interval 3     # update the status bar every 3 seconds
-        set -g status-position top   # macOS / darwin style
+        set -g status-position bottom
 
-        bind 'h' split-window -v -c "#{pane_current_path}"
-        bind 'v' split-window -h -c "#{pane_current_path}"
-        bind '"' split-window -v -c "#{pane_current_path}"
-        bind '%' split-window -h -c "#{pane_current_path}"
-        bind c new-window -c '#{pane_current_path}'
+        bind 'h' split-window -v -e -F -c "#{pane_current_path}"
+        bind 'v' split-window -h -e -F -c "#{pane_current_path}"
+        bind '"' split-window -v -e -F  -c "#{pane_current_path}"
+        bind '%' split-window -h -e -F -c "#{pane_current_path}"
+        bind c new-window -e -F -c '#{pane_current_path}'
 
+        bind -N "⌘+l last-session (via sesh) " L run-shell "sesh last || tmux display-message -d 1000 'Only one session'"
+        bind -N "⌘+9 switch to root session (via sesh) " 9 run-shell "sesh connect --root $(pwd)"
         bind -N "⌘+d lazydocker " d new-window -c "#{pane_current_path}" -n " " "lazydocker 2> /dev/null"
         bind -N "⌘+g lazygit " g new-window -c "#{pane_current_path}" -n " " "lazygit 2> /dev/null"
         bind -N "⌘+G gh-dash " G new-window -c "#{pane_current_path}" -n " " "ghd 2> /dev/null"
+        bind -N "⌘+d dev" D split-window -v -l 10 dev
+        bind -N "⌘+R run a script" Y split-window -v -l 10 "bun run (jq -r '.scripts | keys[]' package.json | fzf --no-border)"
+        bind -N "⌘+Q kill current session" Q kill-session
         bind -N "⌘+⇧+t break pane" B break-pane
         bind -N "⌘+^+t join pane" J join-pane -t 1
 
@@ -106,6 +111,8 @@ in
         set -g pane-active-border-style 'fg=brightblack,bg=default'
         set -g pane-border-style 'fg=brightblack,bg=default'
 
+        set-option -g update-environment "AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN AWS_PROFILE AWS_REGION AWS_DEFAULT_REGION ASSUME_CONFIG ASSUME_DEFAULT_DURATION ASSUME_DEFAULT_PROFILE ASSUME_DEFAULT_ROLE_ARN"
+
       '';
 
       plugins = with pkgs; [
@@ -121,21 +128,44 @@ in
         {
           plugin = tmuxPlugins.tmux-fzf;
           extraConfig = ''
-            bind-key "K" display-popup -E -w 33% -h 63% "sesh connect $(
-              sesh list -i | gum filter --limit 1 --fuzzy --no-sort --placeholder 'Pick a sesh' --prompt='⚡'
-            )"
+            bind-key "K" run-shell "sesh connect \"$(
+              sesh list --icons --hide-duplicates | fzf-tmux -p 100%,100% --no-border \
+              --ansi \
+              --list-border \
+              --no-sort --prompt '⚡  ' \
+              --color 'list-border:6,input-border:3,preview-border:4,header-bg:-1,header-border:6' \
+              --input-border \
+              --header-border \
+              --bind 'tab:down,btab:up' \
+              --bind 'ctrl-b:abort' \
+              --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)' \
+              --bind 'ctrl-t:change-prompt(  )+reload(sesh list -t --icons)' \
+              --bind 'ctrl-g:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
+              --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
+              --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
+              --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
+              --preview-window 'right:70%' \
+              --preview 'sesh preview {}' \
+            )\""
 
-            bind-key "R" display-popup -E -w 40% "sesh connect $(
-              sesh list -i -H | gum filter --value \"\$(sesh root)\" --limit 1 --fuzzy --no-sort --placeholder 'Pick a sesh' --prompt='⚡'
-            )"
-
-            # bind-key "K" display-popup -E -w 40% "sesh connect $(
-            #   sesh list -i | gum filter --limit 1 --fuzzy --no-sort --placeholder 'Pick a sesh' --prompt='⚡'
-            # )"
-
-            bind-key "A" display-popup -E -w 40% "sesh connect $(
-              fabric -l | gum filter --limit 1 --fuzzy --no-sort --placeholder 'Pick a fabric pattern' --prompt='🧠'
-            )"
+            bind-key "R" run-shell "sesh connect \"\$(
+              sesh list --icons | fzf-tmux -p 100%,100% --no-border \
+                --query  \"\$(sesh root)\" \
+                --ansi \
+                --list-border \
+                --no-sort --prompt '⚡  ' \
+                --color 'list-border:6,input-border:3,preview-border:4,header-bg:-1,header-border:6' \
+                --input-border \
+                --bind 'tab:down,btab:up' \
+                --bind 'ctrl-b:abort' \
+                --bind 'ctrl-t:change-prompt(🪟  )+reload(sesh list -t --icons)' \
+                --bind 'ctrl-g:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
+                --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
+                --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
+                --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
+                --preview-window 'right:70%' \
+                --preview 'sesh preview {}' \
+            )\""
 
             bind-key "T" run-shell "sesh connect $(sesh list -tz | fzf-tmux -p 55%,60% \
               --no-sort --border-label ' sesh ' --prompt '⚡ ' \
@@ -153,9 +183,24 @@ in
           plugin = tmuxPlugins.catppuccin;
           extraConfig = ''
             # Catppuccino theme config
+            # Configure Catppuccin
+            set -g @catppuccin_flavor "macchiato"
+            set -g @catppuccin_status_background "none"
+            set -g @catppuccin_window_status_style "basic"
+            set -g @catppuccin_pane_status_enabled "off"
+            set -g @catppuccin_pane_border_status "off"
 
-            set -ogq @catppuccin_flavor "mocha"
-            set -ogq @catppuccin_window_status_style "basic"
+            set -ogq @catppuccin_status_left_separator "" 
+            set -g status-left-length 100
+            set -g status-left ""
+
+            set -ogq @catppuccin_status_middle_separator ""
+
+            set -ogq @catppuccin_status_right_separator ""
+            set -g status-right-length 100
+            set -g status-right ""
+            set -g status-right "#{E:@catppuccin_status_session}"
+
             set -ogq @catppuccin_icon_window_last "null"
             set -ogq @catppuccin_icon_window_current "null"
             set -ogq @catppuccin_icon_window_zoom ""
@@ -164,25 +209,19 @@ in
             set -ogq @catppuccin_icon_window_activity "󰖲"
             set -ogq @catppuccin_icon_window_bell "󰂞"
 
-            set -ogq @catppuccin_status_left_separator "█"
-            set -ogq @catppuccin_status_middle_separator ""
-            set -ogq @catppuccin_status_right_separator "█"
             set -ogq @catppuccin_status_connect_separator "no" # yes, no
             set -ogq @catppuccin_status_fill "icon"
             set -ogq @catppuccin_status_module_bg_color "#{@thm_surface_0}"
+
             set -ogq @catppuccin_date_time_text "%H:%M"
             set -ogq @catppuccin_date_time_icon ""
             set -ogq @catppuccin_session_icon ""
             set -ogq @catppuccin_application_icon ""
 
-            set -g status-right-length 100
-            set -g status-left-length 100
-            set -g status-left ""
-            set -g status-right "#{E:@catppuccin_status_session}"
 
-            set -g @catppuccin_window_default_text "  #W"
-            set -g @catppuccin_window_current_text "  #W"
-            set -g @catppuccin_window_text "  #W"
+            set -g @catppuccin_window_default_text " #W"
+            set -g @catppuccin_window_current_text " #W"
+            set -g @catppuccin_window_text " #W"
           '';
         }
         tmux-nerd-font-window-name

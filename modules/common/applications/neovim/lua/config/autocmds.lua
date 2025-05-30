@@ -23,7 +23,7 @@ vim.api.nvim_create_autocmd({ "WinLeave" }, {
 })
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  pattern = { "composer.json" },
+  pattern = { "composer.json", "*.sql" },
   callback = function()
     vim.b.autoformat = false
   end,
@@ -44,4 +44,13 @@ vim.api.nvim_create_autocmd({ "Filetype" }, {
     vim.bo.commentstring = "# %s"
   end,
   desc = "gitconfig commentstring",
+})
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "*",
+  callback = function()
+    if vim.bo.buftype ~= "terminal" then
+      vim.bo.modifiable = true
+    end
+  end,
 })
