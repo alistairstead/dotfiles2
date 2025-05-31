@@ -11,7 +11,6 @@
     home-manager.users.${config.user} = {
       home.packages = with pkgs; [
         go
-        vectorcode
         pipx
         (lua5_1.withPackages(ps: with ps; [
           luarocks 
@@ -28,6 +27,10 @@
       };
       programs.neovim = {
         enable = true;
+        extraPackages = with pkgs; [
+          # LazyVim
+        ];
+
 
         plugins = with pkgs.vimPlugins; [
           {
@@ -41,6 +44,7 @@
       home.sessionPath = [
         "$HOME/.cargo/bin"
         "$HOME/.local/share/nvim/mason/bin"
+        "$HOME/.local/bin"
       ];
 
       # Normal LazyVim config here, see https://github.com/LazyVim/starter/tree/main/lua

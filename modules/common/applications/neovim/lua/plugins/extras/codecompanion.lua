@@ -13,91 +13,59 @@ return {
     },
     keys = {
       { "<leader>a", "", desc = "+ai", mode = { "n", "v" } },
-      { "<leader>aa", "<cmd>CodeCompanionChat<cr>", mode = { "n", "v" }, desc = "Chat (CodeCompanion)" },
+      {
+        "<Leader>aa",
+        "<cmd>CodeCompanionChat Toggle<CR>",
+        desc = "Toggle chat buffer",
+        mode = { "n", "v" },
+      },
+      {
+        "<Leader>ai",
+        "<cmd>CodeCompanionChat<CR>",
+        desc = "New chat buffer",
+        mode = { "n", "v" },
+      },
       { "<leader>ae", "<cmd>CodeCompanion /explain<cr>", mode = { "n", "v" }, desc = "Explain code" },
       { "<leader>al", "<cmd>CodeCompanion /lsp<cr>", mode = { "v" }, desc = "Explain LSP" },
       { "<leader>af", "<cmd>CodeCompanion /fix<cr>", mode = { "v" }, desc = "Fix code" },
       { "<leader>ap", "<cmd>CodeCompanionActions<cr>", mode = { "n", "v" }, desc = "Prompts" },
       {
-        "<leader>acm",
-        "<cmd>CodeCompanion /inline_commit<cr>",
+        "<leader>am",
+        "<cmd>CodeCompanion /cm<cr>",
+        mode = { "n" },
+        desc = "Commit message inline",
+      },
+      {
+        "<leader>aM",
+        "<cmd>CodeCompanion /commit<cr>",
         mode = { "n" },
         desc = "Commit message",
       },
       {
-        "<leader>acw",
+        "<leader>ac",
         "<cmd>CodeCompanion /cw<cr>",
         mode = { "n" },
         desc = "Code workflow",
       },
       {
-        "<leader>abr",
+        "<leader>ar",
         "<cmd>CodeCompanion /branch_review<cr>",
         mode = { "n" },
         desc = "Code review",
       },
       { "<leader>at", "<cmd>CodeCompanion /tests<cr>", mode = { "v" }, desc = "Generate tests" },
-    },
-    prompt_library = {
-      ["Branch review"] = {
-        strategy = "chat",
-        description = "Perform a code review",
-        opts = {
-          short_name = "branch_review",
-          auto_submit = true,
-          user_prompt = false,
-        },
-        prompts = {
-          {
-            role = "user",
-            contains_code = true,
-            content = function(content)
-              local target_branch = vim.fn.input("Target branch for merge base diff (default: master): ", "master")
-
-              return fmt(
-                [[You are a senior software engineer for the %s language performing a code review. Analyze the following code changes.
-Identify any potential bugs, performance issues, security vulnerabilities, or areas that could
-be refactored for better readability or maintainability.
-
-Explain your reasoning clearly and provide specific suggestions for improvement.
-Consider edge cases, error handling, and adherence to best practices and coding standards.
-Here are the code changes:
-```
-  %s
-```]],
-                content.filetype,
-                vim.fn.system("git diff --merge-base " .. target_branch)
-              )
-            end,
-          },
-        },
+      {
+        "<C-a>",
+        "<cmd>CodeCompanionActions<CR>",
+        desc = "Open the action palette",
+        mode = { "n", "v" },
       },
-      ["Auto-generate git commit message"] = {
-        strategy = "inline",
-        description = "Generate git commit message for current staged changes",
-        opts = {
-          short_name = "inline_commit",
-          placement = "before|false",
-          auto_submit = true,
-        },
-        prompts = {
-          {
-            role = "user",
-            contains_code = true,
-            content = function()
-              return fmt(
-                [[You are an expert at following the Conventional Commit specification.
-Given the git diff listed below, please generate a commit message for me:
-```diff
-%s
-```
-Return the code only and no markdown codeblocks.]],
-                vim.fn.system("git diff --no-ext-diff --staged")
-              )
-            end,
-          },
-        },
-      },
+      -- {
+      --   "<LocalLeader>ac",
+      --   "<cmd>CodeCompanionChat Add<CR>",
+      --   mode = { "v" },
+      --   desc = "Add code to a chat buffer",
+      -- },
     },
     opts = {
       extensions = {
@@ -124,6 +92,75 @@ Return the code only and no markdown codeblocks.]],
         vectorcode = {
           opts = {
             add_tool = true,
+          },
+        },
+      },
+      prompt_library = {
+        ["Branch_Review"] = {
+          strategy = "chat",
+          description = "Perform a code review of the current changeset to the target beanch",
+          opts = {
+            short_name = "branch_review",
+            auto_submit = true,
+            user_prompt = false,
+          },
+          prompts = {
+            {
+              role = "system",
+              content = function(context)
+                return "I want you to act as a senior "
+                  .. context.filetype
+                  .. "performing a very detailed code review. "
+              end,
+            },
+            {
+              role = "user",
+              content = function()
+                local branch = vim.fn.input("Target branch for merge base diff (default: master): ", "master")
+                local diff = vim.fn.system("git diff --merge-base " .. branch)
+                return "<user_prompt>Analyze the following code changes:"
+                  .. "```diff\n"
+                  .. diff
+                  .. "```\n"
+                  .. "Identify any potential bugs, performance issues, security vulnerabilities, or areas that could"
+                  .. "be refactored for better readability or maintainability."
+                  .. "Create a list of isolated refactorings for any changes that are described in a way for a junior"
+                  .. "developt to be able to understand and complete them.</user_prompt>"
+              end,
+            },
+          },
+        },
+        ["Inline Commit Message"] = {
+          strategy = "inline",
+          description = "Generate an inline commit message",
+          opts = {
+            placement = "replace",
+            short_name = "cm",
+            user_prompt = false,
+          },
+          prompts = {
+            {
+              role = "system",
+              content = function(context)
+                return "I want you to act as a senior "
+                  .. context.filetype
+                  .. "engineer and an expert at following the Conventional Commit specification"
+              end,
+            },
+            {
+              role = "user",
+              content = function()
+                local diff = vim.fn.system("git diff --no-ext-diff --staged")
+                return "<user_prompt>Given the git diff listed below, please generate a commit message for me:"
+                  .. "```diff\n"
+                  .. diff
+                  .. "```\n"
+                  .. "Return just the commit message, without any additional text or formatting.</user_prompt>"
+              end,
+              opts = {
+                contains_code = true,
+              },
+            },
           },
         },
       },
@@ -172,36 +209,19 @@ Return the code only and no markdown codeblocks.]],
                 },
               },
             },
-            ["help"] = {
-              opts = {
-                max_lines = 1000,
-              },
-            },
-            ["image"] = {
-              keymaps = {
-                modes = {
-                  i = "<C-i>",
-                },
-              },
-            },
           },
           tools = {
             opts = {
-              auto_submit_success = false,
-              auto_submit_errors = false,
+              auto_submit_success = true,
+              auto_submit_errors = true,
             },
           },
         },
         inline = { adapter = "copilot" },
       },
       display = {
-        action_palette = {
-          provider = "default",
-        },
         chat = {
           show_references = true,
-          -- show_header_separator = false,
-          -- show_settings = false,
           start_in_insert_mode = true,
         },
       },
@@ -218,6 +238,7 @@ Return the code only and no markdown codeblocks.]],
       {
         "Davidyz/VectorCode", -- Index and search code in your repositories
         version = "*",
+        build = "pipx upgrade vectorcode",
         dependencies = { "nvim-lua/plenary.nvim" },
       },
       "nvim-lua/plenary.nvim",
