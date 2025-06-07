@@ -19,6 +19,7 @@
 
       home.sessionPath = [
         "$HOME/.npm-global/bin"
+        "$HOMR/.cache/.bun/bin"
       ];
     };
   };

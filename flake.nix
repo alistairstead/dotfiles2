@@ -167,7 +167,6 @@
               _1password.enable = true;
               slack.enable = true;
               wezterm.enable = false;
-              ghostty.enable = true;
               karabiner.enable = true;
               raycast.enable = true;
               devenv.enable = true;

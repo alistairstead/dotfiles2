@@ -54,7 +54,9 @@
         "mysql-client@8.4" # brew link --overwrite --force mysql-client@8.4
         "sqlite"
         "xh"
-        # "neovim"
+        "stow"
+        "tmux"
+        "neovim"
       ];
       casks = [
         "around" # Around - Video calls

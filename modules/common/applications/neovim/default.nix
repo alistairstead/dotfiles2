@@ -25,32 +25,12 @@
       programs.ripgrep = {
         enable = true;
       };
-      programs.neovim = {
-        enable = true;
-        extraPackages = with pkgs; [
-          # LazyVim
-        ];
-
-
-        plugins = with pkgs.vimPlugins; [
-          {
-            plugin = sqlite-lua;
-            config = "let g:sqlite_clib_path = '${pkgs.sqlite.out}/lib/libsqlite3.dylib'";
-          }
-          lazy-nvim
-        ];
-      };
 
       home.sessionPath = [
         "$HOME/.cargo/bin"
         "$HOME/.local/share/nvim/mason/bin"
         "$HOME/.local/bin"
       ];
-
-      # Normal LazyVim config here, see https://github.com/LazyVim/starter/tree/main/lua
-      xdg.configFile."nvim/lua".source = ./lua;
-      xdg.configFile."nvim/init.lua".source = ./init.lua;
-
     };
   };
 }

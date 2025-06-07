@@ -6,6 +6,5 @@
     ./neovim
     ./slack.nix
     ./wezterm
-    ./ghostty
   ];
 }
