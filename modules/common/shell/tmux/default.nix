@@ -2,22 +2,6 @@
 , pkgs
 , ...
 }:
-let
-  # create plugin using this article: 
-  # https://haseebmajid.dev/posts/2023-07-10-setting-up-tmux-with-nix-home-manager/
-  tmux-nerd-font-window-name = pkgs.tmuxPlugins.mkTmuxPlugin
-    {
-      pluginName = "tmux-nerd-font-window-name";
-      rtpFilePath = "tmux-nerd-font-window-name.tmux";
-      version = "unstable-2024-09-14";
-      src = pkgs.fetchFromGitHub {
-        owner = "joshmedeski";
-        repo = "tmux-nerd-font-window-name";
-        rev = "3def0b9c57b16e2c2fe4ec55555f5698444e5cee";
-        sha256 = "sha256-NcRf4v7QxsWk8w4maWFVlSpq/d+QHrGqFpCw2NxZ/I8=";
-      };
-    };
-in
 {
   home-manager.users.${config.user} = {
     programs.tmux = {

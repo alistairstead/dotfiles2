@@ -1,4 +1,4 @@
-{ config, home-manager,... }:
+{ config,... }:
 
 rec {
   dot = path: "${config.home.homeDirectory}/dev/personal/dotfiles/${path}";

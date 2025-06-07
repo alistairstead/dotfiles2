@@ -1,7 +1,4 @@
 { config, lib , pkgs , ...}:
-let
-  inherit (pkgs.stdenv) isDarwin;
-in
 {
   options.aws.enable = lib.mkEnableOption "AWS tools.";
 
