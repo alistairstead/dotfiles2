@@ -1,0 +1,243 @@
+# vim: set filetype=dosini
+#
+#  ██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗████████╗██╗   ██╗
+# ██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝╚══██╔══╝╚██╗ ██╔╝
+# ██║  ███╗███████║██║   ██║███████╗   ██║      ██║    ╚████╔╝
+# ██║   ██║██╔══██║██║   ██║╚════██║   ██║      ██║     ╚██╔╝
+# ╚██████╔╝██║  ██║╚██████╔╝███████║   ██║      ██║      ██║
+#  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝      ╚═╝      ╚═╝
+#
+# Fast, feature-rich, cross-platform terminal emulator
+# Configuration optimized for:
+# • macOS integration with tmux multiplexer
+# • Development workflow shortcuts
+# • Vim-like navigation and text editing
+# • Beautiful Catppuccin theming
+#
+# Key Encodings Reference:
+# \x0a = Enter/Return
+# \x1b = Esc  
+# \x02 = Ctrl+B (tmux prefix)
+#
+# https://ghostty.org/docs/config/reference
+
+# =====================================
+# SECURITY AND TITLE
+# =====================================
+
+# Window title - static to prevent command injection
+# BUG: Improper handling of window title sequences can lead to arbitrary command execution
+# https://github.com/ghostty-org/ghostty/security/advisories/GHSA-5hcq-3j4q-4v6p
+title = Ghostty
+
+# =====================================
+# SHELL INTEGRATION
+# =====================================
+
+# Fish shell integration with selective features
+shell-integration = fish
+shell-integration-features = "no-cursor,sudo,title"
+
+# =====================================
+# WINDOW AND DISPLAY
+# =====================================
+
+# Window behavior and appearance
+window-padding-balance = true
+window-padding-x = 0
+window-padding-y = 0
+window-save-state = always
+background-opacity = 0.90
+background-blur-radius = 20
+
+# Maximize window by default
+window-width = 9999
+window-height = 9999
+
+# macOS-specific window styling
+macos-window-shadow = false
+mouse-hide-while-typing = true
+
+# =====================================
+# TYPOGRAPHY AND FONTS
+# =====================================
+
+# Monaspace font family with variants for different styles
+font-family = Monaspace Neon Var
+font-family-bold  = Monaspace Neon Var
+font-family-italic = Monaspace Radon Var
+font-family-bold-italic  = Monaspace Radon Var
+window-title-font-family = Monaspace Neon Var
+
+# Font weights for different styles
+font-variation = wght = 100
+font-variation-italic = wght = 100
+font-variation-bold = wght = 400
+font-variation-bold-italic = wght = 400
+
+# OpenType features for enhanced typography
+font-feature = calt  # Contextual alternates
+font-feature = liga  # Ligatures
+font-feature = ss01  # Stylistic set 1
+font-feature = ss02  # Stylistic set 2
+font-feature = ss03  # Stylistic set 3
+font-feature = ss04  # Stylistic set 4
+font-feature = ss05  # Stylistic set 5
+font-feature = ss06  # Stylistic set 6
+font-feature = ss07  # Stylistic set 7
+font-feature = ss08  # Stylistic set 8
+font-feature = ss09  # Stylistic set 9
+
+# Font sizing and cell adjustments
+font-size = 14
+adjust-cell-width = 10%
+adjust-cell-height = 45%
+adjust-underline-position = 30%
+
+# =====================================
+# THEME AND COLORS
+# =====================================
+
+# Catppuccin theme - automatic light/dark switching
+theme = light:catppuccin-latte,dark:catppuccin-mocha
+bold-is-bright = true
+cursor-invert-fg-bg = true
+
+# =====================================
+# CLIPBOARD INTEGRATION
+# =====================================
+
+# macOS clipboard permissions and behavior
+clipboard-read = "allow"
+clipboard-trim-trailing-spaces = true
+
+# =====================================
+# VISUAL EFFECTS
+# =====================================
+
+# Custom shader for visual enhancement
+custom-shader = shaders/starfield-colors.glsl
+
+# =====================================
+# KEY BINDINGS - TMUX INTEGRATION
+# =====================================
+
+# Window/Tab Navigation
+# ⌘+1-9 → Switch to tmux window 1-9
+keybind = super+physical:one=text:\x021
+keybind = super+physical:two=text:\x022
+keybind = super+physical:three=text:\x023
+keybind = super+physical:four=text:\x024
+keybind = super+physical:five=text:\x025
+keybind = super+physical:six=text:\x026
+keybind = super+physical:seven=text:\x027
+keybind = super+physical:eight=text:\x028
+keybind = super+physical:nine=text:\x029
+
+# Window Management
+# ⌘+⇧+[ → Previous tmux window
+keybind = super+shift+left_bracket=text:\x02\x70
+# ⌘+⇧+] → Next tmux window  
+keybind = super+shift+right_bracket=text:\x02\x6e
+
+# Pane Splitting
+# ⌘+N → Vertical split (tmux %)
+keybind = super+n=text:\x02\x25
+# ⌘+⇧+N → Horizontal split (tmux ")
+keybind = super+shift+n=text:\x02\x22
+
+# Session Management
+# ⌘+9 → Switch to project root session
+keybind = super+9=text:\x02\x39
+# ⌘+T → New tmux window
+keybind = super+t=text:\x02\x63
+# ⌘+W → Close tmux pane
+keybind = super+w=text:\x02\x78
+
+# =====================================
+# KEY BINDINGS - DEVELOPMENT TOOLS
+# =====================================
+
+# Git and Version Control
+# ⌘+G → Open Lazygit
+keybind = super+g=text:\x02\x67
+# ⌘+⇧+G → Open GitHub Dashboard
+keybind = super+shift+g=text:\x02\x47
+
+# Docker and Infrastructure
+# ⌘+D → Open Lazydocker
+keybind = super+d=text:\x02\x64
+# ⌘+⇧+D → Development split
+keybind = super+shift+d=text:\x02\x44
+
+# Session and Project Management  
+# ⌘+K → Session picker (sesh)
+keybind = super+k=text:\x02\x4b
+# ⌘+⇧+K → Advanced session picker
+keybind = super+shift+k=text:\x02\x52
+# ⌘+L → Switch to last session
+keybind = super+l=text:\x02\x4c
+# ⌘+⇧+T → Session picker with preview
+keybind = super+shift+t=text:\x02\x54
+# ⌘+⇧+Z → Session popup
+keybind = super+shift+z=text:\x02\x5a
+
+# Script and Task Management
+# ⌘+Y → Script runner (package.json scripts)
+keybind = super+y=text:\x02\x59
+# ⌘+⇧+R → Rename tmux window
+keybind = super+shift+r=text:\x02\x24 
+
+# Pane Management
+# ⌘+⇧+B → Break pane to new window
+keybind = super+shift+b=text:\x02\x42
+# ⌘+⇧+J → Join pane from window 1
+keybind = super+shift+j=text:\x02\x4a
+# ⌘+⇧+Q → Kill current tmux session
+keybind = super+shift+q=text:\x02\x51
+
+# =====================================
+# KEY BINDINGS - EDITOR INTEGRATION
+# =====================================
+
+# Copy Mode and Text Selection
+# ⌘+C → Enter tmux copy mode
+keybind = super+c=text:\x02[
+
+# Vim/Editor Navigation
+# ⌘+] → Jump forward (vim Ctrl+O)
+keybind = super+right_bracket=text:<C-o>
+# ⌘+[ → Jump back (vim Ctrl+I)  
+keybind = super+left_bracket=text:<C-i>
+
+# File and Search Operations
+# ⌘+F → Grep search (:Grep)
+keybind = super+f=text:\x3a\x47\x72\x65\x70\x0a
+# ⌘+P → Go to file (:GotoFile)
+keybind = super+p=text:\x3a\x47\x6f\x54\x6f\x46\x69\x6c\x65\x0a
+# ⌘+⇧+O → Go to symbol (:GotoSymbol)
+keybind = super+shift+o=text:\x18a\x47\x6f\x54\x6f\x53\x79\x6d\x62\x6f\x6c\x0a
+# ⌘+⇧+P → Go to command (:GotoCommand)
+keybind = super+shift+p=text:\x3a\x47\x6f\x54\x6f\x43\x6f\x6d\x6d\x61\x6e\x64\x0a
+
+# File Operations
+# ⌘+S → Save file (:w)
+keybind = super+s=text:\x3a\x77\x0a
+# ⌘+Q → Quit with escape sequence (:qa!)
+keybind = super+q=text:\x3a\x1b\x1b\x3a\x71\x61\x21\x0a
+
+# URL and External Tools
+# ⌘+O → Open URL (tmux urlview)
+keybind = super+o=text:\x02\x75
+
+# =====================================
+# KEY BINDINGS - SYSTEM INTEGRATION  
+# =====================================
+
+# Configuration Management
+# ⌘+R → Reload Ghostty configuration
+keybind = super+r=reload_config
+
+# Terminal Features
+# ⇧+↩ → Send newline (Claude Code integration)
+keybind = shift+enter=text:\x0A
