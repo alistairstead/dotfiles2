@@ -1,0 +1,214 @@
+# ██╗   ██╗ █████╗ ██████╗  █████╗ ██╗
+# ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗██║
+#  ╚████╔╝ ███████║██████╔╝███████║██║
+#   ╚██╔╝  ██╔══██║██╔══██╗██╔══██║██║
+#    ██║   ██║  ██║██████╔╝██║  ██║██║
+#    ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝
+# A tiling window manager for macOS
+# https://github.com/koekeishiya/yabai
+
+sudo yabai --load-sa
+
+# Signal hooks
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+yabai -m signal --add event=space_changed action="nohup open -g raycast://extensions/krzysztoff1/yabai/screens-menu-bar?launchType=background > /dev/null 2>&1 &"
+
+# global settings
+yabai -m config mouse_follows_focus off
+yabai -m config focus_follows_mouse off
+yabai -m config window_origin_display default
+yabai -m config window_placement second_child
+yabai -m config window_insertion_point last
+yabai -m config window_topmost on
+yabai -m config window_shadow on
+yabai -m config window_opacity off
+yabai -m config window_opacity_duration 0.25
+yabai -m config active_window_opacity 1.0
+yabai -m config normal_window_opacity 0.9
+yabai -m config window_border on
+yabai -m config insert_feedback_color 0xFF659D30
+yabai -m config split_ratio 0.50
+yabai -m config auto_balance off
+yabai -m config mouse_modifier fn
+yabai -m config mouse_action1 move
+yabai -m config mouse_action2 resize
+yabai -m config mouse_drop_action swap
+
+# general space settings
+yabai -m config layout bsp # bsp, stack, float, or chain
+yabai -m config top_padding 10
+yabai -m config bottom_padding 10
+yabai -m config left_padding 10
+yabai -m config right_padding 10
+yabai -m config window_gap 10
+
+#!/usr/bin/env bash
+
+create_spaces() {
+  CURRENT_SPACES=$(yabai -m query --spaces | jq -r '[.[]."is-native-fullscreen"| select(.==false) ]| length')
+  CURRENT_SPACE=$(yabai -m query --spaces --space | jq -r ."index")
+  NEEDED_SPACES=$1
+
+  if [[ $1 == "a" ]]; then
+    yabai -m space --create
+    yabai -m space last --label "$2"
+    if [ -n "$yabai_WINDOW_ID" ]; then
+      yabai -m window "$YABAI_WINDOW_ID" --space "$2"
+    fi
+    yabai -m space --focus "$2"
+    return 0
+  fi
+
+  if [[ "$CURRENT_SPACES" -ge "$NEEDED_SPACES" ]]; then
+    return
+  fi
+  SPACES_TO_CREATE=$(("$NEEDED_SPACES" - "$CURRENT_SPACES"))
+
+  for i in $(seq $((1 + CURRENT_SPACES)) "$NEEDED_SPACES"); do
+    echo "$i"
+    yabai -m space --create
+    yabai -m space --focus "$i"
+  done
+  yabai -m space "$CURRENT_SPACE" --focus
+
+}
+
+# SETUP SPACES
+create_spaces 8
+
+# SPACE LABELS
+LABELS=(
+  main
+  comms
+  code
+  ref
+  productivity
+  vm
+  media
+  misc
+  scratch
+)
+
+for ((i = 1; i <= "${#LABELS[@]}"; i++)); do
+  yabai -m space "$i" --label "${LABELS[(($i - 1))]}"
+done
+
+# SPACE LAYOUTS
+yabai -m config --space comms layout stack window_opacity off
+yabai -m config --space media layout stack window_opacity off
+yabai -m config --space scratch layout float
+
+# RULES
+UNMANAGED=(
+  "Activity Monitor"
+  "App Store"
+  "Archive Utility"
+  "Calculator"
+  "Dictionary"
+  "FaceTime"
+  # Finder
+  "Photo Booth"
+  "Screen Sharing"
+  "Screens"
+  "Software Update"
+  "System Information"
+  "System Preferences"
+  "System Settings"
+)
+
+for ((i = 1; i <= "${#UNMANAGED[@]}"; i++)); do
+  yabai -m rule --add label="unmanage_${UNMANAGED[(($i - 1))]}" app="^${UNMANAGED[(($i - 1))]}$" manage=off
+done
+
+# Exclude problematic apps from being managed:
+yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
+# yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
+yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
+yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Select file to save to" manage=off
+
+COMMS=(
+  "Messages"
+  "Messenger"
+  "Spark Desktop"
+  "Slack"
+)
+
+for ((i = 1; i <= "${#COMMS[@]}"; i++)); do
+  yabai -m rule --add label="comms_${COMMS[(($i - 1))]}" app="^${COMMS[(($i - 1))]}$" space=comms
+done
+
+STICKY=(
+  "1Password"
+  "Messages"
+  "Around"
+)
+
+for ((i = 1; i <= "${#STICKY[@]}"; i++)); do
+  yabai -m rule --add label="sticky_${STICKY[(($i - 1))]}" app="^${STICKY[(($i - 1))]}$" sticky=on
+done
+
+MEDIA=(
+  "Music"
+  "TV"
+)
+
+for ((i = 1; i <= "${#MEDIA[@]}"; i++)); do
+  yabai -m rule --add label="media_${MEDIA[(($i - 1))]}" app="^${MEDIA[(($i - 1))]}$" space=media
+done
+
+# Productivity
+PRODUCTIVITY=(
+  "Obsidian"
+  "Notes"
+  "Todoist"
+)
+
+for ((i = 1; i <= "${#PRODUCTIVITY[@]}"; i++)); do
+  yabai -m rule --add label="productivity_${PRODUCTIVITY[(($i - 1))]}" app="^${PRODUCTIVITY[(($i - 1))]}$" space=productivity
+done
+
+MAIN=(
+  "Google Chrome"
+  "Safari"
+)
+
+for ((i = 1; i <= "${#MAIN[@]}"; i++)); do
+  yabai -m rule --add label="main_${MAIN[(($i - 1))]}" app="^${MAIN[(($i - 1))]}$" space=main
+done
+
+CODE=(
+  "Ghostty"
+  "Sizzy"
+)
+
+for ((i = 1; i <= "${#CODE[@]}"; i++)); do
+  yabai -m rule --add label="code_${CODE[(($i - 1))]}" app="^${CODE[(($i - 1))]}$" space=code
+done
+
+REF=(
+  "GitHub"
+)
+
+for ((i = 1; i <= "${#REF[@]}"; i++)); do
+  yabai -m rule --add label="ref_${REF[(($i - 1))]}" app="^${REF[(($i - 1))]}$" space=ref
+done
+
+MISC=(
+  "Discord"
+  "Calendar"
+)
+
+for ((i = 1; i <= "${#MISC[@]}"; i++)); do
+  yabai -m rule --add label="misc_${MISC[(($i - 1))]}" app="^${MISC[(($i - 1))]}$" space=misc
+done
+
+VM=(
+  "OrbStack"
+)
+
+for ((i = 1; i <= "${#VM[@]}"; i++)); do
+  yabai -m rule --add label="vm_${VM[(($i - 1))]}" app="^${VM[(($i - 1))]}$" space=vm
+done
+
+
+echo "yabai configuration loaded.."

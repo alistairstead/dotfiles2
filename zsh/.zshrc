@@ -15,9 +15,9 @@ plug "zsh-users/zsh-history-substring-search" # History search
 # plug "marlonrichert/zsh-edit" # Better keyboard shortcuts
 # plug "marlonrichert/zsh-hist" # Edit history from the command line.
 # plug "zap-zsh/supercharge"
-plug "zap-zsh/exa"
+# plug "zap-zsh/exa"
 plug "zap-zsh/vim"
-plug "zap-zsh/fzf"
+# plug "zap-zsh/fzf"
 plug "reegnz/jq-zsh-plugin"
 
 # Configure syntax highlighting styles
@@ -109,11 +109,34 @@ alias dotfiles="cd ~/dotfiles"
 if which trash >/dev/null 2>&1; then
   alias rm='trash'
 fi
+alias ls='eza $eza_params'
+alias l='eza --git-ignore $eza_params'
+alias ll='eza --all --header --long $eza_params'
+alias llm='eza --all --header --long --sort=modified $eza_params'
+alias la='eza -lbhHigUmuSa'
+alias lx='eza -lbhHigUmuSa@'
+alias lt='eza --tree $eza_params'
+alias tree='eza --tree $eza_params'
 alias ga='git add'
 alias gs='git status -sb'
 alias gco='git co'
 alias push='git push'
 alias pull='git pull'
+# builtins
+alias size="du -sh"
+alias cp="cp -i"
+alias mkdir="mkdir -p"
+alias df="df -h"
+alias du="du -sh"
+alias del="rm -rf"
+alias null="/dev/null"
+# overrides
+alias cat="bat"
+alias top="btop"
+alias htop="btop"
+alias diff="delta"
+
+alias granted-refresh="granted sso populate --sso-region eu-west-2 https://kodehort.awsapps.com/start"
 gi() {
 	curl -s "https://www.gitignore.io/api/$*"
 }
@@ -139,16 +162,6 @@ function ghpr() {
 }
 function ghgist() {
   GH_FORCE_TTY=100% gh gist list --limit 20 | fzf --ansi --preview 'GH_FORCE_TTY=100% gh gist view {1}' --preview-window down | awk '{print $1}' | xargs gh gist edit
-}
-
-# Fish-like utility functions
-# Improved ping
-ping() {
-  if command -v prettyping >/dev/null 2>&1; then
-    command prettyping --nolegend "$@"
-  else
-    command ping "$@"
-  fi
 }
 
 # Copy to clipboard
@@ -191,37 +204,26 @@ bindkey "^?" backward-delete-char
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
-source "$HOME/.asdf/asdf.sh"
-# append completions to fpath
-fpath=(${ASDF_DIR}/completions $fpath)
+# # append completions to fpath
+fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
+# initialise completions with ZSH's compinit
+autoload -Uz compinit && compinit
 
 # Source fzf key bindings (includes Ctrl+R for history search)
 [ -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ] && source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
 [ -r ~/private/.zshrc ] && source ~/private/.zshrc
 
-# Environment variables (moved from .zshenv)
 export GIT_EDITOR='nvim'
 export VISUAL='nvim'
 export EDITOR='nvim'
 export VI_MODE_ESC_INSERT="jk"
 export TERM=tmux-256color
 export ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY=latest_installed
+export GRANTED_ENABLE_AUTO_REASSUME="true"
+export SSH_AUTH_SOCK="$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 
 # Aliases
 alias assume=". assume"
-
-
-
-# pnpm
-export PNPM_HOME="$HOME/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-# sst
-export PATH=$HOME/.sst/bin:$PATH
 
 # Initialize zoxide (must be at the very end)
 eval "$(zoxide init --cmd cd zsh)"

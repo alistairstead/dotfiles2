@@ -48,34 +48,112 @@
       };
       taps = [
         "neovim/neovim"
+        "oven-sh/bun"
+        "common-fate/granted"
+        "nikitabobko/tap"
+        "1password/tap"
+        "koekeishiya/formulae"
       ];
       brews = [
+        "coreutils" 
+        "automake" 
+        "autoconf" 
+        "openssl"
+        "libyaml" 
+        "readline" 
+        "libxslt" 
+        "libtool" 
+        "unixodbc"
+        "unzip" 
+        "gpg"
+        "git"
+        "vim"
+        "wget"
+        "curl"
+        "awscli"
+        "asdf"
+        "bat"
+        "btop"
+        "direnv"
+        "eza"
+        "fzf"
+        "gum"
+        "granted"
+        "htop"
+        "jq"
         "trash" # Delete files and folders to trash instead of rm
         "mysql-client@8.4" # brew link --overwrite --force mysql-client@8.4
         "sqlite"
         "xh"
+        "starship"
         "stow"
         "tmux"
         "neovim"
+        "go"
+        "gnu-sed"
+        "pipx"
+        "luarocks"
+        "luajit"
+        "viu"
+        "stylua"
+        "ripgrep"
+        "nodejs"
+        "corepack"
+        "deno"
+        "bun"
+        "terraform"
+        "terraform-ls"
+        "tflint"
+        "diff-so-fancy"
+        "lazydocker"
+        "lazysql"
+        "lazygit"
+        "prettierd"
+        "yabai"
+        "zoxide"
+        "curl"
+        "fastfetch"
+        "fd"
+        "fontconfig"
+        "gum"
+        "imagemagick"
+        "yq"
+        "ripgrep"
+        "sesh"
+        "sqlite"
+        "tree"
+        "unzip"
       ];
       casks = [
-        "around" # Around - Video calls
+        "1password"
+        "1password-cli"
+        "aerospace"
         "bartender"
         "choosy" # Choose browser
         "cleanmymac" # Clean up macOS
         "cleanshot" # screen shots sorted
+        "discord"
         "figma"
+        "font-monaspace"
         "font-symbols-only-nerd-font" # Nerd Font with only symbols
         "github@beta"
         "ghostty"
         "google-chrome" # Chrome
         "home-assistant" # Home Assistant
+        "inkscape"
+        "karabiner-elements"
         "nordvpn"
+        "obsidian"
         "orbstack"
+        "raycast"
         "readdle-spark"
         "sizzy"
+        "slack"
         "todoist"
       ];
+      masApps = {
+        "1Password for Safari" = 1569813296;
+      };
       caskArgs = {
         appdir = "/Applications";
       };

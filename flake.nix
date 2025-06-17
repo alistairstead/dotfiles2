@@ -158,25 +158,22 @@
             }
             {
               gui.enable = true;
-              charm.enable = true;
-              neovim.enable = true;
-              discord.enable = true;
-              dotfiles.enable = true;
-              aws.enable = true;
-              obsidian.enable = true;
-              _1password.enable = true;
-              slack.enable = true;
-              wezterm.enable = false;
-              karabiner.enable = true;
-              raycast.enable = true;
-              devenv.enable = true;
-              node.enable = true;
-              php.enable = true;
-              go.enable = true;
-              aerospace.enable = false;
-              yabai.enable = true;
-              terraform.enable = true;
-              granted.enable = true;
+              # charm.enable = true;
+              # discord.enable = true;
+              # dotfiles.enable = true;
+              # aws.enable = true;
+              # obsidian.enable = true;
+              # _1password.enable = true;
+              # slack.enable = true;
+              # wezterm.enable = false;
+              # karabiner.enable = true;
+              # devenv.enable = true;
+              # node.enable = true;
+              # php.enable = true;
+              # go.enable = true;
+              # aerospace.enable = false;
+              # yabai.enable = true;
+              # terraform.enable = true;
             }
             (globals)
             ./modules/common

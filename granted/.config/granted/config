@@ -1,0 +1,14 @@
+DefaultBrowser = "CHROME"
+CustomBrowserPath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+CustomSSOBrowserPath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+Ordering = "Alphabetical"
+ExportCredentialSuffix = ""
+DefaultExportAllEnvVar = true
+CredentialProcessAutoLogin = true
+
+[Keyring]
+  Backend = "keychain"
+
+[ProfileRegistry]
+  PrefixAllProfiles = true
+  PrefixDuplicateProfiles = true

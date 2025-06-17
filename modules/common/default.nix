@@ -5,8 +5,8 @@
 }:
 {
   imports = [
-    ./applications
-    ./programming
+    # ./applications
+    # ./programming
     ./repositories
     ./shell
   ];
@@ -73,12 +73,6 @@
 
   config = {
     # Basic common system packages for all devices
-    environment.systemPackages = with pkgs; [
-      git
-      vim
-      wget
-      curl
-    ];
 
 
     # Allow specified unfree packages (identified elsewhere)

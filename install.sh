@@ -35,69 +35,53 @@ done 2>/dev/null &
 
 info "INFO: Mac OS System Install Setup Script"
 
-# unless ENV["CI"]
-# info "INFO: Installing xcode..."
-# xcode-select --install
-# end
+unless ENV["CI"]
+info "INFO: Installing xcode..."
+xcode-select --install
+end
+
+# Homebrew
 #
-# #
-# # Homebrew
-# #
-# # This installs some of the common dependencies needed (or at least desired)
-# # using Homebrew.
-#
-# # Check for Homebrew
-# if test ! "$(which brew)"; then
-#   info "INFO: Installing Homebrew for you."
-#   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-# fi
-#
-# brew upgrade
-# brew update
+# This installs some of the common dependencies needed (or at least desired)
+# using Homebrew.
 
-info "INFO: Installing nix..."
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --determinate --no-confirm
-
-. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-
-# Run the nix command and capture the output
-output=$(nix run "nixpkgs#hello")
-
-# Expected output
-expected_output="Hello, world!"
-
-# Check if the output matches the expected output
-if [ "$output" = "$expected_output" ]; then
-  success "SUCCESS: nix is installed correctly."
-  info "INFO: nix is installed at version: $(nix --version)"
-else
-  error "EXPECTED: '$expected_output'"
-  error "GOT: '$output'"
-  fail "ERROR: nix is not installed correctly."
+# Check for Homebrew
+if test ! "$(which brew)"; then
+  info "INFO: Installing Homebrew for you."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
+brew upgrade
+brew update
+
+info "Creating symlinks..."
+
+stow asdf bin direnv gh nvim ssh starship tmux wezterm yabai zsh
+
+info "Install zap..."
+
+zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
+
+if test ! $(which asdf); then
+  mkdir -p "${ASDF_DATA_DIR:-$HOME/.asdf}/completions"
+  asdf completion zsh >"${ASDF_DATA_DIR:-$HOME/.asdf}/completions/_asdf"
+
+  asdf plugin add erlang
+  asdf plugin add elixir
+  asdf plugin add nodejs
+  asdf plugin add pnpm
+  asdf plugin add bun
+  asdf plugin add postgres
+  asdf plugin add direnv
+fi
 # info "INFO: Cloning personal dotfiles..."
 #
 # git clone https://github.com/alistairstead/dotfiles2.git ~/dotfiles
 #
 # cd ~/dotfiles || echo "Cloning dotfiles failed" exit
 
-info "INFO: Setting up nix-darwin for $USER"
-info "INFO: CI = $CI"
-
-export NIXPKGS_ALLOW_BROKEN=1
-export HOSTNAME=$(hostname)
-export USER=$(whoami)
-
-# Move a file that will conflict with nix-darwin
-sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
-
-if $CI; then
-  info "INFO: Running nix-darwin in CI mode..."
-  nix run nix-darwin --experimental-features 'nix-command flakes' -- switch --impure --no-write-lock-file --flake github:alistairstead/dotfiles2
-else
-  info "INFO: Running nix-darwin in normal mode..."
-  nix run nix-darwin --experimental-features 'nix-command flakes' -- switch --impure --flake github:alistairstead/dotfiles2
-fi
+info "Configuring tmux plugins..."
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+~/.tmux/plugins/tpm/bin/install_plugins
 
 success "Done!"

@@ -1,0 +1,68 @@
+[alias]
+	branches = "branch -a"
+	co = "checkout"
+	l = "log --pretty=oneline -n 40 --graph --abbrev-commit"
+	la = "log --pretty=custom -n 40 --graph --abbrev-commit"
+	remotes = "remote -v"
+	s = "status -s"
+	st = "status"
+	tags = "tag -l"
+	undo = "reset --soft HEAD^"
+
+[apply]
+	whitespace = "fix"
+
+[commit]
+	gpgsign = "true"
+
+[core]
+	ignoreCase = false
+	pager = "delta"
+
+[delta]
+	light = false
+	navigate = true
+
+[gpg]
+	format = "ssh"
+
+[gpg "openpgp"]
+	program = "gpg"
+
+[gpg "ssh"]
+	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+
+[help]
+	autocorrect = "1"
+
+[init]
+	defaultBranch = "main"
+
+[interactive]
+	diffFilter = "delta --color-only"
+	difffilter = "delta --color-only"
+
+[merge]
+	conflictStyle = "diff3"
+
+[pretty]
+	custom = "%C(magenta)%h%C(red)%d %C(yellow)%ar %C(green)%s %C(yellow)(%an)"
+
+[push]
+	autoSetupRemote = true
+	default = "current"
+
+[rebase]
+	autosquash = true
+	autostash = true
+	stat = true
+	updateRefs = true
+
+[rerere]
+	autoupdate = true
+	enabled = true
+
+[user]
+	email = "62936+alistairstead@users.noreply.github.com"
+	name = "Alistair Stead"
+	signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICqsrSxLYhMuCdzuO6pra5QulC8SKN19v1AUjh7wqUZq"

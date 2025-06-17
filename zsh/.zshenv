@@ -26,10 +26,21 @@ export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
 export PATH="$(brew --prefix python)/libexec/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$HOME/.cache/.bun/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
+# sst
+export PATH=$HOME/.sst/bin:$PATH
+
+# pnpm
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# pnpm end
 export PATH=/Users/$USER/bin:$PATH
 export PATH=/Users/$USER/go/bin:$PATH
-
-# Editor settings moved to .zshrc
-# Terminal settings moved to .zshrc
-# ASDF settings moved to .zshrc
