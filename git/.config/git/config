@@ -26,9 +26,6 @@
 [gpg]
 	format = "ssh"
 
-[gpg "openpgp"]
-	program = "gpg"
-
 [gpg "ssh"]
 	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
 
@@ -55,7 +52,6 @@
 [rebase]
 	autosquash = true
 	autostash = true
-	stat = true
 	updateRefs = true
 
 [rerere]

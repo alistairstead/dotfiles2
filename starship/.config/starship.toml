@@ -20,7 +20,3 @@ format = "[$symbol $name]($style) "
 impure_msg = "*"
 pure_msg = ""
 symbol = ""
-
-# [sst]
-# format = "[$symbol]($style) "
-# symbol = "⑆"
