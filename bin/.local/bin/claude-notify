@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Claude Code wrapper with native macOS notifications
+# This script wraps Claude Code to send notifications when it finishes or needs input
+
+# Store the start time
+start_time=$(date +%s)
+
+# Run Claude Code with all arguments
+claude "$@"
+exit_code=$?
+
+# Calculate duration
+end_time=$(date +%s)
+duration=$((end_time - start_time))
+duration_min=$((duration / 60))
+duration_sec=$((duration % 60))
+
+# Determine the message based on exit code
+if [ $exit_code -eq 0 ]; then
+  message="Task completed successfully"
+else
+  message="Task completed with errors (exit code: $exit_code)"
+fi
+
+# Send notification directly using terminal-notifier
+if command -v terminal-notifier >/dev/null 2>&1; then
+  terminal-notifier \
+    -title "Claude Code" \
+    -message "$message" \
+    -subtitle "Duration: ${duration_min}m ${duration_sec}s" \
+    -sound Ping \
+    -group claude-notifications \
+    -sender com.apple.Terminal \
+    -activate com.apple.Terminal
+fi
+
+# Also send bell for tmux integration (when in other windows)
+echo -e "\a"
+
+# Exit with the same code as Claude
+exit $exit_code
+
