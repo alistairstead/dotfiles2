@@ -103,8 +103,6 @@ alias zshrc="vim ~/.zshrc"
 alias vimrc="vim ~/.config/nvim"
 alias tmuxrc="vim ~/.tmux.conf"
 alias pn=pnpm
-alias code="cd ~/code"
-alias dotfiles="cd ~/dotfiles"
 # Remove all items safely, to Trash (`brew install trash`).
 if which trash >/dev/null 2>&1; then
   alias rm='trash'
@@ -221,6 +219,8 @@ export TERM=tmux-256color
 export ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY=latest_installed
 export GRANTED_ENABLE_AUTO_REASSUME="true"
 export SSH_AUTH_SOCK="$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+
+# export _ZO_DOCTOR=0
 
 # Aliases
 alias assume=". assume"

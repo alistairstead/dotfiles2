@@ -1,7 +1,7 @@
 import { rule, to$, withModifier } from 'karabiner.ts'
 
 export const toYabai$ = (command: string) =>
-  to$(`/etc/profiles/per-user/alistairstead/bin/yabai -m ${command}`)
+  to$(`/opt/homebrew/bin/yabai -m ${command}`)
 
 export function yabaiLayer() {
   return [
