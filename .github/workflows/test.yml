@@ -74,6 +74,9 @@ jobs:
             nvim/
             node_modules/
             .git/
+            zsh/.zprofile
+            zsh/.zshrc
+            zsh/.zshenv
 
   test-syntax:
     name: Test Configuration Syntax

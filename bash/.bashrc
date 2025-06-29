@@ -160,6 +160,7 @@ fi
 # Source environment files
 envs() {
   set -a
+  # shellcheck source=/dev/null
   source "$1"
   set +a
 }
@@ -198,6 +199,7 @@ shopt -s extglob
 
 # Source private configuration if it exists
 if [[ -r ~/private/.bashrc ]]; then
+  # shellcheck source=/dev/null
   source ~/private/.bashrc
 fi
 
