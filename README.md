@@ -10,11 +10,12 @@ cd ~/dotfiles
 ./install.sh
 ```
 
-[![Test Dotfiles Installation](https://github.com/alistairstead/dotfiles/actions/workflows/test-dotfiles.yml/badge.svg)](https://github.com/alistairstead/dotfiles/actions/workflows/test-dotfiles.yml)
+[![Test Installation](https://github.com/alistairstead/dotfiles/actions/workflows/test.yml/badge.svg)](https://github.com/alistairstead/dotfiles/actions/workflows/test.yml)
 
 ## What's Included
 
 ### Applications
+
 - **Terminal**: Ghostty, WezTerm
 - **Editor**: Neovim (LazyVim configuration)
 - **Shell**: Zsh with Starship prompt
@@ -24,6 +25,7 @@ cd ~/dotfiles
 - **Development Tools**: Git, GitHub CLI, Direnv
 
 ### Key Features
+
 - Touch ID for sudo authentication
 - Catppuccin Mocha theme across applications
 - Declarative package management via Brewfile
@@ -51,6 +53,7 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ## Directory Structure
 
 Each directory contains configuration for a specific application:
+
 - `app/` - Contains files that will be symlinked to home directory
 - `app/.config/` - Contains files for `~/.config/app/`
 
@@ -63,6 +66,7 @@ Each directory contains configuration for a specific application:
 ## AWS CLI Setup
 
 Sync settings for AWS CLI:
+
 ```bash
 granted-refresh
 ```
