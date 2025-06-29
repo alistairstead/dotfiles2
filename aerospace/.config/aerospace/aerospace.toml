@@ -9,7 +9,20 @@ after-login-command = []
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
-after-startup-command = []
+# Setup workspace-specific layouts (matching yabai config)
+after-startup-command = [
+    # Workspace 2 (comms) - accordion layout similar to yabai's stack
+    'workspace 2',
+    'layout accordion horizontal',
+    # Workspace 7 (media) - accordion layout similar to yabai's stack  
+    'workspace 7',
+    'layout accordion horizontal',
+    # Workspace 9 (scratch) - all windows float by default
+    'workspace 9',
+    'layout floating',
+    # Return to workspace 1
+    'workspace 1',
+]
 
 # Start AeroSpace at login
 start-at-login = true
@@ -50,12 +63,12 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 #                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
 #                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
 [gaps]
-inner.horizontal = 8
-inner.vertical = 8
-outer.left = 8
-outer.bottom = 8
-outer.top = 8
-outer.right = 8
+inner.horizontal = 10
+inner.vertical = 10
+outer.left = 10
+outer.bottom = 10
+outer.top = 10
+outer.right = 10
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -97,7 +110,19 @@ alt-j = 'focus down'
 alt-k = 'focus up'
 alt-l = 'focus right'
 
-alt-f = 'fullscreen'
+# Window management commands matching yabai
+alt-z = 'fullscreen'
+alt-m = 'fullscreen'
+alt-f = 'layout floating tiling'
+alt-s = 'layout tiles accordion'
+alt-d = 'layout tiles horizontal vertical'
+alt-b = 'balance-sizes'
+alt-equal = 'balance-sizes'
+
+# Window rotation and mirroring
+alt-x = 'split horizontal'
+alt-y = 'split vertical'
+alt-r = 'split opposite'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move
 alt-shift-h = 'move left'
@@ -105,17 +130,32 @@ alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
 
+# Sticky window (simulated with floating)
+alt-shift-s = 'layout floating'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
+alt-shift-1 = 'move-node-to-workspace 1'
+alt-shift-2 = 'move-node-to-workspace 2'
+alt-shift-3 = 'move-node-to-workspace 3'
+alt-shift-4 = 'move-node-to-workspace 4'
+alt-shift-5 = 'move-node-to-workspace 5'
+alt-shift-6 = 'move-node-to-workspace 6'
+alt-shift-7 = 'move-node-to-workspace 7'
+alt-shift-8 = 'move-node-to-workspace 8'
+alt-shift-9 = 'move-node-to-workspace 9'
+alt-shift-0 = 'move-node-to-workspace 10'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-ctrl-1 = 'workspace 1'
-ctrl-2 = 'workspace 2'
-ctrl-3 = 'workspace 3'
-ctrl-4 = 'workspace 4'
-ctrl-5 = 'workspace 5'
-ctrl-6 = 'workspace 6'
-ctrl-7 = 'workspace 7'
-ctrl-8 = 'workspace 8'
-ctrl-9 = 'workspace 9'
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+alt-6 = 'workspace 6'
+alt-7 = 'workspace 7'
+alt-8 = 'workspace 8'
+alt-9 = 'workspace 9'
+alt-0 = 'workspace 10'
 
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
@@ -123,9 +163,14 @@ alt-tab = 'workspace-back-and-forth'
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
 alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
-alt-o = 'exec-and-forget open -a /Applications/Obsidian.app'
-alt-g = 'exec-and-forget open -a /Applications/Ghostty.app'
-alt-s = 'exec-and-forget open -a /Applications/Safari.app'
+# Remove these app launchers as they conflict with layout commands
+# Apps should be launched via Raycast or other launcher
+
+# Window resizing with Option+Control (matching yabai)
+alt-ctrl-h = 'resize width -100'
+alt-ctrl-j = 'resize height +100'
+alt-ctrl-k = 'resize height -100'
+alt-ctrl-l = 'resize width +100'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 ctrl-a = 'mode service'
@@ -144,71 +189,166 @@ l = [
 
 backspace = ['close-all-windows-but-current', 'mode main']
 enter = ['mode main']
-o = ['exec-and-forget open -a /Applications/Obsidian.app', 'mode main']
-g = ['exec-and-forget open -a /Applications/Ghostty.app', 'mode main']
-s = ['exec-and-forget open -a /Applications/Safari.app', 'mode main']
 
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#resize
 minus = 'resize smart -50'
 equal = 'resize smart +50'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-ctrl-1 = ['move-node-to-workspace 1', 'workspace 1', 'mode main']
-ctrl-2 = ['move-node-to-workspace 2', 'workspace 2', 'mode main']
-ctrl-3 = ['move-node-to-workspace 3', 'workspace 3', 'mode main']
-ctrl-4 = ['move-node-to-workspace 4', 'workspace 4', 'mode main']
-ctrl-5 = ['move-node-to-workspace 5', 'workspace 5', 'mode main']
-ctrl-6 = ['move-node-to-workspace 6', 'workspace 6', 'mode main']
-ctrl-7 = ['move-node-to-workspace 7', 'workspace 7', 'mode main']
-ctrl-8 = ['move-node-to-workspace 8', 'workspace 8', 'mode main']
-ctrl-9 = ['move-node-to-workspace 9', 'workspace 9', 'mode main']
-
 ctrl-h = ['join-with left', 'mode main']
 ctrl-j = ['join-with down', 'mode main']
 ctrl-k = ['join-with up', 'mode main']
 ctrl-l = ['join-with right', 'mode main']
 
+# Workspace 1 - Main (browsers)
 [[on-window-detected]]
-if.app-id = 'com.github.wez.wezterm'
+if.app-id = 'com.google.Chrome'
 run = 'move-node-to-workspace 1'
 
 [[on-window-detected]]
-if.app-id = 'com.google.Chrome'
+if.app-id = 'com.apple.Safari'
+run = 'move-node-to-workspace 1'
+
+# Workspace 2 - Comms
+[[on-window-detected]]
+if.app-id = 'com.apple.MobileSMS'
 run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
-if.app-id = 'com.apple.Safari'
+if.app-id = 'com.facebook.Messenger'
 run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-id = 'com.readdle.SparkDesktop'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = 'move-node-to-workspace 2'
+
+# Workspace 3 - Code
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
 run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
-if.app-id = 'com.tinyspeck.slackmacgap'
-run = 'move-node-to-workspace 4'
+if.app-id = 'com.github.wez.wezterm'
+run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
-if.app-id = 'com.apple.iCal'
+if.app-id = 'com.draculatheme.sizzy'
+run = 'move-node-to-workspace 3'
+
+# Workspace 4 - Ref (GitHub, documentation)
+[[on-window-detected]]
+if.app-id = 'com.github.GitHubClient'
+run = 'move-node-to-workspace 4'
+
+# Workspace 5 - Productivity
+[[on-window-detected]]
+if.app-id = 'md.obsidian'
 run = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
+if.app-id = 'com.apple.Notes'
+run = 'move-node-to-workspace 5'
+
+[[on-window-detected]]
+if.app-id = 'com.todoist.mac.Todoist'
+run = 'move-node-to-workspace 5'
+
+# Workspace 6 - VM
+[[on-window-detected]]
+if.app-id = 'com.orbstack.OrbStack'
+run = 'move-node-to-workspace 6'
+
+# Workspace 7 - Media
+[[on-window-detected]]
+if.app-id = 'com.apple.Music'
+run = 'move-node-to-workspace 7'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.TV'
+run = 'move-node-to-workspace 7'
+
+# Workspace 8 - Misc
+[[on-window-detected]]
 if.app-id = 'com.hnc.Discord'
-run = 'move-node-to-workspace 9'
+run = 'move-node-to-workspace 8'
 
 [[on-window-detected]]
-if.app-id = 'com.tinyspeck.slackmacgap'
-run = 'move-node-to-workspace 10'
+if.app-id = 'com.apple.iCal'
+run = 'move-node-to-workspace 8'
 
-# Floating apps
+# Floating apps (unmanaged in yabai)
 [[on-window-detected]]
-if.app-id = 'com.macpaw.CleanMyMac4'
+if.app-id = 'com.apple.ActivityMonitor'
 check-further-callbacks = true
 run = ['layout floating']
 
 [[on-window-detected]]
-if.app-id = 'com.raycast.macos'
+if.app-id = 'com.apple.AppStore'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.ArchiveUtility'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Calculator'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Dictionary'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.FaceTime'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.PhotoBooth'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.ScreenSharing'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.thnkdev.Screens5'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.SoftwareUpdate'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.SystemInformation'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systemsettings'
+check-further-callbacks = true
+run = ['layout floating']
+
+# Sticky apps (always on top - simulated with floating in aerospace)
+[[on-window-detected]]
+if.app-id = 'com.1password.1Password'
 check-further-callbacks = true
 run = ['layout floating']
 
@@ -219,5 +359,16 @@ run = ['layout floating']
 
 [[on-window-detected]]
 if.app-id = 'co.teamport.around'
+check-further-callbacks = true
+run = ['layout floating']
+
+# Other floating apps
+[[on-window-detected]]
+if.app-id = 'com.macpaw.CleanMyMac4'
+check-further-callbacks = true
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'com.raycast.macos'
 check-further-callbacks = true
 run = ['layout floating']

@@ -6,6 +6,12 @@ if [[ -f "/opt/homebrew/bin/brew" ]] then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+# Initialize completion system early to avoid menuselect keymap errors
+autoload -Uz compinit && compinit -C
+zmodload zsh/complist
+# Ensure menuselect keymap exists
+bindkey -M menuselect '^?' backward-delete-char 2>/dev/null || true
+
 # Add zsh plugins
 plug "zsh-users/zsh-syntax-highlighting" # Command-line syntax highlighting
 plug "zsh-users/zsh-completions"
@@ -27,16 +33,8 @@ ZSH_HIGHLIGHT_STYLES[builtin]='fg=green'
 ZSH_HIGHLIGHT_STYLES[function]='fg=green'
 ZSH_HIGHLIGHT_STYLES[command-error]='fg=red,bold'
 
-# initialise completions with ZSH's compinit
+# initialise bash completions
 autoload -U +X bashcompinit && bashcompinit
-
-# Lazy load completions for better performance
-autoload -Uz compinit
-if [[ -n ${ZDOTDIR}/.zcompdump(#qNmh+24) ]]; then
-  compinit
-else
-  compinit -C
-fi
 
 complete -C '/opt/homebrew/bin/aws_completer' aws
 
@@ -202,10 +200,13 @@ bindkey "^?" backward-delete-char
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
-# # append completions to fpath
+# append completions to fpath
 fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
-# initialise completions with ZSH's compinit
-autoload -Uz compinit && compinit
+
+# Initialize mise (if installed)
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
 
 # Source fzf key bindings (includes Ctrl+R for history search)
 [ -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ] && source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
@@ -220,10 +221,29 @@ export ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY=latest_installed
 export GRANTED_ENABLE_AUTO_REASSUME="true"
 export SSH_AUTH_SOCK="$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 
-# export _ZO_DOCTOR=0
+# Performance optimizations
+export KEYTIMEOUT=1  # Faster vi mode switching
+export ZSH_AUTOSUGGEST_MANUAL_REBIND=1  # Better performance for autosuggestions
+export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20  # Limit suggestion buffer size
+export _ZO_DOCTOR=0  # Disable zoxide doctor checks
+
+# Better FZF defaults
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --inline-info'
+export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {}'"
+export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
 
 # Aliases
 alias assume=". assume"
+
+# Mise aliases (if installed)
+if command -v mise >/dev/null 2>&1; then
+  alias mr='mise run'
+  alias mi='mise install'
+  alias mu='mise use'
+  alias ml='mise list'
+  alias mc='mise current'
+fi
 
 # Initialize zoxide (must be at the very end)
 eval "$(zoxide init --cmd cd zsh)"

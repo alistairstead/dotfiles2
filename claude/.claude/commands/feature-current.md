@@ -1,6 +1,6 @@
 Show the current feature status by:
 
-1. Check if `.claude/feature/.current-feature` exists
+1. Check if `.claude/features/.current-feature` exists
 2. If no active feature, inform user and suggest starting one
 3. If active feature exists:
    - Show feature name and filename

@@ -1,0 +1,49 @@
+# Example .mise.toml for projects
+# Copy this to your project root and adjust as needed
+
+# Specify tool versions for this project
+[tools]
+node = "20"        # or "lts", or read from .nvmrc if present
+python = "3.12"
+ruby = "3.3"
+go = "1.21"
+terraform = "1.6"
+pnpm = "8"
+yarn = "1.22"
+
+# Project-specific environment variables
+[env]
+NODE_ENV = "development"
+# AWS_PROFILE = "my-project"
+
+# Run scripts on directory enter/leave
+# [hooks]
+# enter = "echo 'Welcome to my project!'"
+# leave = "echo 'Goodbye!'"
+
+# Tasks (similar to package.json scripts)
+[tasks.dev]
+run = "npm run dev"
+description = "Start development server"
+
+[tasks.test]
+run = "npm test"
+description = "Run tests"
+
+[tasks.lint]
+run = ["npm run lint", "npm run typecheck"]
+description = "Run linting and type checking"
+
+[tasks.setup]
+run = """
+npm install
+cp .env.example .env
+echo "Project setup complete!"
+"""
+description = "Initial project setup"
+
+# Aliases for tasks
+[task_aliases]
+d = "dev"
+t = "test"
+l = "lint"

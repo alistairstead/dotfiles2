@@ -53,8 +53,11 @@ if command -v direnv >/dev/null 2>&1; then
   eval "$(direnv hook bash)"
 fi
 
-# ASDF version manager (if installed)
-if [[ -f "$HOME/.asdf/asdf.sh" ]]; then
+# Mise version manager (if installed) - replaces asdf
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate bash)"
+# Fall back to ASDF if mise not installed
+elif [[ -f "$HOME/.asdf/asdf.sh" ]]; then
   source "$HOME/.asdf/asdf.sh"
   # ASDF completions
   if [[ -f "$HOME/.asdf/completions/asdf.bash" ]]; then

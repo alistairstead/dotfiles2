@@ -26,6 +26,8 @@ Quick reference for Ghostty + tmux key bindings and workflows.
 | `⌥+←/→/↑/↓` | Navigate between panes | Global |
 | `⇧+←/→` | Navigate between windows | Global |
 | `⌥+H/L` | Previous/next window | Global |
+| `⌥+⌃+=` / `⌥+⌃++` | Increase pane size (smart) | Global |
+| `⌥+⌃+-` | Decrease pane size (smart) | Global |
 
 ## 📋 Copy Mode & Text Selection
 
@@ -129,8 +131,9 @@ Quick reference for Ghostty + tmux key bindings and workflows.
 ### Pane Management
 1. `⌘+N` / `⌘+⇧+N` → Split vertically/horizontally
 2. `⌥+arrows` → Navigate between panes
-3. `⌘+⇧+B` → Break pane to new window
-4. `⌘+⇧+J` → Join panes together
+3. `⌥+⌃++/-` → Resize panes quickly
+4. `⌘+⇧+B` → Break pane to new window
+5. `⌘+⇧+J` → Join panes together
 
 ## 📚 tmux Prefix Commands
 
@@ -146,6 +149,19 @@ Quick reference for Ghostty + tmux key bindings and workflows.
 | `prefix + w` | Show windows |
 | `prefix + ,` | Rename window |
 | `prefix + $` | Rename session |
+
+### Pane Resizing
+
+| Command | Action |
+|---------|--------|
+| `prefix + ⌥+h` | Resize pane left (5 cells) |
+| `prefix + ⌥+j` | Resize pane down (5 cells) |
+| `prefix + ⌥+k` | Resize pane up (5 cells) |
+| `prefix + ⌥+l` | Resize pane right (5 cells) |
+| `prefix + <` | Resize left (1 cell) |
+| `prefix + >` | Resize right (1 cell) |
+| `prefix + -` | Resize down (1 cell) |
+| `prefix + +` | Resize up (1 cell) |
 
 ---
 

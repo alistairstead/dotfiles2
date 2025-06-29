@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Tmux sessionizer - Quick project switching
+# Inspired by ThePrimeagen's workflow
+
+# Set default directories to search
+SEARCH_DIRS=(
+    "$HOME/dev"
+    "$HOME/dev/personal"
+    "$HOME/dev/work"
+    "$HOME/.config"
+    "$HOME/dotfiles"
+)
+
+# If an argument is provided, use it as the selected directory
+if [[ $# -eq 1 ]]; then
+    selected=$1
+else
+    # Use FZF to select a directory
+    selected=$(find "${SEARCH_DIRS[@]}" -mindepth 1 -maxdepth 2 -type d 2>/dev/null | \
+        fzf --preview 'ls -la {}' \
+            --preview-window right:50% \
+            --header "Select a project directory" \
+            --bind 'ctrl-/:toggle-preview')
+fi
+
+# Exit if nothing was selected
+if [[ -z $selected ]]; then
+    exit 0
+fi
+
+# Get the basename for the session name
+selected_name=$(basename "$selected" | tr . _)
+
+# Check if we're already in tmux
+tmux_running=$(pgrep tmux)
+
+# If we're not in tmux and tmux isn't running
+if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
+    tmux new-session -s "$selected_name" -c "$selected"
+    exit 0
+fi
+
+# If the session doesn't exist, create it
+if ! tmux has-session -t="$selected_name" 2> /dev/null; then
+    tmux new-session -ds "$selected_name" -c "$selected"
+fi
+
+# Switch to the session
+if [[ -z $TMUX ]]; then
+    # If we're not in tmux, attach to the session
+    tmux attach-session -t "$selected_name"
+else
+    # If we're in tmux, switch to the session
+    tmux switch-client -t "$selected_name"
+fi

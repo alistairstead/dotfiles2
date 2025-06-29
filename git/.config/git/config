@@ -1,4 +1,5 @@
 [alias]
+	# Basic shortcuts
 	branches = "branch -a"
 	co = "checkout"
 	l = "log --pretty=oneline -n 40 --graph --abbrev-commit"
@@ -8,6 +9,24 @@
 	st = "status"
 	tags = "tag -l"
 	undo = "reset --soft HEAD^"
+	
+	# Advanced workflows
+	amend = "commit --amend --no-edit"
+	fixup = "commit --fixup"
+	recent = "branch --sort=-committerdate --format='%(committerdate:relative)%09%(refname:short)'"
+	unstage = "reset HEAD --"
+	discard = "checkout --"
+	
+	# Branch management
+	cleanup = "!git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d"
+	publish = "!git push -u origin $(git branch --show-current)"
+	unpublish = "!git push origin :$(git branch --show-current)"
+	
+	# History exploration
+	who = "shortlog -sne"
+	contributors = "shortlog -sn"
+	search = "log --all --grep"
+	find = "log --all --source --name-status --follow --grep"
 
 [apply]
 	whitespace = "fix"
@@ -62,3 +81,24 @@
 	email = "62936+alistairstead@users.noreply.github.com"
 	name = "Alistair Stead"
 	signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICqsrSxLYhMuCdzuO6pra5QulC8SKN19v1AUjh7wqUZq"
+
+[fetch]
+	prune = true
+	prunetags = true
+
+[pull]
+	rebase = true
+
+[diff]
+	algorithm = histogram
+	colorMoved = default
+
+[branch]
+	sort = -committerdate
+
+[log]
+	date = relative
+
+[status]
+	showUntrackedFiles = all
+	submoduleSummary = true

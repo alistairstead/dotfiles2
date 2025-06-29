@@ -35,10 +35,11 @@ done 2>/dev/null &
 
 info "INFO: Mac OS System Install Setup Script"
 
-unless ENV["CI"]
-info "INFO: Installing xcode..."
-xcode-select --install
-end
+# Install Xcode command line tools if not in CI environment
+if [ -z "$CI" ]; then
+  info "INFO: Installing xcode command line tools..."
+  xcode-select --install 2>/dev/null || true
+fi
 
 # Homebrew
 #
@@ -54,26 +55,41 @@ fi
 brew upgrade
 brew update
 
+info "Installing packages from Brewfile..."
+brew bundle
+
 info "Creating symlinks..."
 
-stow asdf bin direnv gh nvim ssh starship tmux wezterm yabai zsh
+stow bin direnv gh git mise nvim ssh starship tmux wezterm yabai zsh
 
 info "Install zap..."
 
 zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
 
-if test ! $(which asdf); then
-  mkdir -p "${ASDF_DATA_DIR:-$HOME/.asdf}/completions"
-  asdf completion zsh >"${ASDF_DATA_DIR:-$HOME/.asdf}/completions/_asdf"
+info "Setting up mise for runtime management..."
 
-  asdf plugin add erlang
-  asdf plugin add elixir
-  asdf plugin add nodejs
-  asdf plugin add pnpm
-  asdf plugin add bun
-  asdf plugin add postgres
-  asdf plugin add direnv
+if test ! $(which mise); then
+  info "Installing mise..."
+  brew install mise
 fi
+
+# Install common development tools with mise
+info "Installing development runtimes with mise..."
+
+# Install Node.js LTS
+mise use --global node@lts
+
+# Install other common tools
+mise use --global python@latest
+mise use --global ruby@latest
+mise use --global go@latest
+
+# Install package managers
+mise use --global pnpm@latest
+mise use --global bun@latest
+
+# For any existing .tool-versions files, mise will automatically read them
+info "Mise is configured to read .nvmrc, .ruby-version, .tool-versions, etc."
 # info "INFO: Cloning personal dotfiles..."
 #
 # git clone https://github.com/alistairstead/dotfiles2.git ~/dotfiles
@@ -85,3 +101,8 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ~/.tmux/plugins/tpm/bin/install_plugins
 
 success "Done!"
+
+info "Note: mise is now configured as your runtime manager."
+info "It will automatically read .nvmrc, .ruby-version, .tool-versions, etc."
+info "Run 'mise doctor' to verify the installation."
+info "See MISE_MIGRATION.md for migration guide from asdf."

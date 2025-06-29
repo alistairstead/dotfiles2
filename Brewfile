@@ -3,7 +3,6 @@
 
 # Taps
 tap "neovim/neovim"
-tap "oven-sh/bun"
 tap "common-fate/granted"
 tap "nikitabobko/tap"
 tap "1password/tap"
@@ -31,10 +30,7 @@ brew "neovim"
 brew "wget"
 brew "curl"
 brew "go"
-brew "nodejs"
-brew "corepack"
 brew "deno"
-brew "bun"
 brew "pipx"
 brew "luarocks"
 brew "luajit"
@@ -47,7 +43,6 @@ brew "tflint"
 brew "granted"
 
 # Terminal tools
-brew "asdf"
 brew "bat"
 brew "btop"
 brew "direnv"
@@ -70,6 +65,14 @@ brew "tree"
 brew "fastfetch"
 brew "yq"
 
+# Enhanced shell tools
+brew "atuin"       # Better shell history with sync
+brew "navi"        # Interactive cheatsheet tool
+brew "tldr"        # Simplified man pages
+brew "glow"        # Markdown rendering in terminal
+brew "just"        # Modern command runner
+brew "watchexec"   # File watcher for development
+
 # Database tools
 brew "mysql-client@8.4"
 brew "sqlite"
@@ -83,9 +86,16 @@ brew "stylua"
 brew "diff-so-fancy"
 brew "lazydocker"
 brew "lazygit"
-brew "prettierd"
 brew "fontconfig"
 brew "imagemagick"
+
+# Advanced development tools
+brew "mise"
+brew "git-cliff"    # Automated changelog generation
+brew "lefthook"     # Modern git hooks manager
+brew "git-absorb"   # Automatically fixup commits
+brew "gitui"        # TUI for git
+brew "sccache"      # Shared compilation cache
 
 # Window management
 brew "yabai"
