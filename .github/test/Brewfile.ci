@@ -1,0 +1,30 @@
+# Minimal Brewfile for CI testing
+# Only essential tools needed for dotfiles functionality
+
+# Core utilities
+brew "coreutils"
+brew "git"
+brew "stow"
+
+# Shell and terminal tools
+brew "zsh"
+brew "bash"
+brew "starship"
+brew "direnv"
+brew "zoxide"
+brew "fzf"
+brew "bat"
+brew "eza"
+brew "ripgrep"
+brew "fd"
+
+# Development tools
+brew "mise"
+brew "neovim"
+brew "tmux"
+brew "gh"
+
+# Optional but useful for testing
+brew "atuin"
+brew "jq"
+brew "yq"

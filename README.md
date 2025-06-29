@@ -7,8 +7,10 @@ Personal macOS configuration files managed with GNU Stow.
 ```bash
 git clone https://github.com/alistairstead/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-./setup.sh
+./install.sh
 ```
+
+[![Test Dotfiles Installation](https://github.com/alistairstead/dotfiles/actions/workflows/test-dotfiles.yml/badge.svg)](https://github.com/alistairstead/dotfiles/actions/workflows/test-dotfiles.yml)
 
 ## What's Included
 

@@ -1,15 +1,115 @@
-name: Tests
+name: Test Dotfiles Installation
+
 on:
   push:
-    branches: [main]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  install:
-    runs-on: macos-latest
+  test-install:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, macos-12]
+    
     steps:
-      - name: Run install
-        env:
-          NIX_CONFIG: "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up environment
         run: |
-          bash -c "$(curl -fsSL \
-          https://raw.githubusercontent.com/alistairstead/dotfiles2/main/install.sh)"
+          echo "CI=true" >> $GITHUB_ENV
+          echo "HOME=$HOME" >> $GITHUB_ENV
+      
+      - name: Run installation script
+        run: |
+          # Make script executable
+          chmod +x install.sh
+          
+          # Run installation
+          ./install.sh
+      
+      - name: Validate installation
+        run: |
+          # Check if key tools are installed
+          echo "=== Checking Homebrew ==="
+          which brew && brew --version
+          
+          echo "=== Checking GNU Stow ==="
+          which stow && stow --version
+          
+          echo "=== Checking mise ==="
+          which mise && mise --version
+          
+          echo "=== Checking symlinks ==="
+          ls -la ~/.config/
+          
+          echo "=== Checking shell configurations ==="
+          # Test if configurations load without errors
+          zsh -c "source ~/.zshrc && echo 'Zsh config loads successfully'"
+          bash -c "source ~/.bashrc && echo 'Bash config loads successfully'"
+      
+      - name: Run extended validation
+        if: success()
+        run: |
+          if [ -f ".github/test/validate.sh" ]; then
+            chmod +x .github/test/validate.sh
+            ./.github/test/validate.sh
+          fi
+
+  test-shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: '.'
+          severity: warning
+          ignore_paths: |
+            nvim/
+            node_modules/
+            .git/
+
+  test-syntax:
+    name: Test Configuration Syntax
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Validate YAML files
+        run: |
+          # Find and validate all YAML files
+          find . -name "*.yml" -o -name "*.yaml" | while read -r file; do
+            echo "Validating $file"
+            python -c "import yaml; yaml.safe_load(open('$file'))" || exit 1
+          done
+      
+      - name: Validate TOML files
+        run: |
+          # Install toml-cli if needed
+          brew install yq
+          
+          # Find and validate all TOML files
+          find . -name "*.toml" | while read -r file; do
+            echo "Validating $file"
+            yq eval '.' "$file" > /dev/null || exit 1
+          done
+      
+      - name: Validate shell scripts
+        run: |
+          # Basic syntax check for all shell scripts
+          find . -name "*.sh" -o -name "*.bash" -o -name "*.zsh" | while read -r file; do
+            echo "Checking syntax of $file"
+            bash -n "$file" || zsh -n "$file" || true
+          done

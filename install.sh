@@ -1,108 +1,281 @@
 #!/usr/bin/env bash
+# Unified Install Script for macOS dotfiles
+# Combines setup.sh and install.sh into a single, comprehensive installer
 
-## Helper functions
+set -e
+
+# =====================================
+# Helper Functions
+# =====================================
 
 info() {
-  # shellcheck disable=SC2059
-  printf "\r  [ \033[00;34m..\033[0m ] $1\n"
+  printf "\r  [ \033[00;34m..\033[0m ] %s\n" "$1"
 }
 
 success() {
-  # shellcheck disable=SC2059
-  printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
+  printf "\r\033[2K  [ \033[00;32mOK\033[0m ] %s\n" "$1"
 }
 
 error() {
-  # shellcheck disable=SC2059
-  printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
-  echo ''
+  printf "\r\033[2K  [\033[0;31mFAIL\033[0m] %s\n" "$1"
 }
 
 fail() {
-  # shellcheck disable=SC2059
   error "$1"
   exit 1
 }
 
-## Run script as sudo if not already
+# =====================================
+# Environment Detection
+# =====================================
 
-sudo -v
-while true; do
-  sudo -n true
-  sleep 60
-  kill -0 "$$" || exit
-done 2>/dev/null &
+info "macOS Dotfiles Installer"
+info "========================"
 
-info "INFO: Mac OS System Install Setup Script"
+# Detect if running in CI
+if [ -n "$CI" ]; then
+  info "Running in CI environment"
+else
+  info "Running in interactive mode"
+fi
 
-# Install Xcode command line tools if not in CI environment
+# =====================================
+# Sudo Setup (skip in CI)
+# =====================================
+
 if [ -z "$CI" ]; then
-  info "INFO: Installing xcode command line tools..."
-  xcode-select --install 2>/dev/null || true
+  # Keep sudo alive
+  sudo -v
+  while true; do
+    sudo -n true
+    sleep 60
+    kill -0 "$$" || exit
+  done 2>/dev/null &
 fi
 
-# Homebrew
-#
-# This installs some of the common dependencies needed (or at least desired)
-# using Homebrew.
+# =====================================
+# 1. Xcode Command Line Tools
+# =====================================
 
-# Check for Homebrew
-if test ! "$(which brew)"; then
-  info "INFO: Installing Homebrew for you."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+if [ -z "$CI" ] && ! xcode-select --print-path &>/dev/null; then
+  info "Installing Xcode Command Line Tools..."
+  xcode-select --install
+  # Wait for installation to complete
+  until xcode-select --print-path &>/dev/null; do
+    sleep 5
+  done
+  success "Xcode Command Line Tools installed"
+else
+  info "Xcode Command Line Tools already installed or running in CI"
 fi
 
-brew upgrade
-brew update
+# =====================================
+# 2. Homebrew Installation
+# =====================================
 
-info "Installing packages from Brewfile..."
-brew bundle
+if ! command -v brew &>/dev/null; then
+  info "Installing Homebrew..."
+  if [ -z "$CI" ]; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  else
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
 
-info "Creating symlinks..."
+  # Add Homebrew to PATH for Apple Silicon Macs
+  if [ -f "/opt/homebrew/bin/brew" ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
+  success "Homebrew installed"
+else
+  info "Homebrew already installed, updating..."
+  brew update
+  brew upgrade
+fi
 
-stow atuin bash bin direnv gh git mise nvim ssh starship tmux wezterm yabai zsh
+# =====================================
+# 3. Install Packages from Brewfile
+# =====================================
 
-info "Install zap..."
+if [ -f "Brewfile" ]; then
+  info "Installing packages from Brewfile..."
+  if [ -n "$CI" ]; then
+    # In CI, use a minimal Brewfile if it exists
+    if [ -f ".github/test/Brewfile.ci" ]; then
+      info "Using CI-specific Brewfile"
+      brew bundle --file=.github/test/Brewfile.ci
+    else
+      # Install only essential packages in CI
+      brew bundle --file=Brewfile || true
+    fi
+  else
+    brew bundle --file=Brewfile
+  fi
+  success "Homebrew packages installed"
+else
+  error "Brewfile not found"
+fi
 
-zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
+# =====================================
+# 4. macOS System Settings
+# =====================================
 
-info "Setting up mise for runtime management..."
+if [ -z "$CI" ] && [ -f "scripts/macos-setup.sh" ]; then
+  info "Configuring macOS system settings..."
+  ./scripts/macos-setup.sh
+  success "macOS settings configured"
+else
+  info "Skipping macOS system settings (CI environment or script not found)"
+fi
 
-if test ! $(which mise); then
+# =====================================
+# 5. Create Required Directories
+# =====================================
+
+info "Creating required directories..."
+mkdir -p ~/.config
+mkdir -p ~/.local/bin
+mkdir -p ~/.tmux/plugins
+success "Directories created"
+
+# =====================================
+# 6. GNU Stow Setup
+# =====================================
+
+if ! command -v stow &>/dev/null; then
+  fail "GNU Stow is required but not installed. Please install it via Homebrew."
+fi
+
+info "Creating symlinks with GNU Stow..."
+
+# Define stow folders
+STOW_FOLDERS=(
+  "aerospace"
+  "atuin"
+  "bash"
+  "bin"
+  "direnv"
+  "gh"
+  "git"
+  "granted"
+  "ghostty"
+  "mise"
+  "nvim"
+  "ssh"
+  "starship"
+  "tmux"
+  "wezterm"
+  "yabai"
+  "zsh"
+)
+
+# Stow each folder
+for folder in "${STOW_FOLDERS[@]}"; do
+  if [ -d "$folder" ]; then
+    info "Stowing $folder..."
+    stow -v "$folder" || error "Failed to stow $folder"
+  else
+    error "Directory $folder not found, skipping..."
+  fi
+done
+success "Dotfiles linked"
+
+# =====================================
+# 7. Zap (Zsh Plugin Manager)
+# =====================================
+
+if [ ! -d "$HOME/.local/share/zap" ]; then
+  info "Installing Zap..."
+  if [ -z "$CI" ]; then
+    zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
+  else
+    zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1 --keep-zshrc || true
+  fi
+  success "Zap installed"
+else
+  info "Zap already installed"
+fi
+
+# =====================================
+# 8. Mise Runtime Management
+# =====================================
+
+if ! command -v mise &>/dev/null; then
   info "Installing mise..."
   brew install mise
 fi
 
+info "Setting up mise for runtime management..."
+
 # Install common development tools with mise
-info "Installing development runtimes with mise..."
+if [ -z "$CI" ]; then
+  mise use --global node@lts
+  mise use --global python@latest
+  mise use --global ruby@latest
+  mise use --global go@latest
+  mise use --global pnpm@latest
+  mise use --global bun@latest
+else
+  # In CI, only install essentials
+  mise use --global node@lts || true
+fi
 
-# Install Node.js LTS
-mise use --global node@lts
+success "Mise configured - will auto-read .nvmrc, .ruby-version, .tool-versions, etc."
 
-# Install other common tools
-mise use --global python@latest
-mise use --global ruby@latest
-mise use --global go@latest
+# =====================================
+# 9. Tmux Plugin Manager
+# =====================================
 
-# Install package managers
-mise use --global pnpm@latest
-mise use --global bun@latest
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+  info "Installing tmux plugin manager..."
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  ~/.tmux/plugins/tpm/bin/install_plugins || true
+  success "Tmux plugins installed"
+else
+  info "Tmux plugin manager already installed"
+fi
 
-# For any existing .tool-versions files, mise will automatically read them
-info "Mise is configured to read .nvmrc, .ruby-version, .tool-versions, etc."
-# info "INFO: Cloning personal dotfiles..."
-#
-# git clone https://github.com/alistairstead/dotfiles2.git ~/dotfiles
-#
-# cd ~/dotfiles || echo "Cloning dotfiles failed" exit
+# =====================================
+# 10. Shell Configuration
+# =====================================
 
-info "Configuring tmux plugins..."
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-~/.tmux/plugins/tpm/bin/install_plugins
+if [ -z "$CI" ] && [ "$SHELL" != "/bin/zsh" ]; then
+  info "Setting default shell to zsh..."
+  chsh -s /bin/zsh
+  success "Default shell set to zsh"
+fi
 
-success "Done!"
+# =====================================
+# 11. PATH Setup
+# =====================================
 
-info "Note: mise is now configured as your runtime manager."
-info "It will automatically read .nvmrc, .ruby-version, .tool-versions, etc."
-info "Run 'mise doctor' to verify the installation."
-info "See MISE_MIGRATION.md for migration guide from asdf."
+info "Setting up PATH..."
+if ! grep -q "/opt/homebrew/bin" ~/.zshenv 2>/dev/null; then
+  cat >>~/.zshenv <<EOF
+
+# Homebrew PATH
+eval "\$(/opt/homebrew/bin/brew shellenv)"
+export PATH="/opt/homebrew/opt/mysql-client@8.4/bin:\$PATH"
+export PATH="/opt/homebrew/opt/trash/bin:\$PATH"
+export PATH="\$HOME/.local/bin:\$PATH"
+EOF
+  success "PATH configured"
+else
+  info "PATH already configured"
+fi
+
+# =====================================
+# Final Steps
+# =====================================
+
+success "Installation complete!"
+echo ""
+info "Next steps:"
+info "1. Restart your terminal or run: source ~/.zshenv && source ~/.zshrc"
+info "2. Run 'mise doctor' to verify runtime management"
+
+# Run validation in CI
+if [ -n "$CI" ] && [ -f ".github/test/validate.sh" ]; then
+  info "Running CI validation..."
+  bash .github/test/validate.sh
+fi
+
