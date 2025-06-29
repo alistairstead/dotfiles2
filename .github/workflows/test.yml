@@ -9,12 +9,8 @@ on:
 
 jobs:
   test-install:
-    name: Test on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest, macos-12]
+    name: Test on macOS Latest
+    runs-on: macos-latest
     
     steps:
       - name: Checkout repository
@@ -89,10 +85,13 @@ jobs:
       
       - name: Validate YAML files
         run: |
+          # Install PyYAML for validation
+          pip3 install pyyaml
+          
           # Find and validate all YAML files
           find . -name "*.yml" -o -name "*.yaml" | while read -r file; do
             echo "Validating $file"
-            python -c "import yaml; yaml.safe_load(open('$file'))" || exit 1
+            python3 -c "import yaml; yaml.safe_load(open('$file'))" || exit 1
           done
       
       - name: Validate TOML files
