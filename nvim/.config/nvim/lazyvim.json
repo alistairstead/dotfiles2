@@ -43,7 +43,6 @@
     "lazyvim.plugins.extras.util.startuptime",
     "lazyvim.plugins.extras.vscode",
     "plugins.extras.ai",
-    "plugins.extras.codecompanion",
     "plugins.extras.coding",
     "plugins.extras.dap",
     "plugins.extras.editor",
