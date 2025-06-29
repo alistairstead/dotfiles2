@@ -70,13 +70,8 @@ jobs:
         with:
           scandir: '.'
           severity: warning
-          ignore_paths: |
-            nvim/
-            node_modules/
-            .git/
-            zsh/.zprofile
-            zsh/.zshrc
-            zsh/.zshenv
+          ignore_paths: nvim node_modules .git zsh
+          ignore_names: .zshrc .zprofile .zshenv
 
   test-syntax:
     name: Test Configuration Syntax
