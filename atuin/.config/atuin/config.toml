@@ -1,0 +1,76 @@
+# Atuin Configuration
+# https://docs.atuin.sh/configuration/config/
+
+## Sync configuration (optional - requires account)
+# sync_address = "https://api.atuin.sh"
+# sync_frequency = "10m"
+# sync = true
+
+## Local settings
+# How often to save history to the database (in seconds)
+auto_sync = false
+update_check = false
+
+## Search settings
+search_mode = "fuzzy"        # fuzzy, fulltext, prefix
+filter_mode = "global"       # global, host, session, directory
+filter_mode_shell_up_key_binding = "directory"  # Use directory filter with up arrow
+
+## UI settings
+style = "compact"            # compact, full
+show_preview = true
+show_help = true
+exit_mode = "return-original" # return-original, return-query
+
+## History settings
+# Don't save these commands in history
+history_filter = [
+  "^cd$",
+  "^ls$",
+  "^ll$",
+  "^pwd$",
+  "^exit$",
+  "^clear$",
+  "^c$",
+]
+
+# Ignore commands with these prefixes
+secrets_filter = true
+# Additional regex patterns to filter out
+# secrets_regex = ""
+
+## Import settings
+# Import history from existing shell history files
+# import_cache = true
+
+## Key bindings
+# Configure how atuin behaves with different key combinations
+inline_height = 10
+max_preview_height = 4
+
+## Shell-specific settings
+# Configure based on your shell preference
+enter_accept = true
+
+## Stats settings
+# Configure history statistics
+stats_format = "{time} - {command}"
+
+## Other settings
+# Set the maximum number of results to show
+max_history_length = 10000
+
+# Timezone for display
+# timezone = "local"
+
+# Path to the history database
+# db_path = "~/.local/share/atuin/history.db"
+
+# Session tracking
+# session_token = ""
+
+# Workspaces - define different sync configs for different directories
+# [[workspaces]]
+# path = "~/work"
+# search_mode = "fuzzy"
+# filter_mode = "directory"

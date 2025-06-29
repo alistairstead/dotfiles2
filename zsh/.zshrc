@@ -200,9 +200,6 @@ bindkey "^?" backward-delete-char
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
-# append completions to fpath
-fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
-
 # Initialize mise (if installed)
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"
@@ -217,7 +214,6 @@ export VISUAL='nvim'
 export EDITOR='nvim'
 export VI_MODE_ESC_INSERT="jk"
 export TERM=tmux-256color
-export ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY=latest_installed
 export GRANTED_ENABLE_AUTO_REASSUME="true"
 export SSH_AUTH_SOCK="$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 
@@ -245,5 +241,18 @@ if command -v mise >/dev/null 2>&1; then
   alias mc='mise current'
 fi
 
+# Atuin aliases (if installed)
+if command -v atuin >/dev/null 2>&1; then
+  alias ah='atuin history list'
+  alias as='atuin search'
+  alias ai='atuin import auto'
+  alias ast='atuin stats'
+fi
+
 # Initialize zoxide (must be at the very end)
 eval "$(zoxide init --cmd cd zsh)"
+
+# Initialize atuin for better shell history
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin init zsh)"
+fi

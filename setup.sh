@@ -89,11 +89,15 @@ fi
 info "Creating symlinks with GNU Stow..."
 STOW_FOLDERS=(
   "aerospace"
+  "atuin"
+  "bash"
+  "bin"
   "direnv"
   "gh"
   "git"
   "granted"
   "ghostty"
+  "mise"
   "nvim"
   "ssh"
   "starship"
@@ -120,24 +124,23 @@ if [ ! -d "$HOME/.local/share/zap" ]; then
   success "Zap installed"
 fi
 
-# 9. Setup asdf plugins
-if command -v asdf &>/dev/null; then
-  info "Setting up asdf plugins..."
-
-  # Create completions directory
-  mkdir -p "${ASDF_DATA_DIR:-$HOME/.asdf}/completions"
-  asdf completion zsh >"${ASDF_DATA_DIR:-$HOME/.asdf}/completions/_asdf"
-
-  # Add plugins (ignore if already installed)
-  plugins=(erlang elixir nodejs pnpm bun postgres direnv)
-  for plugin in "${plugins[@]}"; do
-    if ! asdf plugin list | grep -q "^$plugin$"; then
-      info "Adding asdf plugin: $plugin"
-      asdf plugin add "$plugin"
-    fi
-  done
-  success "asdf plugins configured"
+# 9. Setup mise runtime manager
+if ! command -v mise &>/dev/null; then
+  info "Installing mise..."
+  brew install mise
 fi
+
+info "Setting up mise for runtime management..."
+
+# Install common development tools with mise
+mise use --global node@lts
+mise use --global python@latest
+mise use --global ruby@latest
+mise use --global go@latest
+mise use --global pnpm@latest
+mise use --global bun@latest
+
+success "mise configured - will auto-read .nvmrc, .ruby-version, .tool-versions, etc."
 
 # 10. Install tmux plugin manager
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then

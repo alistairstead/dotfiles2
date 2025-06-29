@@ -18,7 +18,7 @@ cd ~/dotfiles
 - **Shell**: Zsh with Starship prompt
 - **Multiplexer**: Tmux
 - **Window Management**: Aerospace, Yabai
-- **Version Management**: asdf
+- **Version Management**: mise (fast runtime manager, reads .nvmrc, .ruby-version, etc.)
 - **Development Tools**: Git, GitHub CLI, Direnv
 
 ### Key Features

@@ -60,7 +60,7 @@ brew bundle
 
 info "Creating symlinks..."
 
-stow bin direnv gh git mise nvim ssh starship tmux wezterm yabai zsh
+stow atuin bash bin direnv gh git mise nvim ssh starship tmux wezterm yabai zsh
 
 info "Install zap..."
 

@@ -16,8 +16,6 @@ export EDITOR='nvim'
 # Terminal settings
 export TERM=tmux-256color
 
-# Node.js ASDF settings
-export ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY=latest_installed
 
 # AWS Granted settings
 export GRANTED_ENABLE_AUTO_REASSUME="true"
@@ -53,16 +51,9 @@ if command -v direnv >/dev/null 2>&1; then
   eval "$(direnv hook bash)"
 fi
 
-# Mise version manager (if installed) - replaces asdf
+# Mise version manager (if installed)
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate bash)"
-# Fall back to ASDF if mise not installed
-elif [[ -f "$HOME/.asdf/asdf.sh" ]]; then
-  source "$HOME/.asdf/asdf.sh"
-  # ASDF completions
-  if [[ -f "$HOME/.asdf/completions/asdf.bash" ]]; then
-    source "$HOME/.asdf/completions/asdf.bash"
-  fi
 fi
 
 # AWS CLI completion (if installed)
@@ -208,4 +199,9 @@ shopt -s extglob
 # Source private configuration if it exists
 if [[ -r ~/private/.bashrc ]]; then
   source ~/private/.bashrc
+fi
+
+# Initialize atuin for better shell history
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin init bash)"
 fi
