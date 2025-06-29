@@ -172,7 +172,12 @@ STOW_FOLDERS=(
 for folder in "${STOW_FOLDERS[@]}"; do
   if [ -d "$folder" ]; then
     info "Stowing $folder..."
-    stow -v "$folder" || error "Failed to stow $folder"
+    if [ -n "$CI" ]; then
+      # In CI, adopt existing files to avoid conflicts
+      stow -v --adopt "$folder" || error "Failed to stow $folder"
+    else
+      stow -v "$folder" || error "Failed to stow $folder"
+    fi
   else
     error "Directory $folder not found, skipping..."
   fi

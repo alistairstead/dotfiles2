@@ -13,9 +13,6 @@ legacy_version_file = true
 # Jobs to run in parallel (for installations)
 jobs = 4
 
-# Plugin-specific settings
-legacy_version_file_disable_tools = []
-
 # Shorthands for common plugins - using correct syntax
 [alias.node.versions]
 # Support for Nodejs versions
@@ -43,11 +40,6 @@ system = "system"
 # Mise-specific environment variables
 MISE_LEGACY_VERSION_FILE = "true"
 MISE_ASDF_COMPAT = "true"
-
-# Settings for specific tools
-[settings]
-# Configure legacy version file behavior per tool
-legacy_version_file_disable_tools = []
 
 # Plugin-specific settings
 [plugins]
