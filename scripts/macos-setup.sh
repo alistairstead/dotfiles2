@@ -285,7 +285,7 @@ setup_screenshots() {
     mkdir -p ~/Pictures/screenshots
     
     # Set screenshot location
-    defaults write com.apple.screencapture location -string "~/Pictures/screenshots"
+    defaults write com.apple.screencapture location -string "$HOME/Pictures/screenshots"
     
     # Set screenshot format to PNG
     defaults write com.apple.screencapture type -string "png"

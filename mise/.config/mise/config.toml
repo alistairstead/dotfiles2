@@ -1,6 +1,8 @@
 # Mise (formerly rtx) configuration
 # https://mise.jdx.dev/configuration.html
 
+# Settings section for mise configuration
+[settings]
 # Enable experimental features
 experimental = true
 
@@ -8,26 +10,23 @@ experimental = true
 # This allows mise to read version files from other tools
 legacy_version_file = true
 
-# Automatically install missing tools when switching directories
-missing_runtime_behavior = "prompt"
-
-# Enable quiet mode for less verbose output
-quiet = false
-
 # Jobs to run in parallel (for installations)
 jobs = 4
 
-# Shorthands for common plugins
-[alias.node]
+# Plugin-specific settings
+legacy_version_file_disable_tools = []
+
+# Shorthands for common plugins - using correct syntax
+[alias.node.versions]
 # Support for Nodejs versions
 lts = "lts/latest"
 latest = "latest"
 
-[alias.python]
+[alias.python.versions]
 # Common Python versions
 system = "system"
 
-[alias.ruby]
+[alias.ruby.versions]
 # Common Ruby versions
 system = "system"
 

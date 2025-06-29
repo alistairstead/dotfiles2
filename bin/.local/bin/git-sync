@@ -3,8 +3,8 @@
 set -eu
 # sync current branch with main
 main=$(git-main)
-git checkout $main
+git checkout "$main"
 git pull
 git checkout -
 git pull
-git merge --no-edit $main
+git merge --no-edit "$main"

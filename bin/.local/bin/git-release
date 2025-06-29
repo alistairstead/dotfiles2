@@ -7,14 +7,14 @@ set -eu
 tag=$(git describe --tags --abbrev=0)
 
 patch=$(echo "$tag" | grep -o '[0-9]*$')
-prefix=${tag%$patch}
+prefix=${tag%"$patch"}
 
-next_patch=$(( $patch + 1))
+next_patch=$(( patch + 1))
 next_tag="$prefix$next_patch"
 
 echo "$tag -> $next_tag - press enter to tag and push"
 
-read
+read -r _
 
-git tag $next_tag
-git push origin $next_tag
+git tag "$next_tag"
+git push origin "$next_tag"

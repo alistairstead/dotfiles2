@@ -11,13 +11,13 @@ gum style \
  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝'
 
 NOW=$(date +"%Y-%m-%d-%H-%M-%S")
-echo -e "$NOW\n" >>/tmp/u-$NOW.txt
+printf "%s\n\n" "$NOW" >>"/tmp/u-$NOW.txt"
 
 # stop yabai
 yabai --stop-service
 
 # reinstall yabai
-gum spin --spinner globe --title "🍻 brew updating yabai" --show-output -- brew reinstall koekeishiya/formulae/yabai >>/tmp/u-$NOW.txt
+gum spin --spinner globe --title "🍻 brew updating yabai" --show-output -- brew reinstall koekeishiya/formulae/yabai >>"/tmp/u-$NOW.txt"
 
 WHOAMI=$(whoami)
 # Get the SHA-256 hash of the yabai program
@@ -26,7 +26,8 @@ if [ -z "$YABAI_PATH" ]; then
     echo " yabai not found!"
     exit 1
 fi
-HASH=$(shasum -a 256 "$YABAI_PATH" | awk '{print $1}') >>/tmp/u-$NOW.txt
+HASH=$(shasum -a 256 "$YABAI_PATH" | awk '{print $1}')
+printf "Hash: %s\n" "$HASH" >>"/tmp/u-$NOW.txt"
 
 # Check if HASH is non-empty
 if [ -z "$HASH" ]; then
@@ -38,10 +39,12 @@ fi
 SUDOERS_ENTRY="$WHOAMI ALL=(root) NOPASSWD: sha256:$HASH $YABAI_PATH --load-sa"
 
 # Write the entry to /private/etc/sudoers.d/yabai
-echo "$SUDOERS_ENTRY" | sudo tee /private/etc/sudoers.d/yabai >>/tmp/u-$NOW.txt
+echo "$SUDOERS_ENTRY" | sudo tee /private/etc/sudoers.d/yabai >/dev/null
+printf "Updated sudoers entry: %s\n" "$SUDOERS_ENTRY" >>"/tmp/u-$NOW.txt"
 
 # Set the appropriate permissions for the sudoers file
-sudo chmod 0440 /private/etc/sudoers.d/yabai >>/tmp/u-$NOW.txt
+sudo chmod 0440 /private/etc/sudoers.d/yabai
+printf "Set permissions on /private/etc/sudoers.d/yabai\n" >>"/tmp/u-$NOW.txt"
 
 echo "Updated /private/etc/sudoers.d/yabai successfully!"
 

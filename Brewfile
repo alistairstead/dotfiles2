@@ -88,6 +88,7 @@ brew "lazydocker"
 brew "lazygit"
 brew "fontconfig"
 brew "imagemagick"
+brew "shellcheck"
 
 # Advanced development tools
 brew "mise"
