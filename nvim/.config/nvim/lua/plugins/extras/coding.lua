@@ -5,7 +5,7 @@ return {
     optional = true,
     opts = {
       keymap = {
-        preset = "super-tab",
+        -- preset = "super-tab",
         ["<CR>"] = { "accept", "fallback" },
         ["<C-k>"] = { "select_prev", "fallback" },
         ["<C-j>"] = { "select_next", "fallback" },

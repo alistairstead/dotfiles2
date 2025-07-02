@@ -38,6 +38,11 @@ autoload -U +X bashcompinit && bashcompinit
 
 complete -C '/opt/homebrew/bin/aws_completer' aws
 
+# Carapace completions (if installed)
+if command -v carapace >/dev/null 2>&1; then
+  source <(carapace _carapace zsh)
+fi
+
 # History
 HISTSIZE=5000
 HISTFILE=~/.zsh_history
@@ -179,7 +184,6 @@ eval "$(starship init zsh)"
 
 # Better vi mode
 bindkey -v
-bindkey 'jk' vi-cmd-mode
 bindkey '^a' beginning-of-line
 bindkey '^e' end-of-line
 

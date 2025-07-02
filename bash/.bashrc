@@ -51,6 +51,11 @@ if command -v direnv >/dev/null 2>&1; then
   eval "$(direnv hook bash)"
 fi
 
+# Carapace completions (if installed)
+if command -v carapace >/dev/null 2>&1; then
+  source <(carapace _carapace)
+fi
+
 # Mise version manager (if installed)
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate bash)"

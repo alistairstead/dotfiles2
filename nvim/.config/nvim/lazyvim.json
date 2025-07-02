@@ -1,6 +1,7 @@
 {
   "extras": [
     "lazyvim.plugins.extras.ai.copilot",
+    "lazyvim.plugins.extras.ai.copilot-chat",
     "lazyvim.plugins.extras.coding.blink",
     "lazyvim.plugins.extras.coding.mini-comment",
     "lazyvim.plugins.extras.coding.mini-surround",
@@ -42,7 +43,7 @@
     "lazyvim.plugins.extras.util.octo",
     "lazyvim.plugins.extras.util.startuptime",
     "lazyvim.plugins.extras.vscode",
-    "plugins.extras.ai",
+    "plugins.extras.codecompanion",
     "plugins.extras.coding",
     "plugins.extras.dap",
     "plugins.extras.editor",

@@ -72,6 +72,7 @@ brew "tldr"        # Simplified man pages
 brew "glow"        # Markdown rendering in terminal
 brew "just"        # Modern command runner
 brew "watchexec"   # File watcher for development
+brew "carapace"    # Multi-shell command argument completion
 
 # Database tools
 brew "mysql-client@8.4"

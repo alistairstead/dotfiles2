@@ -12,27 +12,19 @@ auto_sync = false
 update_check = false
 
 ## Search settings
-search_mode = "fuzzy"        # fuzzy, fulltext, prefix
-filter_mode = "global"       # global, host, session, directory
-filter_mode_shell_up_key_binding = "directory"  # Use directory filter with up arrow
+search_mode = "fuzzy"                          # fuzzy, fulltext, prefix
+filter_mode = "global"                         # global, host, session, directory
+filter_mode_shell_up_key_binding = "directory" # Use directory filter with up arrow
 
 ## UI settings
-style = "compact"            # compact, full
-show_preview = true
-show_help = true
+style = "compact"             # compact, full
+show_preview = false
+show_help = false
 exit_mode = "return-original" # return-original, return-query
 
 ## History settings
 # Don't save these commands in history
-history_filter = [
-  "^cd$",
-  "^ls$",
-  "^ll$",
-  "^pwd$",
-  "^exit$",
-  "^clear$",
-  "^c$",
-]
+history_filter = ["^cd$", "^ls$", "^ll$", "^pwd$", "^exit$", "^clear$", "^c$"]
 
 # Ignore commands with these prefixes
 secrets_filter = true
