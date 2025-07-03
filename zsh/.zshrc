@@ -2,9 +2,10 @@
 # Created by Zap installer https://www.zapzsh.org
 [ -f "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh" ] && source "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh"
 
-if [[ -f "/opt/homebrew/bin/brew" ]] then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
+# Source shared shell configurations
+for file in ~/.config/shell/*.sh; do
+  [ -r "$file" ] && source "$file"
+done
 
 # Initialize completion system early to avoid menuselect keymap errors
 autoload -Uz compinit && compinit -C
@@ -99,9 +100,7 @@ zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
-# Aliases
-alias vim='nvim'
-alias c='clear'
+# ZSH-specific aliases
 alias zshrc="vim ~/.zshrc"
 alias vimrc="vim ~/.config/nvim"
 alias tmuxrc="vim ~/.tmux.conf"
@@ -110,52 +109,23 @@ alias pn=pnpm
 if which trash >/dev/null 2>&1; then
   alias rm='trash'
 fi
-alias ls='eza $eza_params'
+# Additional eza aliases
 alias l='eza --git-ignore $eza_params'
-alias ll='eza --all --header --long $eza_params'
 alias llm='eza --all --header --long --sort=modified $eza_params'
-alias la='eza -lbhHigUmuSa'
 alias lx='eza -lbhHigUmuSa@'
 alias lt='eza --tree $eza_params'
-alias tree='eza --tree $eza_params'
-alias ga='git add'
-alias gs='git status -sb'
+# ZSH-specific git alias
 alias gco='git co'
-alias push='git push'
-alias pull='git pull'
-# builtins
+# ZSH-specific overrides
 alias size="du -sh"
 alias cp="cp -i"
-alias mkdir="mkdir -p"
-alias df="df -h"
-alias du="du -sh"
 alias del="rm -rf"
 alias null="/dev/null"
-# overrides
-alias cat="bat"
-alias top="btop"
-alias htop="btop"
-alias diff="delta"
 
+# ZSH-specific functions
 alias granted-refresh="granted sso populate --sso-region eu-west-2 https://kodehort.awsapps.com/start"
 gi() {
 	curl -s "https://www.gitignore.io/api/$*"
-}
-g() {
-	args=$@
-	if [[ $# -eq 0 ]]; then
-		git status --short
-	else
-		git $args
-	fi
-}
-gc() {
-	args=$@
-	if [[ $# -eq 0 ]]; then
-		git commit -v
-	else
-		git commit -m "$args"
-	fi
 }
 alias cb='git branch --sort=-committerdate | fzf --header "Checkout Recent Branch" --preview "git diff --color=always {1} " --pointer="" | xargs git checkout'
 function ghpr() {
@@ -213,19 +183,13 @@ fi
 [ -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ] && source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
 [ -r ~/private/.zshrc ] && source ~/private/.zshrc
 
-export GIT_EDITOR='nvim'
-export VISUAL='nvim'
-export EDITOR='nvim'
+# ZSH-specific environment variables
 export VI_MODE_ESC_INSERT="jk"
-export TERM=tmux-256color
-export GRANTED_ENABLE_AUTO_REASSUME="true"
-export SSH_AUTH_SOCK="$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 
 # Performance optimizations
 export KEYTIMEOUT=1  # Faster vi mode switching
 export ZSH_AUTOSUGGEST_MANUAL_REBIND=1  # Better performance for autosuggestions
 export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20  # Limit suggestion buffer size
-export _ZO_DOCTOR=0  # Disable zoxide doctor checks
 
 # Better FZF defaults
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
@@ -233,8 +197,6 @@ export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --inline-info'
 export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {}'"
 export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
 
-# Aliases
-alias assume=". assume"
 
 # Mise aliases (if installed)
 if command -v mise >/dev/null 2>&1; then
@@ -245,16 +207,9 @@ if command -v mise >/dev/null 2>&1; then
   alias mc='mise current'
 fi
 
-# Atuin aliases (if installed)
-if command -v atuin >/dev/null 2>&1; then
-  alias ah='atuin history list'
-  alias as='atuin search'
-  alias ai='atuin import auto'
-  alias ast='atuin stats'
-fi
 
 # Initialize zoxide (must be at the very end)
-eval "$(zoxide init --cmd cd zsh)"
+eval "$(zoxide init --cmd j zsh)"
 
 # Initialize atuin for better shell history
 if command -v atuin >/dev/null 2>&1; then

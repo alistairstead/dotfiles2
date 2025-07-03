@@ -1,46 +1,10 @@
 #!/bin/bash
 # Bash configuration that mirrors essential environment from zsh
 
-# =====================================
-# ENVIRONMENT VARIABLES
-# =====================================
-
-# Disable zoxide doctor warnings when running in bash
-export _ZO_DOCTOR=0
-
-# Editor configuration
-export GIT_EDITOR='nvim'
-export VISUAL='nvim'
-export EDITOR='nvim'
-
-# Terminal settings
-export TERM=tmux-256color
-
-
-# AWS Granted settings
-export GRANTED_ENABLE_AUTO_REASSUME="true"
-
-# 1Password SSH agent
-export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-
-# =====================================
-# PATH CONFIGURATION
-# =====================================
-
-# Homebrew initialization (if installed)
-if [[ -f "/opt/homebrew/bin/brew" ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
-
-# Add common development paths
-export PATH="/usr/local/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/bin:$PATH"
-
-# npm global binaries (if npm-global exists)
-if [[ -d "$HOME/.npm-global/bin" ]]; then
-  export PATH="$HOME/.npm-global/bin:$PATH"
-fi
+# Source shared shell configurations
+for file in ~/.config/shell/*.sh; do
+  [ -r "$file" ] && source "$file"
+done
 
 # =====================================
 # SHELL INTEGRATIONS
@@ -83,92 +47,10 @@ shopt -s histappend
 shopt -s cmdhist
 
 # =====================================
-# ALIASES (Essential ones from zsh)
+# BASH-SPECIFIC CONFIGURATION
 # =====================================
 
-# Editor
-alias vim='nvim'
-
-# Navigation
-alias c='clear'
-alias ll='ls -la'
-
-# Git shortcuts
-alias g='git'
-alias ga='git add'
-alias gs='git status -sb'
-alias gco='git checkout'
-alias push='git push'
-alias pull='git pull'
-
-# Common command improvements
-alias mkdir="mkdir -p"
-alias df="df -h"
-alias du="du -sh"
-
-# Use modern replacements if available
-if command -v bat >/dev/null 2>&1; then
-  alias cat="bat"
-fi
-
-if command -v eza >/dev/null 2>&1; then
-  alias ls='eza'
-  alias ll='eza --all --header --long'
-  alias la='eza -lbhHigUmuSa'
-  alias tree='eza --tree'
-fi
-
-if command -v btop >/dev/null 2>&1; then
-  alias top="btop"
-  alias htop="btop"
-fi
-
-if command -v delta >/dev/null 2>&1; then
-  alias diff="delta"
-fi
-
-# AWS Granted
-alias assume=". assume"
-
-# Claude notify wrapper
-alias claude-notify="~/dev/personal/dotfiles/scripts/claude-notify"
-
-# =====================================
-# FUNCTIONS
-# =====================================
-
-# Simple git wrapper function
-g() {
-  if [[ $# -eq 0 ]]; then
-    git status --short
-  else
-    git "$@"
-  fi
-}
-
-# Git commit wrapper
-gc() {
-  if [[ $# -eq 0 ]]; then
-    git commit -v
-  else
-    git commit -m "$*"
-  fi
-}
-
-# Copy to clipboard (macOS)
-if command -v pbcopy >/dev/null 2>&1; then
-  copy() {
-    cat "$@" | pbcopy
-  }
-fi
-
-# Source environment files
-envs() {
-  set -a
-  # shellcheck source=/dev/null
-  source "$1"
-  set +a
-}
+# Note: Common aliases and functions are now loaded from ~/.config/shell/*.sh
 
 # =====================================
 # PROMPT (Simple version)
@@ -212,3 +94,4 @@ fi
 if command -v atuin >/dev/null 2>&1; then
   eval "$(atuin init bash)"
 fi
+

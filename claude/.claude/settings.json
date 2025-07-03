@@ -1,4 +1,18 @@
 {
   "includeCoAuthoredBy": false,
-  "theme": "dark"
+  "theme": "dark",
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alistairstead/dev/personal/dotfiles/scripts/claude-notification-hook.sh"
+          }
+        ]
+      }
+    ]
+  }
 }
+
