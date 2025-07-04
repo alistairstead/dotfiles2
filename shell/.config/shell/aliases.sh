@@ -10,7 +10,6 @@ alias c='clear'
 alias ll='ls -la'
 
 # Git shortcuts
-alias g='git'
 alias ga='git add'
 alias gs='git status -sb'
 alias gco='git checkout'
@@ -56,3 +55,4 @@ if command -v atuin >/dev/null 2>&1; then
   alias ai='atuin import auto'
   alias ast='atuin stats'
 fi
+

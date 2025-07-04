@@ -124,27 +124,11 @@ alias null="/dev/null"
 
 # ZSH-specific functions
 alias granted-refresh="granted sso populate --sso-region eu-west-2 https://kodehort.awsapps.com/start"
-gi() {
-	curl -s "https://www.gitignore.io/api/$*"
-}
 alias cb='git branch --sort=-committerdate | fzf --header "Checkout Recent Branch" --preview "git diff --color=always {1} " --pointer="" | xargs git checkout'
-function ghpr() {
-  GH_FORCE_TTY=100% gh pr list | fzf --query "$1" --ansi --preview 'GH_FORCE_TTY=100% gh pr view {1}' --preview-window down --header-lines 3 | awk '{print $1}' | xargs gh pr checkout -f
-}
-function ghgist() {
-  GH_FORCE_TTY=100% gh gist list --limit 20 | fzf --ansi --preview 'GH_FORCE_TTY=100% gh gist view {1}' --preview-window down | awk '{print $1}' | xargs gh gist edit
-}
 
 # Copy to clipboard
 copy() {
   cat "$@" | pbcopy
-}
-
-# Source environment files
-envs() {
-  set -a
-  source "$1"
-  set +a
 }
 
 
@@ -211,7 +195,3 @@ fi
 # Initialize zoxide (must be at the very end)
 eval "$(zoxide init --cmd j zsh)"
 
-# Initialize atuin for better shell history
-if command -v atuin >/dev/null 2>&1; then
-  eval "$(atuin init zsh)"
-fi
