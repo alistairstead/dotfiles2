@@ -66,7 +66,6 @@ brew "fastfetch"
 brew "yq"
 
 # Enhanced shell tools
-brew "atuin"       # Better shell history with sync
 brew "navi"        # Interactive cheatsheet tool
 brew "tldr"        # Simplified man pages
 brew "glow"        # Markdown rendering in terminal
@@ -128,6 +127,7 @@ cask "readdle-spark"
 cask "sizzy"
 cask "slack"
 cask "todoist"
+cask "zed"
 
 # Mac App Store apps
 mas "1Password for Safari", id: 1569813296
