@@ -16,8 +16,7 @@
   "icon_theme": "Zed (Default)",
   "base_keymap": "VSCode",
   "features": {
-    "edit_prediction_provider": "zed",
-    "copilot": true
+    "edit_prediction_provider": "zed"
   },
   "ui_font_weight": 100,
   "ui_font_size": 14,
@@ -25,17 +24,21 @@
   "buffer_font_size": 14,
   "buffer_font_family": "Monaspace Neon",
   "buffer_font_weight": 100,
-
+  "buffer_font_features": {
+    "liga": true,
+    "calt": true,
+    "kern": true
+  },
   "active_pane_modifiers": {
     // Inset border size of the active pane, in pixels.
     // Opacity of the inactive panes. 0 means transparent, 1 means opaque.
     // Values are clamped to the [0.0, 1.0] range.
-    "inactive_opacity": 0.7
+    "inactive_opacity": 0.8
   },
+  "confirm_quit": true,
   "vim_mode": true,
   "vim": {
     "use_system_clipboard": "always",
-    "use_multiline_find": true,
     "use_smartcase_find": true,
     "toggle_relative_line_numbers": true,
     "custom_digraphs": {}
@@ -44,12 +47,6 @@
   "relative_line_numbers": true,
   "cursor_blink": false,
   "vertical_scroll_margin": 5,
-  "gutter": {
-    "line_numbers": true,
-    "code_actions": true,
-    "folds": true,
-    "git_diff": true
-  },
   "indent_guides": {
     "enabled": false,
     "coloring": "indent_aware"
@@ -127,7 +124,6 @@
   "format_on_save": "on",
   "remove_trailing_whitespace_on_save": true,
   "ensure_final_newline_on_save": true,
-  "show_tab_bar_buttons": false,
   // Toolbar related settings
   "toolbar": {
     // Whether to show breadcrumbs.
@@ -157,11 +153,12 @@
     "show_sign_in": false
   },
   "scrollbar": {
+    "show": "never",
     "axes": {
       // When false, forcefully disables the horizontal scrollbar. Otherwise, obey other settings.
       "horizontal": false,
       // When false, forcefully disables the vertical scrollbar. Otherwise, obey other settings.
-      "vertical": true
+      "vertical": false
     }
   },
   // When to populate a new search's query based on the text under the cursor.
@@ -179,12 +176,15 @@
   // if it contains only lowercase letters, the search becomes case-insensitive.
   "use_smartcase_search": true,
   "agent": {
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4"
+    },
     "model_parameters": [],
     "inline_assistant_model": {
       "provider": "zed.dev",
       "model": "claude-sonnet-4"
-    },
-    "version": "2"
+    }
   },
   // Settings related to the file finder.
   "file_finder": {
@@ -215,6 +215,7 @@
     "font_weight": 100,
     "font_size": 14,
     "font_family": "Monaspace Neon",
+    "line_height": "standard",
 
     // Whether or not selecting text in the terminal will automatically
     // copy to the system clipboard.

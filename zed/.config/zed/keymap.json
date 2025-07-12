@@ -89,12 +89,12 @@
     }
   },
   // This is problematic in other typing context
-  // {
-  //   "context": "Dock || Terminal || (Editor && vim_mode == normal && !menu)",
-  //   "bindings": {
-  //     "space e": "project_panel::ToggleFocus"
-  //   }
-  // },
+  {
+    "context": "(Dock && vim_mode == normal) || (Editor && vim_mode == normal && !menu)",
+    "bindings": {
+      "space e": "project_panel::ToggleFocus"
+    }
+  },
 
   {
     "context": "Dock || Terminal || Editor",
