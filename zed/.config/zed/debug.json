@@ -1,34 +1,61 @@
 {
+  "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug TypeScript",
       "type": "node",
       "request": "launch",
-      "name": "Debug TypeScript",
       "program": "${workspaceFolder}/src/index.ts",
-      "preLaunchTask": "tsc: build",
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "args": [],
+      "console": "integratedTerminal",
       "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "preLaunchTask": "npm: build"
+    },
+    {
+      "name": "Debug JavaScript",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/index.js",
+      "args": [],
+      "console": "integratedTerminal",
       "env": {
         "NODE_ENV": "development"
       }
     },
     {
+      "name": "Debug Serverless Function",
       "type": "node",
       "request": "launch",
-      "name": "Debug Serverless Function",
       "program": "${workspaceFolder}/node_modules/.bin/serverless",
-      "args": ["invoke", "local", "-f", "${input:functionName}"],
+      "args": ["invoke", "local", "-f", "myFunction"],
+      "console": "integratedTerminal",
       "env": {
         "AWS_PROFILE": "development"
       }
     },
     {
+      "name": "Attach to Process",
       "type": "node",
       "request": "attach",
-      "name": "Attach to Process",
       "port": 9229,
       "restart": true,
-      "sourceMaps": true
+      "sourceMaps": true,
+      "localRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Debug Deno",
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.ts",
+      "args": [],
+      "console": "integratedTerminal",
+      "env": {},
+      "runtimeExecutable": "deno",
+      "runtimeArgs": ["run", "--inspect-brk", "--allow-all"]
     }
   ]
 }
