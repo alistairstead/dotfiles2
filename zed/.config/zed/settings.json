@@ -176,6 +176,7 @@
   // if it contains only lowercase letters, the search becomes case-insensitive.
   "use_smartcase_search": true,
   "agent": {
+    "always_allow_tool_actions": true,
     "default_model": {
       "provider": "copilot_chat",
       "model": "claude-sonnet-4"
