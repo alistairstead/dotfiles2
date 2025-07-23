@@ -5,7 +5,6 @@
 tap "neovim/neovim"
 tap "common-fate/granted"
 tap "nikitabobko/tap"
-tap "1password/tap"
 tap "koekeishiya/formulae"
 
 # Core utilities
@@ -67,7 +66,6 @@ brew "yq"
 
 # Enhanced shell tools
 brew "navi"        # Interactive cheatsheet tool
-brew "tldr"        # Simplified man pages
 brew "glow"        # Markdown rendering in terminal
 brew "just"        # Modern command runner
 brew "watchexec"   # File watcher for development
@@ -89,6 +87,7 @@ brew "lazygit"
 brew "fontconfig"
 brew "imagemagick"
 brew "shellcheck"
+brew "uv"
 
 # Advanced development tools
 brew "mise"
@@ -113,6 +112,7 @@ cask "discord"
 cask "figma"
 cask "font-monaspace"
 cask "font-symbols-only-nerd-font"
+cask "font-victor-mono"
 cask "github@beta"
 cask "ghostty"
 cask "google-chrome"
@@ -128,6 +128,7 @@ cask "sizzy"
 cask "slack"
 cask "todoist"
 cask "zed"
+cask "zed@preview"
 
 # Mac App Store apps
 mas "1Password for Safari", id: 1569813296

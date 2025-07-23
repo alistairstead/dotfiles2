@@ -1,5 +1,35 @@
 [
   {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-k": [
+        "projects::OpenRecent",
+        {
+          "create_new_window": true
+        }
+      ],
+      "cmd-shift-k": [
+        "projects::OpenRecent",
+        {
+          "create_new_window": false
+        }
+      ]
+    }
+  },
+  {
+    "context": "VimControl && !menu",
+    "bindings": {
+      // Put key bindings here if you want them to work in normal & visual mode.
+    }
+  },
+  {
+    "context": "vim_mode == visual && !VimWaiting && !VimObject",
+    "bindings": {
+      "shift-j": "editor::MoveLineDown",
+      "shift-k": "editor::MoveLineUp"
+    }
+  },
+  {
     "context": "vim_mode == normal && !menu",
     "bindings": {
       "space w": "workspace::Save",
@@ -14,6 +44,8 @@
       "space b d": "pane::CloseActiveItem",
       "space b o": "pane::CloseInactiveItems",
       "space b b": "tab_switcher::Toggle",
+      "space m p": "markdown::OpenPreviewToTheSide",
+      "space m P": "markdown::OpenPreview",
 
       "shift-h": "pane::ActivatePreviousItem",
       "shift-l": "pane::ActivateNextItem",
@@ -78,14 +110,23 @@
 
       "ctrl-p": "file_finder::Toggle",
       "ctrl-s": "workspace::Save"
+
+      // "shift-y": ["workspace::SendKeystrokes", "y $"] // Use neovim's yank behavior: yank to end of line.
     }
   },
-
   {
     "context": "vim_mode == insert",
     "bindings": {
       "j j": "vim::NormalBefore",
       "j k": "vim::NormalBefore"
+    }
+  },
+  {
+    "context": "EmptyPane || SharedScreen",
+    "bindings": {
+      // Put key bindings here (in addition to the context above) if you want them to
+      // work when no editor exists.
+      "f": "file_finder::Toggle"
     }
   },
   // This is problematic in other typing context
@@ -116,6 +157,9 @@
   {
     "context": "Terminal",
     "bindings": {
+      // These binding cause problems need to restrict them to when the terminal is in normal mode. Can this be done with an env variable?
+      // "shift-h": "pane::ActivatePreviousItem",
+      // "shift-l": "pane::ActivateNextItem",
       "cmd-t": "workspace::NewTerminal",
       "cmd-shift-t": "workspace::NewCenterTerminal"
     }
@@ -137,9 +181,8 @@
       "ctrl-p": "editor::ContextMenuPrevious"
     }
   },
-
   {
-    "context": "Modal",
+    "context": "Modal || CommandPalette || FileFinder || TabSwitcher",
     "bindings": {
       "ctrl-j": "menu::SelectNext",
       "ctrl-k": "menu::SelectPrevious",
@@ -147,37 +190,6 @@
       "ctrl-p": "menu::SelectPrevious"
     }
   },
-
-  {
-    "context": "CommandPalette",
-    "bindings": {
-      "ctrl-j": "menu::SelectNext",
-      "ctrl-k": "menu::SelectPrevious",
-      "ctrl-n": "menu::SelectNext",
-      "ctrl-p": "menu::SelectPrevious"
-    }
-  },
-
-  {
-    "context": "FileFinder",
-    "bindings": {
-      "ctrl-j": "menu::SelectNext",
-      "ctrl-k": "menu::SelectPrevious",
-      "ctrl-n": "menu::SelectNext",
-      "ctrl-p": "menu::SelectPrevious"
-    }
-  },
-
-  {
-    "context": "TabSwitcher",
-    "bindings": {
-      "ctrl-j": "menu::SelectNext",
-      "ctrl-k": "menu::SelectPrevious",
-      "ctrl-n": "menu::SelectNext",
-      "ctrl-p": "menu::SelectPrevious"
-    }
-  },
-
   {
     "context": "ProjectPanel && !editing",
     "bindings": {
