@@ -1,80 +1,64 @@
 {
-  "includeCoAuthoredBy": false,
-  "theme": "dark",
-  "permissions": {
-    "allow": [
-      "Bash(grep:*)",
-      "Bash(ls:*)",
-      "Bash(source:*)",
-      "Bash(find:*)",
-      "Bash(mv:*)",
-      "Bash(mkdir:*)",
-      "Bash(tree:*)",
-      "Bash(touch:*)",
-      "Bash(cat:*)",
-      "Bash(bun vitest)",
-      "Bash(bun run test)"
-    ],
-    "deny": [
-      "Read(.env)",
-      "Read(**/.env*)",
-      "Read(**/env*)",
-      "Read(**/*.pem)",
-      "Read(**/*.key)",
-      "Read(**/*.crt)",
-      "Read(**/*.cert)",
-      "Read(**/secrets/**)",
-      "Read(**/credentials/**)"
-    ]
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/log-tool-use.ts"
-          },
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/use-bun.ts"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/ts-lint.ts"
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/notification.ts"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/notification.ts"
-          }
-        ]
-      }
-    ]
-  }
+	"includeCoAuthoredBy": false,
+	"permissions": {
+		"allow": [
+			"Bash(grep:*)",
+			"Bash(ls:*)",
+			"Bash(source:*)",
+			"Bash(find:*)",
+			"Bash(mv:*)",
+			"Bash(mkdir:*)",
+			"Bash(tree:*)",
+			"Bash(touch:*)",
+			"Bash(cat:*)",
+			"Bash(bun vitest)",
+			"Bash(bun run test)"
+		],
+		"deny": [
+			"Read(.env)",
+			"Read(**/.env*)",
+			"Read(**/env*)",
+			"Read(**/*.pem)",
+			"Read(**/*.key)",
+			"Read(**/*.crt)",
+			"Read(**/*.cert)",
+			"Read(**/secrets/**)",
+			"Read(**/credentials/**)"
+		]
+	},
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Bash",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "~/.claude/hooks/use-bun.ts"
+					}
+				]
+			}
+		],
+		"Notification": [
+			{
+				"matcher": "",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "~/.claude/hooks/notification.ts"
+					}
+				]
+			}
+		],
+		"Stop": [
+			{
+				"matcher": "",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "~/.claude/hooks/notification.ts"
+					}
+				]
+			}
+		]
+	}
 }
