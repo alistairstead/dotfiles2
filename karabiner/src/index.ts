@@ -1,6 +1,7 @@
 import { rule, map, writeToProfile } from 'karabiner.ts'
 // import { raycastLayer } from './layers/raycast'
 import { yabaiLayer } from './layers/yabai'
+import { hyperLayer } from './layers/hyper'
 // import { openLayer } from './layers/open'
 // import { emojiLayer } from './layers/emoji'
 // import { appsMapping } from './apps'
@@ -12,6 +13,9 @@ writeToProfile(
   [
     rule('Caps Lock → Control || Escape').manipulators([
       map('caps_lock').to('left_control').toIfAlone('escape'),
+    ]),
+    rule('Cmd + Caps Lock → Hyper').manipulators([
+      map('caps_lock', 'command').toHyper(),
     ]),
     // rule('Spacebar → Hyper || Space').manipulators([
     //   map('spacebar')
@@ -39,6 +43,7 @@ writeToProfile(
     // ...vimLayer(),
     // ...appsMapping(),
     ...homerow(),
+    ...hyperLayer(),
   ],
   {
     // 'basic.to_if_alone_timeout_milliseconds': 500,

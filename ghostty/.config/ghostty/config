@@ -18,6 +18,7 @@
 # \x0a = Enter/Return
 # \x1b = Esc  
 # \x02 = Ctrl+B (tmux prefix)
+# \x00 = Ctrl+Space (tmux prefix2)
 #
 # https://ghostty.org/docs/config/reference
 
@@ -124,35 +125,35 @@ custom-shader = shaders/starfield-colors.glsl
 
 # Window/Tab Navigation
 # ⌘+1-9 → Switch to tmux window 1-9
-keybind = super+physical:one=text:\x021
-keybind = super+physical:two=text:\x022
-keybind = super+physical:three=text:\x023
-keybind = super+physical:four=text:\x024
-keybind = super+physical:five=text:\x025
-keybind = super+physical:six=text:\x026
-keybind = super+physical:seven=text:\x027
-keybind = super+physical:eight=text:\x028
-keybind = super+physical:nine=text:\x029
+keybind = super+physical:one=text:\x001
+keybind = super+physical:two=text:\x002
+keybind = super+physical:three=text:\x003
+keybind = super+physical:four=text:\x004
+keybind = super+physical:five=text:\x005
+keybind = super+physical:six=text:\x006
+keybind = super+physical:seven=text:\x007
+keybind = super+physical:eight=text:\x008
+keybind = super+physical:nine=text:\x009
 
 # Window Management
 # ⌘+⇧+[ → Previous tmux window
-keybind = super+shift+left_bracket=text:\x02\x70
+keybind = super+shift+left_bracket=text:\x00\x70
 # ⌘+⇧+] → Next tmux window  
-keybind = super+shift+right_bracket=text:\x02\x6e
+keybind = super+shift+right_bracket=text:\x00\x6e
 
 # Pane Splitting
 # ⌘+N → Vertical split (tmux %)
-keybind = super+n=text:\x02\x25
+keybind = super+n=text:\x00\x25
 # ⌘+⇧+N → Horizontal split (tmux ")
-keybind = super+shift+n=text:\x02\x22
+keybind = super+shift+n=text:\x00\x22
 
 # Session Management
 # ⌘+9 → Switch to project root session
-keybind = super+9=text:\x02\x39
+keybind = super+9=text:\x00\x39
 # ⌘+T → New tmux window
-keybind = super+t=text:\x02\x63
+keybind = super+t=text:\x00\x63
 # ⌘+W → Close tmux pane
-keybind = super+w=text:\x02\x78
+keybind = super+w=text:\x00\x78
 
 # =====================================
 # KEY BINDINGS - DEVELOPMENT TOOLS
@@ -160,41 +161,41 @@ keybind = super+w=text:\x02\x78
 
 # Git and Version Control
 # ⌘+G → Open Lazygit
-keybind = super+g=text:\x02\x67
+keybind = super+g=text:\x00\x67
 # ⌘+⇧+G → Open GitHub Dashboard
-keybind = super+shift+g=text:\x02\x47
+keybind = super+shift+g=text:\x00\x47
 
 # Docker and Infrastructure
 # ⌘+D → Open Lazydocker
-keybind = super+d=text:\x02\x64
+keybind = super+d=text:\x00\x64
 # ⌘+⇧+D → Development split
-keybind = super+shift+d=text:\x02\x44
+keybind = super+shift+d=text:\x00\x44
 
 # Session and Project Management  
 # ⌘+K → Session picker (sesh)
-keybind = super+k=text:\x02\x4b
+keybind = super+k=text:\x00\x4b
 # ⌘+⇧+K → Advanced session picker
-keybind = super+shift+k=text:\x02\x52
+keybind = super+shift+k=text:\x00\x52
 # ⌘+L → Switch to last session
-keybind = super+l=text:\x02\x4c
+keybind = super+l=text:\x00\x4c
 # ⌘+⇧+T → Session picker with preview
-keybind = super+shift+t=text:\x02\x54
+keybind = super+shift+t=text:\x00\x54
 # ⌘+⇧+Z → Session popup
-keybind = super+shift+z=text:\x02\x5a
+keybind = super+shift+z=text:\x00\x5a
 
 # Script and Task Management
 # ⌘+Y → Script runner (package.json scripts)
-keybind = super+y=text:\x02\x59
+keybind = super+y=text:\x00\x59
 # ⌘+⇧+R → Rename tmux window
-keybind = super+shift+r=text:\x02\x24 
+keybind = super+shift+r=text:\x00\x24 
 
 # Pane Management
 # ⌘+⇧+B → Break pane to new window
-keybind = super+shift+b=text:\x02\x42
+keybind = super+shift+b=text:\x00\x42
 # ⌘+⇧+J → Join pane from window 1
-keybind = super+shift+j=text:\x02\x4a
+keybind = super+shift+j=text:\x00\x4a
 # ⌘+⇧+Q → Kill current tmux session
-keybind = super+shift+q=text:\x02\x51
+keybind = super+shift+q=text:\x00\x51
 
 # =====================================
 # KEY BINDINGS - EDITOR INTEGRATION
@@ -202,7 +203,7 @@ keybind = super+shift+q=text:\x02\x51
 
 # Copy Mode and Text Selection
 # ⌘+C → Enter tmux copy mode
-keybind = super+c=text:\x02[
+keybind = super+c=text:\x00[
 
 # Vim/Editor Navigation
 # ⌘+] → Jump forward (vim Ctrl+O)
@@ -228,7 +229,7 @@ keybind = super+q=text:\x3a\x1b\x1b\x3a\x71\x61\x21\x0a
 
 # URL and External Tools
 # ⌘+O → Open URL (tmux urlview)
-keybind = super+o=text:\x02\x75
+keybind = super+o=text:\x00\x75
 
 # =====================================
 # KEY BINDINGS - SYSTEM INTEGRATION  
