@@ -4,73 +4,95 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a Nix-based dotfiles repository using Nix Flakes for declarative macOS system configuration. The repository manages both system-level (via nix-darwin) and user-level (via home-manager) configurations.
+This is a GNU Stow-based dotfiles repository for macOS. The repository manages personal configuration files using a modular approach where each application has its own directory containing files that mirror the home directory structure.
 
 ## Key Commands
 
-### System Management
+### Installation and Setup
 
-- **Rebuild system**: `rebuild-darwin` (Fish function) or `sudo darwin-rebuild switch --flake .#wombat`
-- **Update all packages**: `nix flake update`
-- **Check flake**: `nix flake check`
-- **Show flake metadata**: `nix flake metadata`
+- **Initial installation**: `./install.sh` - Comprehensive installer that sets up entire environment
+- **Install Homebrew packages**: `brew bundle`
+- **Update all packages**: `brew update && brew upgrade`
+- **Link specific app configs**: `stow <app>` (e.g., `stow nvim`)
+- **Unlink configs**: `stow -D <app>`
+- **Re-stow after changes**: `stow -R <app>`
 
-### Development
+### Development Commands
 
-- **Run repository apps**:
-  - `nix run .#readme` - Display documentation
-  - `nix run .#rebuild` - Rebuild system
-  - `nix run .#help` - Show available options
+- **Karabiner configuration**: 
+  - Build: `cd karabiner && pnpm build` (uses tsx to compile TypeScript config)
+- **Shell validation**: `shellcheck *.sh scripts/*.sh` (automated via Lefthook pre-commit)
+- **Test installation**: Run GitHub Actions workflow (`.github/workflows/test.yml`)
+
+### Tmux Plugin Management
+
+- **Install plugins**: `~/.tmux/plugins/tpm/bin/install_plugins`
+- **Update plugins**: `<prefix> + U` (inside tmux)
 
 ## Architecture
 
-### Module System
+### Directory Structure
 
-The configuration is organized into modules under `/modules/`:
-
-- **common/**: Cross-platform configurations (applications, programming languages, shell tools)
-- **darwin/**: macOS-specific configurations (system settings, Homebrew, window managers)
-
-Each module follows a pattern:
-
-```nix
-{ config, lib, pkgs, ... }: {
-  options.modules.feature.enable = lib.mkEnableOption "feature";
-  config = lib.mkIf config.modules.feature.enable {
-    # Configuration here
-  };
-}
-```
+Each application directory follows the Stow convention:
+- Files in `app/` get symlinked directly to `~/`
+- Files in `app/.config/` get symlinked to `~/.config/app/`
+- Special directories like `bin/` contain executable scripts
 
 ### Key Configuration Files
 
-- `flake.nix`: Main entry point, defines system configuration and inputs
-- `modules/common/default.nix`: Imports all common modules
-- `modules/darwin/default.nix`: Imports all Darwin-specific modules
-- Individual feature modules toggle functionality via boolean options in `flake.nix`
+- **`install.sh`**: Main installation script that handles:
+  - Xcode Command Line Tools installation
+  - Homebrew setup and package installation
+  - GNU Stow symlink creation
+  - Shell configuration (Zsh with Zap plugin manager)
+  - Development tools via mise (runtime version manager)
+  - macOS system settings
+  
+- **`Brewfile`**: Declarative package management for Homebrew
+  - Core utilities and CLI tools
+  - Development tools
+  - GUI applications
+  - Fonts (Nerd Fonts variants)
 
-### Application Configuration Approach
+- **`.stowrc`**: GNU Stow configuration with ignore patterns
 
-- Configurations are managed through Nix modules when possible
-- Some applications (like Neovim, Tmux) have their configs symlinked or copied
-- The repository is transitioning to GNU Stow for managing dotfile symlinks (see `.stowrc`)
+### Application Configurations
+
+- **Shell**: `zsh/` (with Zap plugin manager), `bash/`, `shell/` (common configs)
+- **Editor**: `nvim/` - Neovim with LazyVim configuration
+- **Terminal**: `ghostty/`, `wezterm/`, `tmux/` (with custom theme and plugins)
+- **Window Management**: `aerospace/` (modern tiling), `yabai/` (traditional tiling)
+- **Development**: `git/`, `gh/`, `direnv/`, `mise/` (runtime management)
+- **Automation**: `karabiner/` - TypeScript-based keyboard customization
+- **Claude Integration**: `claude/` - Custom hooks for Claude Code
 
 ## Important Notes
 
-1. **System Hostname**: The system is configured for hostname "wombat" with user "alistairstead"
-2. **Theme**: Uses Catppuccin Mocha theme across applications
-3. **Shell**: Fish is the default shell with custom functions in `modules/common/shell/fish.nix`
-4. **Editor**: Neovim with LazyVim configuration
-5. **Window Management**: Uses Yabai (tiling) or Aerospace (alternative) for window management
+1. **Package Management**: Uses Homebrew as primary package manager, mise for runtime versions
+2. **Shell**: Zsh is default with Starship prompt and extensive aliases
+3. **Theme**: Catppuccin Mocha theme preference across applications
+4. **Version Management**: mise handles Node.js, Ruby, Python, etc. (reads .nvmrc, .ruby-version)
+5. **Git Hooks**: Lefthook runs shellcheck on pre-commit
+6. **CI/CD**: GitHub Actions tests installation on macOS
 
 ## When Making Changes
 
-1. **Module Changes**: After modifying any module, run `rebuild-darwin` to apply changes
-2. **New Features**: Add enable options in `flake.nix` and create corresponding modules
-3. **Testing**: Use `nix flake check` before committing to ensure the configuration is valid
-4. **Dependencies**: Add new packages to the appropriate module's `home.packages` or `environment.systemPackages`
+1. **Config Updates**: After modifying configs, run `stow -R <app>` to update symlinks
+2. **New Applications**: Create directory structure matching home layout, then `stow <app>`
+3. **Brew Packages**: Edit `Brewfile` then run `brew bundle`
+4. **Shell Scripts**: Ensure shellcheck compliance (automated via Lefthook)
+5. **Karabiner Rules**: Edit TypeScript in `karabiner/src/`, then `pnpm build`
 
-## Current Migration
+## Claude Code Hooks
 
-The repository is currently migrating some configurations to use GNU Stow for symlink management. Files are being moved from root directories to `.config/` subdirectories.
+The repository includes custom hooks in `claude/.claude/hooks/` that:
+- Enforce Bun usage over npm/yarn/pnpm
+- Log tool usage for debugging
+- Run TypeScript linting
+- Send macOS notifications for long-running tasks
 
+## Testing
+
+- **Local Testing**: Run `shellcheck` on shell scripts
+- **CI Testing**: GitHub Actions validates installation, syntax, and runs shellcheck
+- **Manual Validation**: Check symlinks with `ls -la ~/.config/`
