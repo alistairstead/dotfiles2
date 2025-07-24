@@ -1,0 +1,25 @@
+[
+  {
+    "label": "Search Obsidian Notes",
+    "command": "obsidian",
+    "args": ["${ZED_SELECTED_TEXT}"],
+    "cwd": "/Users/alistairstead/Documents/Notes",
+    "use_new_terminal": true,
+    "reveal": "always"
+  },
+  {
+    "label": "Create Daily Note",
+    "command": "obsidian-note",
+    "args": ["${ZED_SELECTED_TEXT}"],
+    "cwd": "/Users/alistairstead/Documents/Notes",
+    "use_new_terminal": false,
+    "reveal": "never"
+  },
+  {
+    "label": "Preview in Obsidian",
+    "command": "open",
+    "args": ["-a", "Obsidian", "${ZED_FILE}"],
+    "use_new_terminal": false,
+    "reveal": "never"
+  }
+]

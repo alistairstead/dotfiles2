@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# Create or open daily note in Obsidian vault using Zed
+
+set -e
+
+# Colors for output
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Configuration
+NOTES_DIR="${NOTES_DIR:-$HOME/Documents/Notes}"
+EDITOR="${EDITOR:-zed}"
+DAILY_DIR="Daily"
+
+# Get current date components
+YEAR=$(date +%Y)
+MONTH=$(date +%m)
+DAY=$(date +%d)
+DATE=$(date +%Y-%m-%d)
+WEEKDAY=$(date +%A)
+MONTH_NAME=$(date +%B)
+
+# Construct paths
+YEAR_DIR="$NOTES_DIR/$DAILY_DIR/$YEAR"
+MONTH_DIR="$YEAR_DIR/$MONTH"
+DAILY_NOTE="$MONTH_DIR/$DATE.md"
+
+# Function to create daily note template
+create_template() {
+    local file="$1"
+    cat > "$file" << EOF
+# $WEEKDAY, $MONTH_NAME $DAY, $YEAR
+
+## 📅 Tasks
+
+- [ ] 
+
+## 📝 Notes
+
+## 💭 Reflections
+
+## 🔗 Links
+
+---
+*Created: $(date +"%Y-%m-%d %H:%M")*
+EOF
+}
+
+# Create directory structure if needed
+echo -e "${BLUE}Setting up daily note for ${DATE}...${NC}"
+
+if [ ! -d "$MONTH_DIR" ]; then
+    echo -e "${YELLOW}Creating directory structure...${NC}"
+    mkdir -p "$MONTH_DIR"
+fi
+
+# Check if daily note already exists
+if [ -f "$DAILY_NOTE" ]; then
+    echo -e "${GREEN}Daily note already exists${NC}"
+else
+    echo -e "${YELLOW}Creating new daily note...${NC}"
+    create_template "$DAILY_NOTE"
+    echo -e "${GREEN}Daily note created${NC}"
+fi
+
+# Get any text passed as argument (from Zed selection)
+SELECTED_TEXT="$1"
+
+# If text was selected, append it to the notes section
+if [ -n "$SELECTED_TEXT" ]; then
+    echo -e "${CYAN}Adding selected text to daily note...${NC}"
+    
+    # Add a newline and the selected text under the Notes section
+    # Find the line number of "## 📝 Notes" and insert after it
+    LINE_NUM=$(grep -n "^## 📝 Notes" "$DAILY_NOTE" | cut -d: -f1)
+    if [ -n "$LINE_NUM" ]; then
+        # Insert the text after the Notes header
+        sed -i '' "${LINE_NUM}a\\
+\\
+${SELECTED_TEXT}\\
+" "$DAILY_NOTE"
+        echo -e "${GREEN}Text added to daily note${NC}"
+    fi
+fi
+
+# Open the daily note in Zed
+echo -e "${GREEN}Opening daily note in ${EDITOR}...${NC}"
+$EDITOR "$DAILY_NOTE" &
+
+# Also print the path for reference
+echo -e "${CYAN}Path: ${DAILY_NOTE#$NOTES_DIR/}${NC}"
