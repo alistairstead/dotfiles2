@@ -29,9 +29,8 @@ class NotificationHandler {
   private readonly logFile: string;
 
   constructor() {
-    // Get the directory where this script is located
-    const scriptDir = dirname(new URL(import.meta.url).pathname);
-    this.logFile = join(scriptDir, "..", "notifications.json");
+    // Use /tmp for log files
+    this.logFile = "/tmp/claude_notifications.json";
 
     // Ensure the directory exists
     this.ensureDirectories();

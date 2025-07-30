@@ -44,3 +44,4 @@ esac
 # pnpm end
 export PATH=/Users/$USER/bin:$PATH
 export PATH=/Users/$USER/go/bin:$PATH
+. "$HOME/.cargo/env"

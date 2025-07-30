@@ -26,9 +26,8 @@ class ToolUseLogger {
   private readonly logFile: string;
 
   constructor() {
-    // Get the directory where this script is located
-    const scriptDir = dirname(new URL(import.meta.url).pathname);
-    this.logFile = join(scriptDir, "..", "bash_commands.json");
+    // Use /tmp for log files
+    this.logFile = "/tmp/claude_bash_commands.json";
 
     // Ensure the directory exists
     this.ensureDirectories();

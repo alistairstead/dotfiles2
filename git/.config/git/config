@@ -9,24 +9,29 @@
 	st = "status"
 	tags = "tag -l"
 	undo = "reset --soft HEAD^"
-	
+
 	# Advanced workflows
 	amend = "commit --amend --no-edit"
 	fixup = "commit --fixup"
 	recent = "branch --sort=-committerdate --format='%(committerdate:relative)%09%(refname:short)'"
 	unstage = "reset HEAD --"
 	discard = "checkout --"
-	
+
 	# Branch management
 	cleanup = "!git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d"
 	publish = "!git push -u origin $(git branch --show-current)"
 	unpublish = "!git push origin :$(git branch --show-current)"
-	
+
 	# History exploration
 	who = "shortlog -sne"
 	contributors = "shortlog -sn"
 	search = "log --all --grep"
 	find = "log --all --source --name-status --follow --grep"
+
+	# Case sensitivity helpers
+	case-rename = "!f() { git mv \"$1\" \"$1.tmp\" && git mv \"$1.tmp\" \"$2\"; }; f"
+	case-check = "!git ls-files | sort -f | uniq -di"
+	case-conflicts = "!git status --porcelain | grep -E '^[MARC][MARC]' | awk '{print $2}' | sort -f | uniq -di"
 
 [apply]
 	whitespace = "fix"
@@ -36,7 +41,9 @@
 
 [core]
 	ignoreCase = false
+	precomposeUnicode = true
 	pager = "delta"
+	hooksPath = "~/.config/git/hooks"
 
 [delta]
 	light = false

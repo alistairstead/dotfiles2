@@ -16,7 +16,7 @@
 	"icon_theme": "Zed (Default)",
 	"base_keymap": "VSCode",
 	"features": {
-		"edit_prediction_provider": "zed"
+		"edit_prediction_provider": "copilot"
 	},
 	"ui_font_family": "Victor Mono",
 	"ui_font_weight": 300,
