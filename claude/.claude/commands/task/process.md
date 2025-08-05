@@ -1,326 +1,155 @@
 # Process Implementation Tasks
 
 <instructions>
-You are an autonomous development agent coordinating with other agents to complete implementation tasks. Execute tasks systematically with comprehensive quality gates and progress tracking.
+You are an autonomous development agent executing implementation tasks. Process tasks systematically, ensure tests pass, and update task status for coordination with other agents.
 </instructions>
 
-<execution_framework>
-Apply the Saga pattern for distributed task execution:
-
-- Orchestrator coordinates task sequence
-- Each task maintains completion state
-- Compensating actions handle failures
-- Quality gates prevent progression with issues
-  </execution_framework>
-
 <arguments>
-Phase Number: $ARGUMENTS (e.g., "1", "2", "3", or "all")
+Task file path or name: $ARGUMENTS
 </arguments>
 
-## Step 1: Load Task Context and Current State
+## Step 1: Load Task File and Assess Status
 
-@tasks/feature-tasks.md
-@prds/feature-prd.md
+<input_handling>
+- If $ARGUMENTS contains "/" or ends with ".md", treat as file path
+- If $ARGUMENTS is a name, look for `docs/tasks/$ARGUMENTS-tasks.md` or `docs/tasks/$ARGUMENTS.md`
+- If file not found, prompt for correct task file path
+- Load task file and parse current task statuses
+</input_handling>
 
-<state_assessment>
-Analyzing current project state to determine:
+@$ARGUMENTS
 
-- Which tasks are already completed
-- Which tasks are in progress
-- What dependencies are satisfied
-- What quality gates have been passed
-  </state_assessment>
+## Step 2: Analyze Task Dependencies and Status
 
+**Parse task information:**
+- Identify all tasks with current status (pending, in_progress, completed, blocked)
+- Map dependency relationships between tasks
+- Find tasks ready for execution (dependencies satisfied + status = pending)
+- Verify no tasks are already in_progress by other agents
+
+**Current project state:**
 !git status
-!git log --oneline -10
+!git log --oneline -5
 
-## Step 2: Phase Selection and Task Orchestration
+## Step 3: Select and Execute Available Task
 
-<phase_coordination>
-Based on the requested phase, I'll:
+**Task selection criteria:**
+- Status must be "pending"
+- All dependency tasks must be "completed"
+- No conflicting in_progress tasks
 
-- Validate all dependencies are satisfied
-- Check prerequisite quality gates
-- Prepare execution environment
-- Initialize progress tracking
-  </phase_coordination>
+**Task execution workflow:**
+1. **Update task status to in_progress** in task file
+2. **Execute task implementation** following TDD approach
+3. **Run quality gates** (tests, linting, type checking)
+4. **Update task status** based on results (completed/blocked)
+5. **Commit changes** if task completed successfully
 
-### Initialize TODO Management
+### Task Implementation Pattern
 
-Create or update `tasks/todo-active.md`:
-
-```markdown
-# Active Task Execution: Phase $ARGUMENTS
-
-## Execution Status: IN_PROGRESS
-
-**Started**: [Current timestamp]
-**Phase**: $ARGUMENTS
-**Estimated Completion**: [Based on task estimates]
-
-## Task Queue Status
-
-### Ready for Execution
-
-[Tasks with satisfied dependencies]
-
-### Blocked
-
-[Tasks waiting for dependencies]
-
-### In Progress
-
-[Currently executing tasks]
-
-### Completed
-
-[Finished tasks with quality gates passed]
-
-### Failed
-
-[Tasks that failed quality gates or execution]
-```
-
-## Step 3: Task Execution Engine
-
-<task_execution>
-For each task in the selected phase, I'll:
-
-Verify dependencies and prerequisites
-Execute the task implementation
-Run quality gates and validation
-Update progress and prepare next task
-Handle errors with compensating actions
-</task_execution>
-
-Execute Task Implementation
-For each task, I'll follow this pattern:
+For the selected task:
 
 ```markdown
-## Executing Task: [Task ID - Description]
+## Executing Task: [task-id] - [description]
 
-### Pre-Execution Validation
+### Pre-execution
+- [x] Dependencies satisfied: [list dependency task IDs]
+- [x] Status updated to in_progress
+- [x] Environment ready
 
-- [ ] Dependencies satisfied
-- [ ] Environment ready
-- [ ] Resources available
-- [ ] Quality gates from previous tasks passed
+### TDD Implementation
+1. **Write failing tests** (Red phase)
+   - Create test files as specified in task deliverables
+   - Implement test cases covering acceptance criteria
+   - Verify tests fail as expected
 
-### Implementation Steps
+2. **Implement minimal code** (Green phase)
+   - Write code to make tests pass
+   - Focus on meeting acceptance criteria
+   - Create deliverable files as specified
 
-[Specific steps based on task type]
+3. **Refactor and improve** (Refactor phase)
+   - Improve code quality while keeping tests green
+   - Follow project conventions and patterns
+   - Optimize for readability and performance
 
-### Quality Gate Execution
+### Quality Gates
+- [ ] All new tests pass
+- [ ] Existing tests still pass
+- [ ] Linting rules pass
+- [ ] Type checking passes (if applicable)
+- [ ] Deliverables created at specified paths
 
-[Run tests, linting, security scans, etc.]
-
-### Progress Update
-
-[Update task status and prepare handoff]
+### Status Update
+Task status: [completed | blocked | needs_review]
+Completion notes: [Brief summary of work done]
 ```
 
-## Step 4: Quality Gate Orchestration
+## Step 4: Essential Quality Validation
 
-<quality_gates>
-Implementing comprehensive quality gates based on project standards:
+Run essential quality gates before marking task complete:
 
-Code quality and formatting
-Unit test coverage and passing
-Integration test validation
-Security scan results
-Performance benchmark validation
-Documentation completeness
-</quality_gates>
+**Core validation:**
+!npm run test || bun run test || yarn test
+!npm run lint || bun lint || yarn lint
+!npm run typecheck || bun typecheck || yarn typecheck
 
-Code Quality Gates
+**Build verification:**
+!npm run build || bun run build || yarn build
 
-```bash
-# ESLint/Prettier for code formatting
-!bun run lint
-!bun run format:check
+## Step 5: Update Task File Status
 
-# TypeScript type checking
-!bun run typecheck
+**For completed tasks:**
+- Change status from "in_progress" to "completed"
+- Add completion timestamp
+- Note any deviations from original specifications
 
-# Unit test execution with coverage
-!bun run test:coverage
+**For blocked tasks:**
+- Change status from "in_progress" to "blocked"
+- Document specific blocker and resolution needed
+- Identify which agent or action can resolve blocker
 
-# Integration tests
-!bun run test:integration
-```
-
-Security and Performance Gates
-
-```bash
-# Security vulnerability scanning
-!bun audit --audit-level moderate
-
-# Bundle size analysis (if frontend)
-!bun run analyze:bundle
-
-# Performance testing (if applicable)
-!bun run test:performance
-```
-
-Documentation and Deployment Gates
-
-```bash
-# Documentation completeness check
-!find docs/ -name "*.md" -exec grep -l "TODO\|FIXME\|XXX" {} \;
-
-# Build verification
-!bun run build
-
-# Deployment readiness check
-!bun run deploy:check
-```
-
-## Step 5: Progress Tracking and State Management
-
-<progress_management>
-Maintaining detailed progress information for coordination with other agents and team members:
-
-Real-time task completion status
-Quality gate results and trends
-Blocker identification and resolution
-Resource utilization and estimates
-</progress_management>
-
-Update Task Status
-
+**Status update format:**
 ```markdown
-## Task Progress Update
-
-### Task: [Current Task ID]
-
-**Status**: [NOT_STARTED | IN_PROGRESS | BLOCKED | COMPLETED | FAILED]
-**Progress**: [Percentage complete]
-**Time Spent**: [Actual vs estimated]
-**Quality Gates**: [Passed/Failed with details]
-**Blockers**: [Any impediments encountered]
-**Next Steps**: [What happens next]
-
-### Overall Phase Progress
-
-**Completed Tasks**: X of Y
-**Overall Progress**: Z%
-**Estimated Completion**: [Updated estimate]
-**Risk Level**: [GREEN | YELLOW | RED]
+- **Status**: completed
+- **Completed**: [timestamp]
+- **Agent**: [agent identifier]
+- **Notes**: [brief completion summary]
 ```
 
-## Step 6: Multi-Agent Coordination
+## Step 6: Progress Assessment and Next Steps
 
-<agent_coordination>
-Facilitating handoffs and coordination between different agents:
+**After task completion:**
+- Identify next available tasks (newly unblocked by completion)
+- Commit all changes with descriptive commit message
+- Report progress: completed task and next available tasks
 
-Backend agents for API implementation
-Frontend agents for UI development
-DevOps agents for infrastructure
-QA agents for testing validation
-Documentation agents for knowledge capture
-</agent_coordination>
+**If no more tasks available:**
+- Report all remaining tasks and their blocking dependencies
+- Suggest next actions for project continuation
 
-Agent Handoff Protocol
+**If tasks blocked:**
+- Document specific blockers and required resolutions
+- Identify which specialist agents could resolve blockers
+- Suggest alternative tasks that could proceed in parallel
 
-```markdown
-## Agent Handoff: [From Agent] → [To Agent]
+## Error Handling
 
-### Context Transfer
+**If task execution fails:**
+1. Rollback any partial changes (git checkout)
+2. Update task status to "blocked" with failure reason
+3. Document specific error and potential solutions
+4. Identify if issue requires different agent expertise
 
-- **Completed Work**: [Summary of what was finished]
-- **Current State**: [Exact state of code/systems]
-- **Quality Status**: [All quality gates and their status]
-- **Known Issues**: [Any problems or concerns]
-- **Next Actions**: [What the receiving agent should do]
+**If tests fail:**
+1. Do not mark task as completed
+2. Document failing tests and error messages
+3. Keep status as "in_progress" for retry or "blocked" if unable to resolve
+4. Suggest next steps for resolution
 
-### Verification Checklist
+**Quality gate failures:**
+- Document specific quality issues (linting errors, type errors)
+- Fix issues or mark task as blocked if resolution unclear
+- Ensure all quality gates pass before completion
 
-- [ ] All artifacts committed to version control
-- [ ] Quality gates documented and accessible
-- [ ] Environment state is clean and reproducible
-- [ ] Documentation updated with current state
-- [ ] Receiving agent has all necessary context
-```
-
-## Step 7: Error Handling and Recovery
-
-<error_handling>
-Implementing robust error handling with compensating transactions:
-
-Automatic rollback of failed changes
-Clear error reporting and diagnosis
-Recovery procedures for common failures
-Escalation paths for critical issues
-</error_handling>
-
-Failure Recovery Protocol
-
-```markdown
-## Error Recovery: [Task ID] Failed
-
-### Failure Analysis
-
-**Error Type**: [Compilation | Test | Quality Gate | Integration]
-**Root Cause**: [Detailed analysis of what went wrong]
-**Impact Assessment**: [What else might be affected]
-
-### Compensating Actions
-
-- [ ] Rollback incomplete changes
-- [ ] Restore previous working state
-- [ ] Update task status and dependencies
-- [ ] Notify dependent agents/tasks
-
-### Recovery Plan
-
-**Immediate Actions**: [Steps to stabilize]
-**Resolution Approach**: [How to fix the underlying issue]
-**Prevention**: [How to avoid this in the future]
-```
-
-## Step 8: Completion and Handoff
-
-<completion_protocol>
-Ensuring clean completion with full documentation:
-
-All quality gates passed and documented
-Progress tracking updated
-Next phase prepared
-Knowledge captured for future reference
-</completion_protocol>
-
-Phase Completion Report
-
-```markdown
-# Phase $ARGUMENTS Completion Report
-
-## Executive Summary
-
-**Phase Status**: [COMPLETED | PARTIALLY_COMPLETED | FAILED]
-**Completion Date**: [Timestamp]
-**Total Effort**: [Actual vs estimated hours]
-**Quality Score**: [Aggregate quality gate results]
-
-## Task Summary
-
-[Detailed breakdown of each task completion status]
-
-## Quality Gate Results
-
-[Comprehensive report of all quality validations]
-
-## Issues and Resolutions
-
-[Any problems encountered and how they were resolved]
-
-## Handoff to Next Phase
-
-**Prerequisites Satisfied**: [All dependencies for next phase]
-**Environment State**: [Current state of development environment]
-**Known Risks**: [Any concerns for upcoming work]
-**Recommendations**: [Suggestions for next phase execution]
-
-## Lessons Learned
-
-[Process improvements and knowledge for future iterations]
-```
+IMPORTANT: Always update the task file with current status. Other agents depend on accurate status information for coordination and preventing duplicate work.

@@ -1,308 +1,130 @@
 # Generate Implementation Tasks
 
 <instructions>
-You are a senior engineering manager with expertise in task decomposition and project planning. Break down the feature PRD into atomic, executable tasks organized in logical phases.
+You are a senior engineering manager breaking down a feature PRD into atomic, executable tasks for agentic workflows. Focus on clear dependencies and TDD structure.
 </instructions>
 
-<task_decomposition_principles>
-Each task must be:
-
-- Atomic: Single, well-defined action
-- Estimable: 4-16 hours of work
-- Testable: Clear completion criteria
-- Independent: Minimal external dependencies within phase
-- Assigned: Clear ownership and skills required
-  </task_decomposition_principles>
-
 <arguments>
-Feature: $ARGUMENTS
+PRD path or name: $ARGUMENTS
 </arguments>
 
-## Step 1: Load Feature Context
+## Step 1: Load PRD Context
 
-@prds/feature-prd.md
+<input_handling>
+- If $ARGUMENTS contains "/" or ends with ".md", treat as file path
+- If $ARGUMENTS is a name, look for `docs/prds/$ARGUMENTS-prd.md` or `docs/prds/$ARGUMENTS.md`
+- If file not found, prompt for correct PRD path
+- Load the PRD and extract feature requirements
+</input_handling>
 
-<understanding>
-I have the complete feature specification including user stories, technical requirements, and success criteria. Now I'll decompose this into executable tasks following proven software engineering practices.
-</understanding>
+@$ARGUMENTS
 
-## Step 2: Dependency Analysis
+## Step 2: Analyze Dependencies and Extract Implementation Context
 
-<dependency_mapping>
-Using Critical Path Method (CPM) thinking to identify:
+Identify task dependencies by analyzing:
+- **Sequential requirements**: Database → API → Frontend → Integration
+- **Parallel opportunities**: Frontend components can develop alongside API
+- **External dependencies**: Third-party services, authentication systems
+- **Testing dependencies**: Tests must be written before implementation (TDD)
 
-- Sequential dependencies (must finish before starting)
-- Parallel opportunities (can work simultaneously)
-- Resource constraints (team member availability)
-- External dependencies (APIs, third-party services)
-- Infrastructure dependencies (environments, tooling)
-  </dependency_mapping>
+## Step 2.5: Extract PRD Implementation Context
 
-## Step 3: Phase Organization
+**Parse PRD for actionable implementation details:**
 
-<phase_planning>
-Organizing tasks into logical phases based on:
+1. **User Stories → Test Cases**:
+   - Extract specific acceptance criteria with Given-When-Then scenarios
+   - Identify edge cases and error conditions from user stories
+   - Map user flows to specific component interactions
 
-- Technical dependency order
-- Risk mitigation strategy (high-risk items early)
-- Value delivery milestones (MVP → enhancements)
-- Team coordination needs
-- Testing and validation points
-  </phase_planning>
+2. **Technical Specifications → Implementation Guidance**:
+   - API specifications → Exact endpoint schemas, request/response formats
+   - Database changes → Schema definitions, migration scripts, indexing strategy
+   - Frontend requirements → Component structures, props interfaces, state management
+   - Architecture impact → Integration patterns, data flow, system interactions
 
-## Step 4: Task Generation
+3. **Business Rules → Validation Logic**:
+   - Extract specific validation requirements and error messages
+   - Identify business constraints and enforcement rules
+   - Document authorization and access control requirements
 
-Create `tasks/feature-tasks.md`:
+4. **Performance & Security → Concrete Requirements**:
+   - Performance metrics → Specific benchmarks and optimization targets
+   - Security requirements → Authentication patterns, input validation, data protection
+   - Non-functional requirements → Accessibility standards, browser compatibility
 
-````markdown
-# Implementation Tasks: [Feature Name]
+5. **Integration Context from Base PRD**:
+   - Technology stack patterns to follow
+   - Existing architectural conventions
+   - Code quality standards and testing approaches
+   - Anti-patterns to avoid
 
-## Overview
+## Step 3: Generate Task Breakdown
 
-**Total Estimated Effort**: [X] story points / [Y] hours
-**Estimated Duration**: [Z] weeks with [N] developers
-**Critical Path**: [Longest dependency chain]
+Create `docs/tasks/[feature-name]-tasks.md` using the agentic template:
 
-## Task Dependency Graph
+@~/.claude/templates/task-template.md
 
-```mermaid
-setup-1 → test-1 → impl-1 → integration-1
-↘ impl-2 ↗
-```
-````
+**Task Generation Requirements**:
 
-## Phase 1: Foundation & Infrastructure (Sprint 1)
+1. **Unique Task IDs**: Use `[feature-prefix]-[number]` format (e.g., `auth-001`, `auth-002`)
 
-### Task 1.1: Database Schema Design
+2. **TDD Structure**: Each task includes:
+   - Tests to write first (red phase)
+   - Implementation to make tests pass (green phase)
+   - Clear completion criteria
 
-- **Description**: Design and review database schema changes for [feature]
-- **Acceptance Criteria**:
-  - Schema migration scripts created and reviewed
-  - Indexing strategy documented and implemented
-  - Backward compatibility verified
-- **Estimate**: 8 hours
-- **Owner**: Backend Engineer
-- **Dependencies**: None
-- **Deliverables**:
-  - Migration scripts in `db/migrations/`
-  - Schema documentation updated
-- **Quality Gates**:
-  - Schema review by senior engineer
-  - Migration tested in staging environment
+3. **Agent-Friendly Format**:
+   - Clear deliverable file paths
+   - Status tracking for cross-agent handoffs
+   - Agent assignment (job title or specific agent name)
+   - No time estimates (agents work differently than humans)
+   - Specific completion criteria
 
-### Task 1.2: API Endpoint Scaffolding
+4. **Dependency Management**:
+   - List prerequisite task IDs
+   - Support parallel task execution where possible
+   - Identify critical path through dependency chain
 
-- **Description**: Create basic API endpoint structure with authentication
-- **Acceptance Criteria**:
-  - RESTful endpoints created following project conventions
-  - Authentication middleware integrated
-  - Basic validation implemented
-- **Estimate**: 6 hours
-- **Owner**: Backend Engineer
-- **Dependencies**: Task 1.1 (database schema)
-- **Deliverables**:
-  - API endpoints in `src/api/`
-  - OpenAPI documentation updated
-- **Quality Gates**:
-  - Unit tests for endpoint routing
-  - Integration tests for authentication
+**Task Categories**:
+- **Foundation**: Database, infrastructure, basic scaffolding
+- **Core Implementation**: Business logic, API endpoints, frontend components
+- **Integration**: Connecting systems, data flow, user experience
+- **Quality Assurance**: Performance, security, documentation
 
-### Task 1.3: Frontend Component Architecture
+**Completion Criteria Standards**:
+- All tests pass (unit, integration, acceptance)
+- Code meets quality standards (linting, type checking)
+- Feature works end-to-end as specified in PRD
+- Documentation updated
 
-- **Description**: Design and implement reusable component structure
-- **Acceptance Criteria**:
-  - Component hierarchy designed and documented
-  - Shared components created following design system
-  - State management pattern established
-- **Estimate**: 10 hours
-- **Owner**: Frontend Engineer
-- **Dependencies**: None
-- **Deliverables**:
-  - Components in `src/components/`
-  - Storybook stories for visual testing
-- **Quality Gates**:
-  - Component unit tests
-  - Visual regression tests
+Replace template placeholders with:
+- `[Feature Name]` → Actual feature name from PRD
+- `[task-id-X]` → Sequential task IDs with feature prefix
+- `[feature]` → Lowercase feature name for file paths
+- `[ext]` → Appropriate file extensions for project
+- `[agent-type]` → Appropriate agent type or job title for the task
+- `[PRD-Context]` → Extracted implementation details from PRD analysis
+- `[User-Story]` → Specific user story this task implements
+- `[Acceptance-Criteria]` → Exact criteria from PRD with examples
+- `[Business-Rules]` → Validation rules and constraints
+- `[API-Schema]` → Endpoint specifications with request/response examples
+- `[DB-Schema]` → Database structure, relationships, migration code
+- `[Component-Structure]` → Props interface, state management patterns
+- `[Code-Examples]` → Implementation patterns from PRD research
+- `[Performance-Targets]` → Specific benchmarks and optimization goals
+- Test descriptions → Specific test requirements from PRD user stories
 
-### Task 1.4: DevOps Environment Setup
+**Agent Assignment Guidelines**:
+- **Backend tasks**: backend-engineer, api-developer, database-engineer
+- **Frontend tasks**: frontend-engineer, ui-developer, react-developer
+- **Full-stack tasks**: fullstack-engineer, integration-specialist
+- **QA tasks**: qa-engineer, testing-specialist, performance-engineer
+- **DevOps tasks**: devops-engineer, infrastructure-specialist
+- **Security tasks**: security-engineer, security-specialist
+- **Documentation tasks**: technical-writer, documentation-specialist
 
-- **Description**: Configure development and staging environments
-- **Acceptance Criteria**:
-  - Feature branch deployments automated
-  - Environment variables configured
-  - Monitoring and logging enabled
-- **Estimate**: 4 hours
-- **Owner**: DevOps Engineer
-- **Dependencies**: None
-- **Deliverables**:
-  - Updated CI/CD pipeline configuration
-  - Environment documentation
-- **Quality Gates**:
-  - Successful automated deployment
-  - Health check endpoints responding
-
-## Phase 2: Core Feature Implementation (Sprint 2)
-
-### Task 2.1: Core Business Logic Implementation
-
-- **Description**: Implement the primary feature functionality
-- **Acceptance Criteria**:
-  - All user stories from PRD implemented
-  - Business rules enforced
-  - Error handling implemented
-- **Estimate**: 16 hours
-- **Owner**: Backend Engineer
-- **Dependencies**: Task 1.1, Task 1.2
-- **Deliverables**:
-  - Business logic in `src/services/`
-  - Comprehensive unit tests
-- **Quality Gates**:
-  - Code coverage > 80%
-  - Integration tests passing
-
-### Task 2.2: User Interface Implementation
-
-- **Description**: Build complete user interface for feature
-- **Acceptance Criteria**:
-  - All UI mockups implemented pixel-perfect
-  - Responsive design working on all breakpoints
-  - Accessibility requirements met (WCAG AA)
-- **Estimate**: 20 hours
-- **Owner**: Frontend Engineer
-- **Dependencies**: Task 1.3, Task 2.1 (for API integration)
-- **Deliverables**:
-  - Complete UI implementation
-  - Accessibility audit report
-- **Quality Gates**:
-  - Cross-browser testing completed
-  - Accessibility testing with screen reader
-
-### Task 2.3: API Integration and Data Flow
-
-- **Description**: Connect frontend to backend APIs with proper error handling
-- **Acceptance Criteria**:
-  - All API calls implemented with proper error handling
-  - Loading states and error messages implemented
-  - Data validation on both client and server
-- **Estimate**: 12 hours
-- **Owner**: Full-Stack Engineer
-- **Dependencies**: Task 2.1, Task 2.2
-- **Deliverables**:
-  - API integration layer
-  - Error handling documentation
-- **Quality Gates**:
-  - End-to-end tests covering happy path
-  - Error scenario testing completed
-
-## Phase 3: Integration & Polish (Sprint 3)
-
-### Task 3.1: Performance Optimization
-
-- **Description**: Optimize feature performance based on requirements
-- **Acceptance Criteria**:
-  - Page load time < 2 seconds
-  - API response time < 500ms for 95th percentile
-  - Memory usage within acceptable limits
-- **Estimate**: 8 hours
-- **Owner**: Senior Engineer
-- **Dependencies**: Task 2.3
-- **Deliverables**:
-  - Performance optimization report
-  - Monitoring dashboards updated
-- **Quality Gates**:
-  - Load testing results meeting SLA
-  - Performance monitoring alerts configured
-
-### Task 3.2: Security Review and Hardening
-
-- **Description**: Conduct security review and implement hardening measures
-- **Acceptance Criteria**:
-  - Security scan completed with no high-severity issues
-  - Input validation reviewed and strengthened
-  - Authorization controls verified
-- **Estimate**: 6 hours
-- **Owner**: Security Engineer
-- **Dependencies**: Task 2.3
-- **Deliverables**:
-  - Security review report
-  - Penetration testing results
-- **Quality Gates**:
-  - OWASP security scan passing
-  - Security review approved
-
-### Task 3.3: Documentation and Knowledge Transfer
-
-- **Description**: Create comprehensive documentation for the feature
-- **Acceptance Criteria**:
-  - User documentation written and reviewed
-  - Technical documentation updated
-  - Team knowledge transfer completed
-- **Estimate**: 4 hours
-- **Owner**: Technical Writer + Team Lead
-- **Dependencies**: All previous tasks
-- **Deliverables**:
-  - User guide documentation
-  - Technical architecture documentation
-- **Quality Gates**:
-  - Documentation review by product team
-  - Knowledge transfer session completed
-
-## Quality Gates and Checkpoints
-
-### Phase 1 Completion Criteria
-
-- All infrastructure tasks completed and tested
-- Development environment fully functional
-- Basic scaffolding deployed to staging
-
-### Phase 2 Completion Criteria
-
-- Core functionality implemented and tested
-- User acceptance testing completed
-- Performance baseline established
-
-### Phase 3 Completion Criteria
-
-- All acceptance criteria met
-- Security review passed
-- Documentation completed
-- Ready for production deployment
-
-## Risk Mitigation and Contingency Plans
-
-### High-Risk Tasks
-
-- **Task 2.1** (Core Logic): Schedule extra review time, pair programming
-- **Task 2.2** (UI Implementation): Early design validation, incremental review
-
-### Dependency Management
-
-- **External API delays**: Implement mock services for development
-- **Resource conflicts**: Cross-training plan for critical tasks
-- **Technical blockers**: Escalation path to architecture team
-
-## Progress Tracking and Communication
-
-### Daily Updates
-
-- Task completion status
-- Blockers and impediments
-- Updated time estimates
-
-### Weekly Reviews
-
-- Phase progress assessment
-- Risk evaluation and mitigation
-- Stakeholder communication
-
-### Milestone Demonstrations
-
-- End of Phase 1: Infrastructure demo
-- End of Phase 2: Feature demo to stakeholders
-- End of Phase 3: Production readiness review
-
-```
-
-**Remember**: Good tasks are specific, testable, and sized for steady progress.
-**Remember**: The tasks should be written for a **Junior Developer**, so keep them clear and straightforward.
-```
+**Agent Handoff Requirements**:
+- Include clear status tracking mechanism
+- Document blockers and resolution paths
+- Specify file locations for all deliverables
+- Reference PRD sections for context
