@@ -43,6 +43,15 @@
 - Accessibility: [WCAG compliance, screen reader support]
 - Browser/Platform Support: [Compatibility matrix]
 
+### Non-Goals (Out of Scope)
+
+[Explicitly state what this feature will NOT include to manage scope and expectations]
+
+- [Feature/functionality that will NOT be included]
+- [Edge cases or use cases that are explicitly out of scope]
+- [Future enhancements that are not part of this iteration]
+- [Integrations or platforms that will NOT be supported initially]
+
 ## Technical Specifications
 
 ### Architecture Impact
@@ -131,3 +140,21 @@
 ### Rollback Criteria
 
 [Conditions that would trigger feature rollback]
+
+## Open Questions
+
+[List any remaining questions or areas needing further clarification before implementation begins]
+
+- **Technical Questions:**
+  - [Unresolved technical implementation details]
+  - [Architecture decisions that need stakeholder input]
+
+- **Product Questions:**
+  - [User experience decisions requiring research]
+  - [Business logic clarifications needed]
+
+- **Resource Questions:**
+  - [Dependencies on other teams or external services]
+  - [Timeline or capacity constraints to resolve]
+
+**Note:** These questions should be resolved before development begins to avoid scope creep and implementation delays.
