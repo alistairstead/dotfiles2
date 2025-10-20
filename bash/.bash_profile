@@ -10,3 +10,5 @@ fi
 
 # Additional login-specific configurations can go here
 . "$HOME/.cargo/env"
+
+. "$HOME/.turso/env"

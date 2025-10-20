@@ -96,3 +96,5 @@ if command -v atuin >/dev/null 2>&1; then
 fi
 
 . "$HOME/.cargo/env"
+
+. "$HOME/.turso/env"

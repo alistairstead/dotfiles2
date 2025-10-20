@@ -195,3 +195,8 @@ fi
 # Initialize zoxide (must be at the very end)
 eval "$(zoxide init --cmd j zsh)"
 
+
+# bun completions
+[ -s "/Users/alistairstead/.bun/_bun" ] && source "/Users/alistairstead/.bun/_bun"
+
+. "$HOME/.turso/env"

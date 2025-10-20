@@ -1,201 +1,221 @@
 [
-  {
-    "context": "Workspace",
-    "bindings": {
-      "cmd-k": [
-        "projects::OpenRecent",
-        {
-          "create_new_window": true
-        }
-      ],
-      "cmd-shift-k": [
-        "projects::OpenRecent",
-        {
-          "create_new_window": false
-        }
-      ]
-    }
-  },
-  {
-    "context": "VimControl && !menu",
-    "bindings": {
-      // Put key bindings here if you want them to work in normal & visual mode.
-    }
-  },
-  {
-    "context": "vim_mode == visual && !VimWaiting && !VimObject",
-    "bindings": {
-      "shift-j": "editor::MoveLineDown",
-      "shift-k": "editor::MoveLineUp"
-    }
-  },
-  {
-    "context": "vim_mode == normal && !menu",
-    "bindings": {
-      "space w": "workspace::Save",
-      "space q": "pane::CloseActiveItem",
-      "space q q": "workspace::CloseWindow",
+	{
+		"use_key_equivalents": true,
+		"bindings": {
+			"cmd-z": "workspace::ToggleZoom"
+		}
+	},
+	{
+		"context": "Workspace",
+		"bindings": {
+			"cmd-k": [
+				"projects::OpenRecent",
+				{
+					"create_new_window": true
+				}
+			],
+			"cmd-shift-k": [
+				"projects::OpenRecent",
+				{
+					"create_new_window": false
+				}
+			]
+		}
+	},
+	{
+		"context": "VimControl && !menu",
+		"bindings": {
+			// Put key bindings here if you want them to work in normal & visual mode.
+		}
+	},
+	{
+		"context": "vim_mode == visual && !VimWaiting && !VimObject",
+		"bindings": {
+			"ctrl-j": "editor::MoveLineDown",
+			"ctrl-k": "editor::MoveLineUp",
+			"shift-j": "editor::SplitSelectionIntoLines"
+		}
+	},
+	{
+		"context": "vim_mode == normal && !menu",
+		"bindings": {
+			"space w": "workspace::Save",
+			"space q": "pane::CloseActiveItem",
+			"space q q": "workspace::CloseWindow",
 
-      "space f f": "file_finder::Toggle",
-      "space f r": "projects::OpenRecent",
-      "space f g": "workspace::NewSearch",
-      "space f b": "tab_switcher::Toggle",
+			"space f f": "file_finder::Toggle",
+			"space f r": "projects::OpenRecent",
+			"space f g": "workspace::NewSearch",
+			"space f b": "tab_switcher::Toggle",
 
-      "space b d": "pane::CloseActiveItem",
-      "space b o": "pane::CloseInactiveItems",
-      "space b b": "tab_switcher::Toggle",
-      "space m p": "markdown::OpenPreviewToTheSide",
-      "space m P": "markdown::OpenPreview",
+			"space b d": "pane::CloseActiveItem",
+			"space b o": "pane::CloseOtherItems",
+			"space b b": "tab_switcher::Toggle",
+			"space m p": "markdown::OpenPreviewToTheSide",
+			"space m P": "markdown::OpenPreview",
 
-      "shift-h": "pane::ActivatePreviousItem",
-      "shift-l": "pane::ActivateNextItem",
+			"shift-h": "pane::ActivatePreviousItem",
+			"shift-l": "pane::ActivateNextItem",
 
-      "g d": "editor::GoToDefinition",
-      "g D": "editor::GoToDeclaration",
-      "g r": "editor::FindAllReferences",
-      "g i": "editor::GoToImplementation",
-      "g t": "editor::GoToTypeDefinition",
-      "g a": "editor::ToggleCodeActions",
-      "g R": "editor::Rename",
-      "K": "editor::Hover",
+			"g d": "editor::GoToDefinition",
+			"g D": "editor::GoToDeclaration",
+			"g r": "editor::FindAllReferences",
+			"g i": "editor::GoToImplementation",
+			"g t": "editor::GoToTypeDefinition",
+			"g a": "editor::ToggleCodeActions",
+			"g R": "editor::Rename",
+			"K": "editor::Hover",
 
-      "[ d": "editor::GoToPreviousDiagnostic",
-      "] d": "editor::GoToDiagnostic",
-      "[ h": "editor::GoToPreviousHunk",
-      "] h": "editor::GoToHunk",
+			"[ d": "editor::GoToPreviousDiagnostic",
+			"] d": "editor::GoToDiagnostic",
+			"[ h": "editor::GoToPreviousHunk",
+			"] h": "editor::GoToHunk",
 
-      "space e": "project_panel::ToggleFocus",
+			"space e": "project_panel::ToggleFocus",
 
-      "space g g": "git_panel::ToggleFocus",
-      "space g s": "git_panel::ToggleFocus",
-      "space g b": "git::Blame",
-      "space g d": "editor::ToggleSelectedDiffHunks",
-      "space g r": "git::Restore",
+			"space g g": "git_panel::ToggleFocus",
+			"space g s": "git_panel::ToggleFocus",
+			"space g b": "git::Blame",
+			"space g d": "editor::ToggleSelectedDiffHunks",
+			"space g r": "git::Restore",
 
-      "space t t": "workspace::NewCenterTerminal",
-      "space t h": "terminal_panel::ToggleFocus",
-      "space t v": "workspace::NewTerminal",
+			"space t t": "workspace::NewCenterTerminal",
+			"space t h": "terminal_panel::ToggleFocus",
+			"space t v": "workspace::NewTerminal",
 
-      "space s v": "pane::SplitRight",
-      "space s h": "pane::SplitDown",
-      "space s c": "pane::CloseActiveItem",
-      "space w v": "pane::SplitRight",
-      "space w h": "pane::SplitDown",
-      "space w m": "workspace::ToggleZoom",
-      "space -": "pane::SplitDown",
-      "space |": "pane::SplitRight",
+			"space s v": "pane::SplitRight",
+			"space s h": "pane::SplitDown",
+			"space s c": "pane::CloseActiveItem",
+			"space w v": "pane::SplitRight",
+			"space w h": "pane::SplitDown",
+			"space w m": "workspace::ToggleZoom",
+			"space -": "pane::SplitDown",
+			"space |": "pane::SplitRight",
 
-      "space /": "workspace::NewSearch",
-      "space s w": "buffer_search::Deploy",
-      "space s g": "workspace::NewSearch",
+			"space /": "workspace::NewSearch",
+			"space s w": "buffer_search::Deploy",
+			"space s g": "workspace::NewSearch",
 
-      "space space": "command_palette::Toggle",
-      "space .": "file_finder::Toggle",
-      "space ,": "tab_switcher::Toggle",
+			"space space": "command_palette::Toggle",
+			"space .": "file_finder::Toggle",
+			"space ,": "tab_switcher::Toggle",
 
-      "space c a": "editor::ToggleCodeActions",
-      "space c r": "editor::Rename",
-      "space c f": "editor::Format",
+			"space c a": "editor::ToggleCodeActions",
+			"space c r": "editor::Rename",
+			"space c f": "editor::Format",
 
-      "space a a": "agent::ToggleFocus",
+			"space a a": "agent::ToggleFocus",
 
-      "space d b": "editor::ToggleBreakpoint",
-      "space d c": "debugger::RunToCursor",
-      "space d s": "debugger::StepOver",
-      "space d i": "debugger::StepInto",
-      "space d o": "debugger::StepOut",
+			"space d b": "editor::ToggleBreakpoint",
+			"space d c": "debugger::RunToCursor",
+			"space d s": "debugger::StepOver",
+			"space d i": "debugger::StepInto",
+			"space d o": "debugger::StepOut",
 
-      "space t r": "task::Spawn",
-      "space t l": "task::Rerun",
+			"space t r": "task::Spawn",
+			"space t l": "task::Rerun",
 
-      "ctrl-p": "file_finder::Toggle",
-      "ctrl-s": "workspace::Save"
+			"ctrl-p": "file_finder::Toggle",
+			"ctrl-s": "workspace::Save"
 
-      // "shift-y": ["workspace::SendKeystrokes", "y $"] // Use neovim's yank behavior: yank to end of line.
-    }
-  },
-  {
-    "context": "vim_mode == insert",
-    "bindings": {
-      "j j": "vim::NormalBefore",
-      "j k": "vim::NormalBefore"
-    }
-  },
-  {
-    "context": "EmptyPane || SharedScreen",
-    "bindings": {
-      // Put key bindings here (in addition to the context above) if you want them to
-      // work when no editor exists.
-      "f": "file_finder::Toggle"
-    }
-  },
-  // This is problematic in other typing context
-  {
-    "context": "(Dock && vim_mode == normal) || (Editor && vim_mode == normal && !menu)",
-    "bindings": {
-      "space e": "project_panel::ToggleFocus"
-    }
-  },
+			// "shift-y": ["workspace::SendKeystrokes", "y $"] // Use neovim's yank behavior: yank to end of line.
+		}
+	},
+	{
+		"context": "vim_mode == insert",
+		"bindings": {
+			"j j": "vim::NormalBefore",
+			"j k": "vim::NormalBefore"
+		}
+	},
+	{
+		"context": "EmptyPane || SharedScreen",
+		"bindings": {
+			// Put key bindings here (in addition to the context above) if you want them to
+			// work when no editor exists.
+			"f": "file_finder::Toggle"
+		}
+	},
+	// This is problematic in other typing context
+	{
+		"context": "(Dock && vim_mode == normal) || (Editor && vim_mode == normal && !menu)",
+		"bindings": {
+			"space e": "project_panel::ToggleFocus"
+		}
+	},
 
-  {
-    "context": "Dock || Terminal || Editor",
-    "bindings": {
-      "ctrl-h": "workspace::ActivatePaneLeft",
-      "ctrl-l": "workspace::ActivatePaneRight",
-      "ctrl-k": "workspace::ActivatePaneUp",
-      "ctrl-j": "workspace::ActivatePaneDown",
-      "ctrl-w h": "workspace::ActivatePaneLeft",
-      "ctrl-w l": "workspace::ActivatePaneRight",
-      "ctrl-w k": "workspace::ActivatePaneUp",
-      "ctrl-w j": "workspace::ActivatePaneDown",
-      "ctrl-w v": "pane::SplitRight",
-      "ctrl-w s": "pane::SplitDown",
-      "ctrl-w c": "pane::CloseActiveItem"
-    }
-  },
+	{
+		"context": "Dock || Terminal || Editor",
+		"bindings": {
+			"ctrl-h": "workspace::ActivatePaneLeft",
+			"ctrl-l": "workspace::ActivatePaneRight",
+			"ctrl-k": "workspace::ActivatePaneUp",
+			"ctrl-j": "workspace::ActivatePaneDown",
+			"ctrl-w h": "workspace::ActivatePaneLeft",
+			"ctrl-w l": "workspace::ActivatePaneRight",
+			"ctrl-w k": "workspace::ActivatePaneUp",
+			"ctrl-w j": "workspace::ActivatePaneDown",
+			"ctrl-w v": "pane::SplitRight",
+			"ctrl-w s": "pane::SplitDown",
+			"ctrl-w c": "pane::CloseActiveItem"
+		}
+	},
 
-  {
-    "context": "Terminal",
-    "bindings": {
-      // These binding cause problems need to restrict them to when the terminal is in normal mode. Can this be done with an env variable?
-      // "shift-h": "pane::ActivatePreviousItem",
-      // "shift-l": "pane::ActivateNextItem",
-      "cmd-t": "workspace::NewTerminal",
-      "cmd-shift-t": "workspace::NewCenterTerminal"
-    }
-  },
+	{
+		"context": "Terminal",
+		"bindings": {
+			// These binding cause problems need to restrict them to when the terminal is in normal mode. Can this be done with an env variable?
+			// "shift-h": "pane::ActivatePreviousItem",
+			// "shift-l": "pane::ActivateNextItem",
+			"cmd-t": "workspace::NewTerminal",
+			"cmd-shift-t": "workspace::NewCenterTerminal"
+		}
+	},
 
-  {
-    "context": "Editor",
-    "bindings": {
-      "ctrl-s": "workspace::Save"
-    }
-  },
+	{
+		"context": "Editor",
+		"bindings": {
+			"ctrl-s": "workspace::Save"
+		}
+	},
 
-  {
-    "context": "Editor && showing_completions",
-    "bindings": {
-      "ctrl-j": "editor::ContextMenuNext",
-      "ctrl-k": "editor::ContextMenuPrevious",
-      "ctrl-n": "editor::ContextMenuNext",
-      "ctrl-p": "editor::ContextMenuPrevious"
-    }
-  },
-  {
-    "context": "Modal || CommandPalette || FileFinder || TabSwitcher",
-    "bindings": {
-      "ctrl-j": "menu::SelectNext",
-      "ctrl-k": "menu::SelectPrevious",
-      "ctrl-n": "menu::SelectNext",
-      "ctrl-p": "menu::SelectPrevious"
-    }
-  },
-  {
-    "context": "ProjectPanel && !editing",
-    "bindings": {
-      "l": "project_panel::Open",
-      "v": "pane::SplitRight",
-      "a": "project_panel::NewFile"
-    }
-  }
+	{
+		"context": "Editor && showing_completions",
+		"bindings": {
+			"ctrl-j": "editor::ContextMenuNext",
+			"ctrl-k": "editor::ContextMenuPrevious",
+			"ctrl-n": "editor::ContextMenuNext",
+			"ctrl-p": "editor::ContextMenuPrevious"
+		}
+	},
+	{
+		"context": "Modal || CommandPalette || FileFinder || TabSwitcher",
+		"bindings": {
+			"ctrl-j": "menu::SelectNext",
+			"ctrl-k": "menu::SelectPrevious",
+			"ctrl-n": "menu::SelectNext",
+			"ctrl-p": "menu::SelectPrevious"
+		}
+	},
+	{
+		"context": "ProjectPanel && !editing",
+		"bindings": {
+			"a": "project_panel::NewFile",
+			"l": "project_panel::Open"
+		}
+	},
+	{
+		"context": "CommitEditor > Editor",
+		"use_key_equivalents": true,
+		"bindings": {
+			"cmd-z": "git::ExpandCommitEditor",
+			"ctrl-a": "git::GenerateCommitMessage"
+		}
+	},
+	{
+		"context": "(CommitEditor > Editor && vim_mode == normal)",
+		"bindings": {
+			"space a m": "git::GenerateCommitMessage"
+		}
+	}
 ]

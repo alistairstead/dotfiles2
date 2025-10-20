@@ -22,3 +22,5 @@ if [[ -f "/opt/homebrew/bin/brew" ]]; then
 fi
 
 . "$HOME/.cargo/env"
+
+. "$HOME/.turso/env"

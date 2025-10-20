@@ -1,5 +1,73 @@
 {
-	"context_servers": {
+	"minimum_contrast_for_highlights": 60.0,
+ "hover_popover_enabled": false,
+ "show_completion_documentation": false,
+ "audio": {
+  "experimental.rodio_audio": true
+ },
+ "calls": {
+  "mute_on_join": true
+ },
+ "diagnostics": {
+  "inline": {
+   "enabled": true
+  }
+ },
+ "collaboration_panel": {
+  "dock": "left"
+ },
+ "outline_panel": {
+  "auto_reveal_entries": false,
+  "auto_fold_dirs": false
+ },
+ "project_panel": {
+  "hide_gitignore": false,
+  "hide_root": true,
+  "drag_and_drop": true,
+  "sticky_scroll": false,
+  "auto_fold_dirs": false,
+  "starts_open": false,
+  "auto_reveal_entries": true
+ },
+ "search": {
+  "include_ignored": true
+ },
+ "preview_tabs": {
+  "enabled": false
+ },
+ "inlay_hints": {
+  "show_parameter_hints": true,
+  "show_type_hints": true,
+  "show_other_hints": false,
+  "show_value_hints": true,
+  "show_background": false,
+  "enabled": false
+ },
+ "completions": {
+  "lsp_insert_mode": "insert"
+ },
+ "tabs": {
+  "show_diagnostics": "errors",
+  "git_status": true
+ },
+ "auto_signature_help": false,
+ "autoscroll_on_clicks": false,
+ "show_wrap_guides": false,
+ "current_line_highlight": "gutter",
+ "agent_buffer_font_size": 14.0,
+ "context_servers": {
+		"postgres-context-server": {
+			"source": "extension",
+			"enabled": true,
+			"settings": {
+				"database_url": "postgresql://postgres:password@dev-postgres.orb.local:5432/local"
+			}
+		},
+		"container-use-mcp": {
+			"source": "extension",
+			"enabled": true,
+			"settings": {}
+		},
 		"mcp-server-context7": {
 			"source": "extension",
 			"enabled": true,
@@ -8,10 +76,11 @@
 			}
 		}
 	},
+	"use_system_window_tabs": false,
 	"theme": {
 		"mode": "system",
 		"light": "One Light",
-		"dark": "Catppuccin Mocha"
+		"dark": "Github Plus Dark"
 	},
 	"icon_theme": "Zed (Default)",
 	"base_keymap": "VSCode",
@@ -19,24 +88,32 @@
 		"edit_prediction_provider": "copilot"
 	},
 	"ui_font_family": "Victor Mono",
-	"ui_font_weight": 300,
-	"ui_font_size": 14,
-	"agent_font_size": 14,
+	"ui_font_weight": 200.0,
+	"ui_font_size": 16,
+	"agent_ui_font_size": 16,
 	"buffer_font_size": 14,
 	"buffer_font_family": "Victor Mono",
-	"buffer_font_weight": 300,
+	"buffer_font_weight": 200.0,
 	"buffer_font_features": {
 		"liga": true,
 		"calt": true,
 		"kern": true
 	},
 	"active_pane_modifiers": {
+		"border_size": 1.0,
+
 		// Inset border size of the active pane, in pixels.
 		// Opacity of the inactive panes. 0 means transparent, 1 means opaque.
 		// Values are clamped to the [0.0, 1.0] range.
-		"inactive_opacity": 0.8
+		"inactive_opacity": 0.6
 	},
+	"bottom_dock_layout": "full",
 	"confirm_quit": true,
+	"zoomed_padding": false,
+	// The default number of lines to expand excerpts in the multibuffer by.
+	"expand_excerpt_lines": 10,
+	// The default number of context lines shown in multibuffer excerpts.
+	"excerpt_context_lines": 10,
 	"vim_mode": true,
 	"vim": {
 		"use_system_clipboard": "always",
@@ -46,7 +123,7 @@
 	},
 	"load_direnv": "shell_hook",
 	"relative_line_numbers": true,
-	"cursor_blink": false,
+	"cursor_blink": true,
 	"vertical_scroll_margin": 5,
 	"indent_guides": {
 		"enabled": false,
@@ -76,23 +153,23 @@
 		// 	}
 		// },
 		"TSX": {
- 			"formatter": { "language_server": { "name": "biome" } },
- 			"code_actions_on_format": {
+			"formatter": { "language_server": { "name": "biome" } },
+			"code_actions_on_format": {
 				"source.fixAll.biome": true,
 				"source.organizeImports.biome": true
- 			}
+			}
 		},
 		"JSON": {
-  		"formatter": { "language_server": { "name": "biome" } },
-  		"code_actions_on_format": {
-  			"source.fixAll.biome": true
-		  }
+			"formatter": { "language_server": { "name": "biome" } },
+			"code_actions_on_format": {
+				"source.fixAll.biome": true
+			}
 		},
 		"JSONC": {
-  		"formatter": { "language_server": { "name": "biome" } },
-  		"code_actions_on_format": {
-  			"source.fixAll.biome": true
-		  }
+			"formatter": { "language_server": { "name": "biome" } },
+			"code_actions_on_format": {
+				"source.fixAll.biome": true
+			}
 		},
 		"CSS": { "formatter": { "language_server": { "name": "biome" } } }
 	},
@@ -124,6 +201,7 @@
 			},
 			"settings": {
 				"typescript": {
+					"tsserver": { "maxTsServerMemory": 16184 },
 					"updateImportsOnFileMove": { "enabled": "always" },
 					"suggest": {
 						"completeFunctionCalls": true
@@ -149,22 +227,22 @@
 	// Toolbar related settings
 	"toolbar": {
 		// Whether to show breadcrumbs.
-		"breadcrumbs": false,
+		"breadcrumbs": true,
 		// Whether to show quick action buttons.
 		"quick_actions": false,
 		// Whether to show the Selections menu in the editor toolbar.
-		"selections_menu": true,
+		"selections_menu": false,
 		// Whether to show agent review buttons in the editor toolbar.
-		"agent_review": true,
+		"agent_review": false,
 		// Whether to show code action buttons in the editor toolbar.
 		"code_actions": false
 	},
 	// Titlebar related settings
 	"title_bar": {
 		// Whether to show the branch icon beside branch switcher in the titlebar.
-		"show_branch_icon": true,
+		"show_branch_icon": false,
 		// Whether to show the branch name button in the titlebar.
-		"show_branch_name": true,
+		"show_branch_name": false,
 		// Whether to show the project host and name in the titlebar.
 		"show_project_items": false,
 		// Whether to show onboarding banners in the titlebar.
@@ -192,14 +270,55 @@
 	//    "selection"
 	// 3. Never populate the search query
 	//    "never"
-	"seed_search_query_from_cursor": "selection",
+	"seed_search_query_from_cursor": "always",
 	// When enabled, automatically adjusts search case sensitivity based on your query.
 	// If your search query contains any uppercase letters, the search becomes case-sensitive;
 	// if it contains only lowercase letters, the search becomes case-insensitive.
 	"use_smartcase_search": true,
 	"agent": {
+		"default_profile": "write",
+		"profiles": {
+			"container-use": {
+				"name": "Container Use",
+				"tools": {
+					"fetch": true,
+					"thinking": true,
+					"copy_path": false,
+					"find_path": false,
+					"delete_path": false,
+					"create_directory": false,
+					"list_directory": false,
+					"diagnostics": false,
+					"read_file": false,
+					"open": false,
+					"move_path": false,
+					"grep": false,
+					"edit_file": false,
+					"terminal": false
+				},
+				"enable_all_context_servers": false,
+				"context_servers": {
+					"container-use": {
+						"tools": {
+							"environment_add_service": true,
+							"environment_checkpoint": true,
+							"environment_config": true,
+							"environment_create": true,
+							"environment_file_delete": true,
+							"environment_file_edit": true,
+							"environment_file_list": true,
+							"environment_file_read": true,
+							"environment_file_write": true,
+							"environment_open": true,
+							"environment_run_cmd": true,
+							"environment_update_metadata": true
+						}
+					}
+				}
+			}
+		},
 		"play_sound_when_agent_done": true,
-  "always_allow_tool_actions": true,
+		"always_allow_tool_actions": true,
 		"default_model": {
 			"provider": "copilot_chat",
 			"model": "claude-sonnet-4"
@@ -252,7 +371,8 @@
 			//
 			// The shell running in the terminal needs to be configured to emit the title.
 			// Example: `echo -e "\e]2;New Title\007";`
-			"breadcrumbs": false
-		}
+			"breadcrumbs": true
+		},
+		"default_height": 320
 	}
 }

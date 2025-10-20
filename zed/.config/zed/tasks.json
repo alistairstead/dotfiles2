@@ -21,5 +21,9 @@
     "args": ["-a", "Obsidian", "${ZED_FILE}"],
     "use_new_terminal": false,
     "reveal": "never"
+  },
+  {
+    "label": "Start lazygit",
+    "command": "lazygit -p $ZED_WORKTREE_ROOT"
   }
 ]
