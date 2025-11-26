@@ -13,7 +13,7 @@
 - **Agent**: database-engineer
 - **Dependencies**: []
 
-**PRD Context:**
+**Spec Context:**
 - **User Story**: [User-Story]
 - **Acceptance Criteria**: [Acceptance-Criteria]
 - **Business Rules**: [Business-Rules]
@@ -34,7 +34,7 @@
 - **Indexing Strategy**: [Performance optimization approach]
 - **Constraints & Validation**: [Data integrity requirements]
 
-- **Deliverables**: 
+- **Deliverables**:
   - `db/migrations/[timestamp]_[feature]_schema.sql`
   - `docs/database/[feature]-schema.md`
 - **TDD Tests**:
@@ -46,12 +46,12 @@
   - Rollback migration tested and working
 - **Status**: pending
 
-### [task-id-2]: API Endpoint Implementation  
+### [task-id-2]: API Endpoint Implementation
 - **Description**: Create RESTful API endpoints with authentication and validation
 - **Agent**: backend-engineer
 - **Dependencies**: [task-id-1]
 
-**PRD Context:**
+**Spec Context:**
 - **User Story**: [User-Story]
 - **Acceptance Criteria**: [Acceptance-Criteria]
 - **Business Rules**: [Business-Rules]
@@ -94,7 +94,7 @@
 - **Agent**: backend-engineer
 - **Dependencies**: [task-id-2]
 
-**PRD Context:**
+**Spec Context:**
 - **User Story**: [User-Story]
 - **Acceptance Criteria**: [Acceptance-Criteria]
 - **Business Rules**: [Business-Rules with specific validation logic]
@@ -134,7 +134,7 @@
 - **Agent**: frontend-engineer
 - **Dependencies**: [task-id-1]
 
-**PRD Context:**
+**Spec Context:**
 - **User Story**: [User-Story]
 - **Acceptance Criteria**: [Acceptance-Criteria]
 - **Business Rules**: [Business-Rules for UI validation and behavior]
@@ -176,7 +176,7 @@
 - **Agent**: fullstack-engineer
 - **Dependencies**: [task-id-3, task-id-4]
 
-**PRD Context:**
+**Spec Context:**
 - **User Story**: [User-Story for complete feature flow]
 - **Acceptance Criteria**: [Acceptance-Criteria for end-to-end functionality]
 - **Business Rules**: [Business-Rules for data flow and error handling]
@@ -205,7 +205,7 @@
   - **Integration**: `test/integration/[feature]_flow_test.[ext]` - Complete user flows
   - **Acceptance**: `test/e2e/[feature]_complete_test.[ext]` - End-to-end scenarios
 - **Completion Criteria**:
-  - All user stories from PRD working
+  - All user stories from Spec working
   - Error states properly handled and displayed
   - Loading states implemented
   - Data persistence working correctly
@@ -247,7 +247,7 @@
 
 ## Task Status Tracking
 
-**Legend**: 
+**Legend**:
 - `pending` - Not started
 - `in_progress` - Currently being worked on
 - `completed` - Finished and validated
@@ -255,37 +255,37 @@
 
 **Agent Assignment and Handoff Notes**:
 - **Agent field**: Specifies which type of agent should handle this task
-- **PRD Context sections**: Provide specific implementation guidance from PRD analysis
+- **Spec Context sections**: Provide specific implementation guidance from Spec analysis
 - **Implementation Guidance**: Contains extracted technical specifications and patterns
 - **Code Examples**: Include concrete implementation patterns and templates
 - **Architecture Context**: References existing patterns and integration approaches
 - Update task status when starting/completing work
-- Document any blockers or issues encountered  
+- Document any blockers or issues encountered
 - Include relevant file paths and commit references
 - Note any deviations from original specifications
 - If assigned agent unavailable, task can be handled by general-purpose agent
 
-## Example: Enhanced Task with PRD Context
+## Example: Enhanced Task with Spec Context
 
 ### auth-001: User Authentication Database Schema
 - **Description**: Create database tables for user authentication with email/password and OAuth support
 - **Agent**: database-engineer
 - **Dependencies**: []
 
-**PRD Context:**
+**Spec Context:**
 - **User Story**: As a new user, I want to register with email/password so that I can access the platform securely
-- **Acceptance Criteria**: 
+- **Acceptance Criteria**:
   - Email must be unique and validated
   - Password must meet complexity requirements (8+ chars, special chars)
   - Support for OAuth providers (Google, GitHub)
   - Account activation via email verification
-- **Business Rules**: 
+- **Business Rules**:
   - Users can have multiple OAuth connections
   - Failed login attempts trigger account lockout after 5 attempts
   - Password reset tokens expire after 24 hours
 
 **Implementation Guidance:**
-- **Database Schema**: 
+- **Database Schema**:
   ```sql
   CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -295,7 +295,7 @@
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
   );
-  
+
   CREATE TABLE oauth_accounts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,

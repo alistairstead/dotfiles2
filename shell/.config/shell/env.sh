@@ -3,9 +3,9 @@
 # This file contains POSIX-compatible environment variable definitions
 
 # Editor configuration
-export GIT_EDITOR='nvim'
-export VISUAL='nvim'
-export EDITOR='nvim'
+export GIT_EDITOR='zed-preview --wait'
+export VISUAL='zed-preview --wait'
+export EDITOR='zed-preview --wait'
 
 # Terminal settings
 export TERM=tmux-256color

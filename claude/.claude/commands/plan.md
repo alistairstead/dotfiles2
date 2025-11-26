@@ -1,20 +1,20 @@
 # Generate Implementation Tasks
 
 <instructions>
-You are a senior engineering manager breaking down a feature PRD into atomic, executable tasks for agentic workflows. Focus on clear dependencies and TDD structure.
+You are a senior engineering manager breaking down a feature spec into atomic, executable tasks for agentic workflows. Focus on clear dependencies and TDD structure.
 </instructions>
 
 <arguments>
-PRD path or name: $ARGUMENTS
+Spec path or name: $ARGUMENTS
 </arguments>
 
-## Step 1: Load PRD Context
+## Step 1: Load Spec Context
 
 <input_handling>
 - If $ARGUMENTS contains "/" or ends with ".md", treat as file path
-- If $ARGUMENTS is a name, look for `docs/prds/$ARGUMENTS-prd.md` or `docs/prds/$ARGUMENTS.md`
-- If file not found, prompt for correct PRD path
-- Load the PRD and extract feature requirements
+- If $ARGUMENTS is a name, look for `docs/specs/$ARGUMENTS-spec.md` or `docs/specs/$ARGUMENTS.md`
+- If file not found, prompt for correct spec path
+- Load the Spec and extract feature requirements
 </input_handling>
 
 @$ARGUMENTS
@@ -27,9 +27,9 @@ Identify task dependencies by analyzing:
 - **External dependencies**: Third-party services, authentication systems
 - **Testing dependencies**: Tests must be written before implementation (TDD)
 
-## Step 2.5: Extract PRD Implementation Context
+## Step 2.5: Extract Spec Implementation Context
 
-**Parse PRD for actionable implementation details:**
+**Parse Spec for actionable implementation details:**
 
 1. **User Stories → Test Cases**:
    - Extract specific acceptance criteria with Given-When-Then scenarios
@@ -52,7 +52,7 @@ Identify task dependencies by analyzing:
    - Security requirements → Authentication patterns, input validation, data protection
    - Non-functional requirements → Accessibility standards, browser compatibility
 
-5. **Integration Context from Base PRD**:
+5. **Integration Context from Base Spec**:
    - Technology stack patterns to follow
    - Existing architectural conventions
    - Code quality standards and testing approaches
@@ -94,25 +94,25 @@ Create `docs/tasks/[feature-name]-tasks.md` using the agentic template:
 **Completion Criteria Standards**:
 - All tests pass (unit, integration, acceptance)
 - Code meets quality standards (linting, type checking)
-- Feature works end-to-end as specified in PRD
+- Feature works end-to-end as specified in Spec
 - Documentation updated
 
 Replace template placeholders with:
-- `[Feature Name]` → Actual feature name from PRD
+- `[Feature Name]` → Actual feature name from Spec
 - `[task-id-X]` → Sequential task IDs with feature prefix
 - `[feature]` → Lowercase feature name for file paths
 - `[ext]` → Appropriate file extensions for project
 - `[agent-type]` → Appropriate agent type or job title for the task
-- `[PRD-Context]` → Extracted implementation details from PRD analysis
+- `[Spec-Context]` → Extracted implementation details from Spec analysis
 - `[User-Story]` → Specific user story this task implements
-- `[Acceptance-Criteria]` → Exact criteria from PRD with examples
+- `[Acceptance-Criteria]` → Exact criteria from Spec with examples
 - `[Business-Rules]` → Validation rules and constraints
 - `[API-Schema]` → Endpoint specifications with request/response examples
 - `[DB-Schema]` → Database structure, relationships, migration code
 - `[Component-Structure]` → Props interface, state management patterns
-- `[Code-Examples]` → Implementation patterns from PRD research
+- `[Code-Examples]` → Implementation patterns from Spec research
 - `[Performance-Targets]` → Specific benchmarks and optimization goals
-- Test descriptions → Specific test requirements from PRD user stories
+- Test descriptions → Specific test requirements from Spec user stories
 
 **Agent Assignment Guidelines**:
 - **Backend tasks**: backend-engineer, api-developer, database-engineer
@@ -127,4 +127,4 @@ Replace template placeholders with:
 - Include clear status tracking mechanism
 - Document blockers and resolution paths
 - Specify file locations for all deliverables
-- Reference PRD sections for context
+- Reference Spec sections for context

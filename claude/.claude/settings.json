@@ -1,81 +1,82 @@
 {
-	"$schema": "https://json.schemastore.org/claude-code-settings.json",
-	"includeCoAuthoredBy": false,
-	"permissions": {
-		"allow": [
-			"Bash(grep:*)",
-			"Bash(ls:*)",
-			"Bash(source:*)",
-			"Bash(find:*)",
-			"Bash(mv:*)",
-			"Bash(mkdir:*)",
-			"Bash(tree:*)",
-			"Bash(touch:*)",
-			"Bash(cat:*)",
-			"Bash(bun vitest:*)",
-			"Bash(bun run test:*)",
-			"Bash(bun turbo:*)",
-		],
-		"deny": [
-			"Read(.env)",
-			"Read(**/.env*)",
-			"Read(**/env*)",
-			"Read(**/*.pem)",
-			"Read(**/*.key)",
-			"Read(**/*.crt)",
-			"Read(**/*.cert)",
-			"Read(**/secrets/**)",
-			"Read(**/credentials/**)"
-		]
-	},
-	"model": "sonnet",
-	"hooks": {
-		"PostToolUse": [
-			{
-				"matcher": "Edit|MultiEdit|Write",
-				"hooks": [
-					{
-						"type": "command",
-						"command": "~/.claude/hooks/post-use-tool.ts"
-					}
-				]
-			}
-		],
-		"PreToolUse": [
-			{
-				"matcher": "Bash",
-				"hooks": [
-					{
-						"type": "command",
-						"command": "~/.claude/hooks/pre-use-tool.ts"
-					}
-				]
-			}
-		],
-		"Notification": [
-			{
-				"matcher": "",
-				"hooks": [
-					{
-						"type": "command",
-						"command": "~/.claude/hooks/notification.ts"
-					}
-				]
-			}
-		],
-		"Stop": [
-			{
-				"matcher": "",
-				"hooks": [
-					{
-						"type": "command",
-						"command": "~/.claude/hooks/notification.ts"
-					}
-				]
-			}
-		]
-	},
-	"feedbackSurveyState": {
-		"lastShownTime": 1754066916309
-	}
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(source:*)",
+      "Bash(find:*)",
+      "Bash(mv:*)",
+      "Bash(mkdir:*)",
+      "Bash(tree:*)",
+      "Bash(touch:*)",
+      "Bash(cat:*)",
+      "Bash(bun vitest:*)",
+      "Bash(bun run test:*)",
+      "Bash(bun turbo:*)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(**/.env*)",
+      "Read(**/env*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*.crt)",
+      "Read(**/*.cert)",
+      "Read(**/secrets/**)",
+      "Read(**/credentials/**)"
+    ]
+  },
+  "model": "opus",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/post-use-tool.ts"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/pre-use-tool.ts"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notification.ts"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notification.ts"
+          }
+        ]
+      }
+    ]
+  },
+  "alwaysThinkingEnabled": false,
+  "feedbackSurveyState": {
+    "lastShownTime": 1754066916309
+  }
 }

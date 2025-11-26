@@ -1,5 +1,14 @@
 {
-	"minimum_contrast_for_highlights": 60.0,
+	"close_on_file_delete": true,
+ "always_treat_brackets_as_autoclosed": true,
+ "restore_on_startup": "last_workspace",
+ "buffer_line_height": "comfortable",
+ "git": {
+  "inline_blame": {
+   "enabled": false
+  }
+ },
+ "minimum_contrast_for_highlights": 60.0,
  "hover_popover_enabled": false,
  "show_completion_documentation": false,
  "audio": {
@@ -30,6 +39,9 @@
   "auto_reveal_entries": true
  },
  "search": {
+  "center_on_match": true,
+  "case_sensitive": true,
+  "whole_word": true,
   "include_ignored": true
  },
  "preview_tabs": {
@@ -56,20 +68,25 @@
  "current_line_highlight": "gutter",
  "agent_buffer_font_size": 14.0,
  "context_servers": {
-		"postgres-context-server": {
-			"source": "extension",
-			"enabled": true,
+		"mcp-server-sequential-thinking": {
+   "source": "extension",
+   "enabled": false,
+   "settings": {}
+  },
+  "postgres-context-server": {
+   "source": "extension",
+			"enabled": false,
 			"settings": {
 				"database_url": "postgresql://postgres:password@dev-postgres.orb.local:5432/local"
 			}
 		},
 		"container-use-mcp": {
-			"source": "extension",
-			"enabled": true,
+   "source": "extension",
+			"enabled": false,
 			"settings": {}
 		},
 		"mcp-server-context7": {
-			"source": "extension",
+   "source": "extension",
 			"enabled": true,
 			"settings": {
 				"default_minimum_tokens": "10000"
@@ -78,22 +95,26 @@
 	},
 	"use_system_window_tabs": false,
 	"theme": {
-		"mode": "system",
-		"light": "One Light",
-		"dark": "Github Plus Dark"
-	},
-	"icon_theme": "Zed (Default)",
+  "mode": "system",
+  "light": "Catppuccin Frappé",
+  "dark": "Catppuccin Frappé"
+ },
+	"icon_theme": {
+  "mode": "system",
+  "light": "Zed (Default)",
+  "dark": "Zed (Default)"
+ },
 	"base_keymap": "VSCode",
 	"features": {
-		"edit_prediction_provider": "copilot"
+		"edit_prediction_provider": "zed"
 	},
-	"ui_font_family": "Victor Mono",
+	"ui_font_family": ".SystemUIFont",
 	"ui_font_weight": 200.0,
 	"ui_font_size": 16,
 	"agent_ui_font_size": 16,
 	"buffer_font_size": 14,
 	"buffer_font_family": "Victor Mono",
-	"buffer_font_weight": 200.0,
+	"buffer_font_weight": 300.0,
 	"buffer_font_features": {
 		"liga": true,
 		"calt": true,
@@ -122,7 +143,7 @@
 		"custom_digraphs": {}
 	},
 	"load_direnv": "shell_hook",
-	"relative_line_numbers": true,
+	"relative_line_numbers": "enabled",
 	"cursor_blink": true,
 	"vertical_scroll_margin": 5,
 	"indent_guides": {
@@ -226,17 +247,11 @@
 	"ensure_final_newline_on_save": true,
 	// Toolbar related settings
 	"toolbar": {
-		// Whether to show breadcrumbs.
-		"breadcrumbs": true,
-		// Whether to show quick action buttons.
-		"quick_actions": false,
-		// Whether to show the Selections menu in the editor toolbar.
-		"selections_menu": false,
-		// Whether to show agent review buttons in the editor toolbar.
-		"agent_review": false,
-		// Whether to show code action buttons in the editor toolbar.
-		"code_actions": false
-	},
+  "selections_menu": false,
+  "agent_review": false,
+  "breadcrumbs": false,
+  "quick_actions": false
+ },
 	// Titlebar related settings
 	"title_bar": {
 		// Whether to show the branch icon beside branch switcher in the titlebar.
@@ -351,7 +366,7 @@
 		//   * `true`: Use all gitignored files
 		//   * `false`: Use only the files Zed had indexed
 		//   * `null`: Be smart and search for ignored when called from a gitignored worktree
-		"include_ignored": true
+		"include_ignored": "smart"
 	},
 	// Settings specific to the terminal
 	"terminal": {

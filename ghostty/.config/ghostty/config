@@ -16,7 +16,7 @@
 #
 # Key Encodings Reference:
 # \x0a = Enter/Return
-# \x1b = Esc  
+# \x1b = Esc
 # \x02 = Ctrl+B (tmux prefix)
 # \x00 = Ctrl+Space (tmux prefix2)
 #
@@ -35,9 +35,6 @@ title = Ghostty
 # SHELL INTEGRATION
 # =====================================
 
-# Fish shell integration with selective features
-shell-integration = fish
-shell-integration-features = "no-cursor,sudo,title"
 
 # =====================================
 # WINDOW AND DISPLAY
@@ -100,7 +97,7 @@ adjust-underline-position = 30%
 # =====================================
 
 # Catppuccin theme - automatic light/dark switching
-theme = light:catppuccin-latte,dark:catppuccin-mocha
+# theme = light:catppuccin-latte,dark:catppuccin-mocha
 bold-is-bright = true
 cursor-invert-fg-bg = true
 
@@ -118,127 +115,3 @@ clipboard-trim-trailing-spaces = true
 
 # Custom shader for visual enhancement
 custom-shader = shaders/starfield-colors.glsl
-
-# =====================================
-# KEY BINDINGS - TMUX INTEGRATION
-# =====================================
-
-# Window/Tab Navigation
-# ⌘+1-9 → Switch to tmux window 1-9
-keybind = super+physical:one=text:\x001
-keybind = super+physical:two=text:\x002
-keybind = super+physical:three=text:\x003
-keybind = super+physical:four=text:\x004
-keybind = super+physical:five=text:\x005
-keybind = super+physical:six=text:\x006
-keybind = super+physical:seven=text:\x007
-keybind = super+physical:eight=text:\x008
-keybind = super+physical:nine=text:\x009
-
-# Window Management
-# ⌘+⇧+[ → Previous tmux window
-keybind = super+shift+left_bracket=text:\x00\x70
-# ⌘+⇧+] → Next tmux window  
-keybind = super+shift+right_bracket=text:\x00\x6e
-
-# Pane Splitting
-# ⌘+N → Vertical split (tmux %)
-keybind = super+n=text:\x00\x25
-# ⌘+⇧+N → Horizontal split (tmux ")
-keybind = super+shift+n=text:\x00\x22
-
-# Session Management
-# ⌘+9 → Switch to project root session
-keybind = super+9=text:\x00\x39
-# ⌘+T → New tmux window
-keybind = super+t=text:\x00\x63
-# ⌘+W → Close tmux pane
-keybind = super+w=text:\x00\x78
-
-# =====================================
-# KEY BINDINGS - DEVELOPMENT TOOLS
-# =====================================
-
-# Git and Version Control
-# ⌘+G → Open Lazygit
-keybind = super+g=text:\x00\x67
-# ⌘+⇧+G → Open GitHub Dashboard
-keybind = super+shift+g=text:\x00\x47
-
-# Docker and Infrastructure
-# ⌘+D → Open Lazydocker
-keybind = super+d=text:\x00\x64
-# ⌘+⇧+D → Development split
-keybind = super+shift+d=text:\x00\x44
-
-# Session and Project Management  
-# ⌘+K → Session picker (sesh)
-keybind = super+k=text:\x00\x4b
-# ⌘+⇧+K → Advanced session picker
-keybind = super+shift+k=text:\x00\x52
-# ⌘+L → Switch to last session
-keybind = super+l=text:\x00\x4c
-# ⌘+⇧+T → Session picker with preview
-keybind = super+shift+t=text:\x00\x54
-# ⌘+⇧+Z → Session popup
-keybind = super+shift+z=text:\x00\x5a
-
-# Script and Task Management
-# ⌘+Y → Script runner (package.json scripts)
-keybind = super+y=text:\x00\x59
-# ⌘+⇧+R → Rename tmux window
-keybind = super+shift+r=text:\x00\x24 
-
-# Pane Management
-# ⌘+⇧+B → Break pane to new window
-keybind = super+shift+b=text:\x00\x42
-# ⌘+⇧+J → Join pane from window 1
-keybind = super+shift+j=text:\x00\x4a
-# ⌘+⇧+Q → Kill current tmux session
-keybind = super+shift+q=text:\x00\x51
-
-# =====================================
-# KEY BINDINGS - EDITOR INTEGRATION
-# =====================================
-
-# Copy Mode and Text Selection
-# ⌘+C → Enter tmux copy mode
-keybind = super+c=text:\x00[
-
-# Vim/Editor Navigation
-# ⌘+] → Jump forward (vim Ctrl+O)
-keybind = super+right_bracket=text:<C-o>
-# ⌘+[ → Jump back (vim Ctrl+I)  
-keybind = super+left_bracket=text:<C-i>
-
-# File and Search Operations
-# ⌘+F → Grep search (:Grep)
-keybind = super+f=text:\x3a\x47\x72\x65\x70\x0a
-# ⌘+P → Go to file (:GotoFile)
-keybind = super+p=text:\x3a\x47\x6f\x54\x6f\x46\x69\x6c\x65\x0a
-# ⌘+⇧+O → Go to symbol (:GotoSymbol)
-keybind = super+shift+o=text:\x18a\x47\x6f\x54\x6f\x53\x79\x6d\x62\x6f\x6c\x0a
-# ⌘+⇧+P → Go to command (:GotoCommand)
-keybind = super+shift+p=text:\x3a\x47\x6f\x54\x6f\x43\x6f\x6d\x6d\x61\x6e\x64\x0a
-
-# File Operations
-# ⌘+S → Save file (:w)
-keybind = super+s=text:\x3a\x77\x0a
-# ⌘+Q → Quit with escape sequence (:qa!)
-keybind = super+q=text:\x3a\x1b\x1b\x3a\x71\x61\x21\x0a
-
-# URL and External Tools
-# ⌘+O → Open URL (tmux urlview)
-keybind = super+o=text:\x00\x75
-
-# =====================================
-# KEY BINDINGS - SYSTEM INTEGRATION  
-# =====================================
-
-# Configuration Management
-# ⌘+R → Reload Ghostty configuration
-keybind = super+r=reload_config
-
-# Terminal Features
-# ⇧+↩ → Send newline (Claude Code integration)
-keybind = shift+enter=text:\x0A
