@@ -69,25 +69,21 @@
  "agent_buffer_font_size": 14.0,
  "context_servers": {
 		"mcp-server-sequential-thinking": {
-   "source": "extension",
    "enabled": false,
    "settings": {}
   },
   "postgres-context-server": {
-   "source": "extension",
-			"enabled": false,
+   "enabled": false,
 			"settings": {
 				"database_url": "postgresql://postgres:password@dev-postgres.orb.local:5432/local"
 			}
 		},
 		"container-use-mcp": {
-   "source": "extension",
-			"enabled": false,
+   "enabled": false,
 			"settings": {}
 		},
 		"mcp-server-context7": {
-   "source": "extension",
-			"enabled": true,
+   "enabled": true,
 			"settings": {
 				"default_minimum_tokens": "10000"
 			}
@@ -114,6 +110,7 @@
 	"agent_ui_font_size": 16,
 	"buffer_font_size": 14,
 	"buffer_font_family": "Victor Mono",
+  "buffer_font_fallbacks": ["Symbols Nerd Font Mono"],
 	"buffer_font_weight": 300.0,
 	"buffer_font_features": {
 		"liga": true,

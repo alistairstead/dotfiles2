@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=https://gh-dash.dev/schema.json
+prSections:
+  - title: Mine
+    filters: is:open author:@me
+    layout:
+      author:
+        hidden: true
+  - title: Review
+    filters: is:open review-requested:@me
+    layout:
+      repo:
+        width: 6
+  - title: Commented
+    filters: commenter:@me
+
+  - title: BBG
+    filters: "is:open repo:broadband-co-uk/broadbandgenie-website"
+
+issuesSections:
+  - title: Creator
+    filters: author:@me
+  - title: Commented
+    filters: is:open commenter:@me
+  - title: Assigned
+    filters: is:open assignee:@me
+
+defaults:
+  view: prs
+  refetchIntervalMinutes: 10
+  layout:
+    prs:
+      repoName:
+        grow: true,
+        width: 10
+        hidden: false
+      base:
+        hidden: true
+
+  preview:
+    open: true
+    width: 150
+  prsLimit: 20
+  issuesLimit: 20
+repoPaths:
+  client/*: ~/dev/client/*
+  kodehort/*: ~/dev/kodehort/*
+  personal/*: ~/dev/personal/*
+
+keybindings:
+  universal:
+    - key: g
+      name: lazygit
+      command: >
+        cd {{.RepoPath}} && lazygit
+  prs:
+    - key: O
+      builtin: checkout
+    - key: m
+      command: gh pr merge --admin --repo {{.RepoName}} {{.PrNumber}}
+    - key: v
+      name: approve
+      command: >
+        gh pr review --repo {{.RepoName}} --approve --body "$(gum input --prompt='Approval Comment: ')" {{.PrNumber}}
+
+theme:
+  ui:
+    sectionsShowCount: true
+    table:
+      compact: false
+  colors:
+    text:
+      primary: "#E2E1ED"
+      secondary: "#666CA6"
+      inverted: "#242347"
+      faint: "#B0B3BF"
+      warning: "#E0AF68"
+      success: "#3DF294"
+    background:
+      selected: "#1B1B33"
+    border:
+      primary: "#383B5B"
+      secondary: "#39386B"
+      faint: "#2B2B40"
