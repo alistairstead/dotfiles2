@@ -199,19 +199,24 @@ gh_comments() {
     # Use GraphQL for --unresolved flag, REST API otherwise
     if [ "$unresolved_only" = true ]; then
         # Split repo into owner/name
-        local owner="${repo%/*}"
-        local name="${repo#*/}"
+        owner="${repo%/*}"
+        name="${repo#*/}"
 
-        # Build GraphQL query
-        local graphql_query='query($owner: String!, $name: String!, $pr: Int!) {
+        # Build GraphQL query with pagination support
+        graphql_query='query($owner: String!, $name: String!, $pr: Int!, $cursor: String) {
           repository(owner: $owner, name: $name) {
             pullRequest(number: $pr) {
-              reviewThreads(first: 100) {
+              reviewThreads(first: 100, after: $cursor) {
+                pageInfo {
+                  hasNextPage
+                  endCursor
+                }
                 nodes {
+                  id
                   isResolved
                   comments(first: 1) {
                     nodes {
-                      author { login, ... on Bot { id } }
+                      author { login, __typename }
                       body
                       diffHunk
                       line
@@ -224,20 +229,48 @@ gh_comments() {
           }
         }'
 
-        # Execute GraphQL query and filter
-        local jq_filter='.data.repository.pullRequest.reviewThreads.nodes | map(select(.isResolved == false) | .comments.nodes[0])'
+        # Pagination loop to fetch all review threads
+        all_threads_file=$(mktemp)
+        response_file=$(mktemp)
+        echo "[]" > "$all_threads_file"
+        cursor=""
+        has_next="true"
+
+        while [ "$has_next" = "true" ]; do
+            if [ -z "$cursor" ]; then
+                gh api graphql -f query="$graphql_query" -f owner="$owner" -f name="$name" -F pr="$pr_number" > "$response_file"
+            else
+                gh api graphql -f query="$graphql_query" -f owner="$owner" -f name="$name" -F pr="$pr_number" -f cursor="$cursor" > "$response_file"
+            fi
+
+            # Extract threads from response and append
+            jq '.data.repository.pullRequest.reviewThreads.nodes' "$response_file" > "${response_file}.threads"
+            jq -s 'add' "$all_threads_file" "${response_file}.threads" > "${all_threads_file}.new"
+            mv "${all_threads_file}.new" "$all_threads_file"
+
+            # Update pagination state
+            has_next=$(jq -r '.data.repository.pullRequest.reviewThreads.pageInfo.hasNextPage' "$response_file")
+            cursor=$(jq -r '.data.repository.pullRequest.reviewThreads.pageInfo.endCursor' "$response_file")
+        done
+
+        all_threads="$all_threads_file"
+        rm -f "$response_file" "${response_file}.threads"
+
+        # Build jq filter for unresolved comments (preserve thread_id)
+        jq_filter='map(select(.isResolved == false) | {thread_id: .id, comment: .comments.nodes[0]})'
 
         if [ "$no_bots" = true ]; then
-            jq_filter="$jq_filter | map(select(.author.__typename == null or .author.__typename != \"Bot\"))"
+            jq_filter="$jq_filter | map(select(.comment.author.__typename == null or .comment.author.__typename != \"Bot\"))"
         fi
 
-        jq_filter="$jq_filter | map({ user: .author.login, diff_hunk: .diffHunk, line: .line, start_line: .startLine, body: .body })"
+        jq_filter="$jq_filter | map({ thread_id: .thread_id, user: .comment.author.login, diff_hunk: .comment.diffHunk, line: .comment.line, start_line: .comment.startLine, body: .comment.body })"
 
-        gh api graphql -f query="$graphql_query" -f owner="$owner" -f name="$name" -F pr="$pr_number" | jq "$jq_filter"
+        jq "$jq_filter" "$all_threads"
+        rm -f "$all_threads"
     else
         # Use REST API for other filters
-        local jq_filter
-        local base_conditions=""
+        jq_filter
+        base_conditions=""
 
         # Build condition chain
         if [ "$no_bots" = true ]; then
@@ -254,4 +287,32 @@ gh_comments() {
         # Execute REST API call
         gh api "repos/$repo/pulls/$pr_number/comments" | jq "$jq_filter"
     fi
+}
+
+gh_comment_resolve() {
+    # Resolve a PR review thread
+    #
+    # Usage:
+    #   gh_comment_resolve <thread_id>
+    #
+    # Arguments:
+    #   thread_id  The thread ID from gh_comments output (e.g., PRRT_kwDOLsFqtM5kv0rG)
+    #
+    # Example:
+    #   gh_comment_resolve PRRT_kwDOLsFqtM5kv0rG
+
+    local thread_id="$1"
+
+    if [ -z "$thread_id" ]; then
+        echo "Usage: gh_comment_resolve <thread_id>"
+        return 1
+    fi
+
+    gh api graphql -f query='
+      mutation($threadId: ID!) {
+        resolveReviewThread(input: {threadId: $threadId}) {
+          thread { isResolved }
+        }
+      }
+    ' -f threadId="$thread_id" | jq -r '.data.resolveReviewThread.thread.isResolved'
 }

@@ -1,7 +1,7 @@
 # Generate Implementation Tasks
 
 <instructions>
-You are a senior engineering manager breaking down a feature spec into atomic, executable tasks for agentic workflows. Focus on clear dependencies and TDD structure.
+You are a senior product manager breaking down a feature spec into atomic, executable tasks for agentic workflows. Focus on clear dependencies and TDD structure.
 </instructions>
 
 <arguments>

@@ -129,6 +129,7 @@ cask "slack"
 cask "todoist"
 cask "zed"
 cask "zed@preview"
+cask "fliqlo"
 
 # Mac App Store apps
 mas "1Password for Safari", id: 1569813296
