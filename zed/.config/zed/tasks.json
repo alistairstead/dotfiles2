@@ -1,5 +1,31 @@
 [
   {
+    "label": "LazyDocker",
+    "command": "lazydocker",
+    "shell": {
+      "program": "sh"
+    },
+    "hide": "on_success",
+    "reveal_target": "center",
+    "show_summary": false,
+    "show_command": false,
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+  {
+    "label": "LazyJJ",
+    "command": "lazyjj",
+    "shell": {
+      "program": "sh"
+    },
+    "hide": "on_success",
+    "reveal_target": "center",
+    "show_summary": false,
+    "show_command": false,
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+  {
     "label": "Search Obsidian Notes",
     "command": "obsidian",
     "args": ["${ZED_SELECTED_TEXT}"],
@@ -21,9 +47,5 @@
     "args": ["-a", "Obsidian", "${ZED_FILE}"],
     "use_new_terminal": false,
     "reveal": "never"
-  },
-  {
-    "label": "Start lazygit",
-    "command": "lazygit -p $ZED_WORKTREE_ROOT"
   }
 ]

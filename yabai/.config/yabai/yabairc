@@ -1,4 +1,3 @@
-
 # ██╗   ██╗ █████╗ ██████╗  █████╗ ██╗
 # ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗██║
 #  ╚████╔╝ ███████║██████╔╝███████║██║
@@ -47,31 +46,30 @@ yabai -m config window_gap 10
 #!/usr/bin/env bash
 
 create_spaces() {
-  CURRENT_SPACES=$(yabai -m query --spaces | jq -r '[.[]."is-native-fullscreen"| select(.==false) ]| length')
-  CURRENT_SPACE=$(yabai -m query --spaces --space | jq -r ."index")
-  NEEDED_SPACES=$1
+    CURRENT_SPACES=$(yabai -m query --spaces | jq -r '[.[]."is-native-fullscreen"| select(.==false) ]| length')
+    CURRENT_SPACE=$(yabai -m query --spaces --space | jq -r ."index")
+    NEEDED_SPACES=$1
 
-  if [[ $1 == "a" ]]; then
-    yabai -m space --create
-    yabai -m space last --label "$2"
-    if [ -n "$yabai_WINDOW_ID" ]; then
-      yabai -m window "$YABAI_WINDOW_ID" --space "$2"
+    if [[ $1 == "a" ]]; then
+        yabai -m space --create
+        yabai -m space last --label "$2"
+        if [ -n "$yabai_WINDOW_ID" ]; then
+            yabai -m window "$YABAI_WINDOW_ID" --space "$2"
+        fi
+        yabai -m space --focus "$2"
+        return 0
     fi
-    yabai -m space --focus "$2"
-    return 0
-  fi
 
-  if [[ "$CURRENT_SPACES" -ge "$NEEDED_SPACES" ]]; then
-    return
-  fi
-  SPACES_TO_CREATE=$(("$NEEDED_SPACES" - "$CURRENT_SPACES"))
+    if [[ "$CURRENT_SPACES" -ge "$NEEDED_SPACES" ]]; then
+        return
+    fi
 
-  for i in $(seq $((1 + CURRENT_SPACES)) "$NEEDED_SPACES"); do
-    echo "$i"
-    yabai -m space --create
-    yabai -m space --focus "$i"
-  done
-  yabai -m space "$CURRENT_SPACE" --focus
+    for i in $(seq $((1 + CURRENT_SPACES)) "$NEEDED_SPACES"); do
+        echo "$i"
+        yabai -m space --create
+        yabai -m space --focus "$i"
+    done
+    yabai -m space "$CURRENT_SPACE" --focus
 
 }
 
@@ -80,19 +78,19 @@ create_spaces 8
 
 # SPACE LABELS
 LABELS=(
-  main
-  comms
-  code
-  ref
-  productivity
-  vm
-  media
-  misc
-  scratch
+    main
+    comms
+    code
+    ref
+    productivity
+    vm
+    media
+    misc
+    scratch
 )
 
 for ((i = 1; i <= "${#LABELS[@]}"; i++)); do
-  yabai -m space "$i" --label "${LABELS[(($i - 1))]}"
+    yabai -m space "$i" --label "${LABELS[(($i - 1))]}"
 done
 
 # SPACE LAYOUTS
@@ -102,24 +100,24 @@ yabai -m config --space scratch layout float
 
 # RULES
 UNMANAGED=(
-  "Activity Monitor"
-  "App Store"
-  "Archive Utility"
-  "Calculator"
-  "Dictionary"
-  "FaceTime"
-  # Finder
-  "Photo Booth"
-  "Screen Sharing"
-  "Screens"
-  "Software Update"
-  "System Information"
-  "System Preferences"
-  "System Settings"
+    "Activity Monitor"
+    "App Store"
+    "Archive Utility"
+    "Calculator"
+    "Dictionary"
+    "FaceTime"
+    # Finder
+    "Photo Booth"
+    "Screen Sharing"
+    "Screens"
+    "Software Update"
+    "System Information"
+    "System Preferences"
+    "System Settings"
 )
 
 for ((i = 1; i <= "${#UNMANAGED[@]}"; i++)); do
-  yabai -m rule --add label="unmanage_${UNMANAGED[(($i - 1))]}" app="^${UNMANAGED[(($i - 1))]}$" manage=off
+    yabai -m rule --add label="unmanage_${UNMANAGED[(($i - 1))]}" app="^${UNMANAGED[(($i - 1))]}$" manage=off
 done
 
 # Exclude problematic apps from being managed:
@@ -129,88 +127,87 @@ yabai -m rule --add label="About This Mac" app="System Information" title="About
 yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Select file to save to" manage=off
 
 COMMS=(
-  "Messages"
-  "Messenger"
-  "Spark Desktop"
-  "Slack"
+    "Messages"
+    "Messenger"
+    "Spark Desktop"
+    "Slack"
 )
 
 for ((i = 1; i <= "${#COMMS[@]}"; i++)); do
-  yabai -m rule --add label="comms_${COMMS[(($i - 1))]}" app="^${COMMS[(($i - 1))]}$" space=comms
+    yabai -m rule --add label="comms_${COMMS[(($i - 1))]}" app="^${COMMS[(($i - 1))]}$" space=comms
 done
 
 STICKY=(
-  "Around"
+    "Around"
 )
 
 for ((i = 1; i <= "${#STICKY[@]}"; i++)); do
-  yabai -m rule --add label="sticky_${STICKY[(($i - 1))]}" app="^${STICKY[(($i - 1))]}$" sticky=on
+    yabai -m rule --add label="sticky_${STICKY[(($i - 1))]}" app="^${STICKY[(($i - 1))]}$" sticky=on
 done
 
 MEDIA=(
-  "Music"
-  "TV"
+    "Music"
+    "TV"
 )
 
 for ((i = 1; i <= "${#MEDIA[@]}"; i++)); do
-  yabai -m rule --add label="media_${MEDIA[(($i - 1))]}" app="^${MEDIA[(($i - 1))]}$" space=media
+    yabai -m rule --add label="media_${MEDIA[(($i - 1))]}" app="^${MEDIA[(($i - 1))]}$" space=media
 done
 
 # Productivity
 PRODUCTIVITY=(
-  "Obsidian"
-  "Notes"
-  "Todoist"
+    "Obsidian"
+    "Notes"
+    "Todoist"
 )
 
 for ((i = 1; i <= "${#PRODUCTIVITY[@]}"; i++)); do
-  yabai -m rule --add label="productivity_${PRODUCTIVITY[(($i - 1))]}" app="^${PRODUCTIVITY[(($i - 1))]}$" space=productivity
+    yabai -m rule --add label="productivity_${PRODUCTIVITY[(($i - 1))]}" app="^${PRODUCTIVITY[(($i - 1))]}$" space=productivity
 done
 
 MAIN=(
-  "Google Chrome"
-  "Safari"
+    "Google Chrome"
+    "Safari"
 )
 
 for ((i = 1; i <= "${#MAIN[@]}"; i++)); do
-  yabai -m rule --add label="main_${MAIN[(($i - 1))]}" app="^${MAIN[(($i - 1))]}$" space=main
+    yabai -m rule --add label="main_${MAIN[(($i - 1))]}" app="^${MAIN[(($i - 1))]}$" space=main
 done
 
 CODE=(
-  "Zed"
-  "Zed Preview"
-  "Ghostty"
-  "Sizzy"
+    "Zed"
+    "Zed Preview"
+    "Ghostty"
+    "Sizzy"
 )
 
 for ((i = 1; i <= "${#CODE[@]}"; i++)); do
-  yabai -m rule --add label="code_${CODE[(($i - 1))]}" app="^${CODE[(($i - 1))]}$" space=code
+    yabai -m rule --add label="code_${CODE[(($i - 1))]}" app="^${CODE[(($i - 1))]}$" space=code
 done
 
 REF=(
-  "GitHub"
+    "GitHub"
 )
 
 for ((i = 1; i <= "${#REF[@]}"; i++)); do
-  yabai -m rule --add label="ref_${REF[(($i - 1))]}" app="^${REF[(($i - 1))]}$" space=ref
+    yabai -m rule --add label="ref_${REF[(($i - 1))]}" app="^${REF[(($i - 1))]}$" space=ref
 done
 
 MISC=(
-  "Discord"
-  "Calendar"
+    "Discord"
+    "Calendar"
 )
 
 for ((i = 1; i <= "${#MISC[@]}"; i++)); do
-  yabai -m rule --add label="misc_${MISC[(($i - 1))]}" app="^${MISC[(($i - 1))]}$" space=misc
+    yabai -m rule --add label="misc_${MISC[(($i - 1))]}" app="^${MISC[(($i - 1))]}$" space=misc
 done
 
 VM=(
-  "OrbStack"
+    "OrbStack"
 )
 
 for ((i = 1; i <= "${#VM[@]}"; i++)); do
-  yabai -m rule --add label="vm_${VM[(($i - 1))]}" app="^${VM[(($i - 1))]}$" space=vm
+    yabai -m rule --add label="vm_${VM[(($i - 1))]}" app="^${VM[(($i - 1))]}$" space=vm
 done
-
 
 echo "yabai configuration loaded.."

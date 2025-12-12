@@ -1,0 +1,12 @@
+{
+  "name": "gh-pr-comments",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "list": "bun run scripts/list-comments.ts",
+    "resolve": "bun run scripts/resolve-comment.ts"
+  },
+  "dependencies": {
+    "zod": "^3.24.0"
+  }
+}

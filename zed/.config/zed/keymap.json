@@ -54,6 +54,15 @@
 			"space m p": "markdown::OpenPreviewToTheSide",
 			"space m P": "markdown::OpenPreview",
 
+			"space l d": [
+			    "task::Spawn",
+					{ "task_name": "LazyDocker", "reveal_target": "center" }
+			],
+			"space l j": [
+			    "task::Spawn",
+					{ "task_name": "LazyJJ", "reveal_target": "center" }
+			],
+
 			"shift-h": "pane::ActivatePreviousItem",
 			"shift-l": "pane::ActivateNextItem",
 
@@ -124,7 +133,7 @@
 	{
 		"context": "vim_mode == insert",
 		"bindings": {
-			"j j": "vim::NormalBefore",
+			// "j j": "vim::NormalBefore",
 			"j k": "vim::NormalBefore"
 		}
 	},

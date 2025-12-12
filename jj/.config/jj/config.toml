@@ -13,8 +13,13 @@ key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICqsrSxLYhMuCdzuO6pra5QulC8SKN19v1AUj
 program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
 
 [git]
-auto-local-bookmark = true
 sign-on-push = true
+
+[remotes.origin]
+auto-track-bookmarks = "glob:*"
+
+[remotes.upstream]
+auto-track-bookmarks = "main"
 
 [fix.tools.biome]
 command = ["bunx", "@biomejs/biome", "check", "--stdin-file-path=$path", "--write"]
