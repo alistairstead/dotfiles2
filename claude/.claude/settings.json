@@ -40,7 +40,7 @@
         ],
         "matcher": "Edit|Write|MultiEdit"
       }
-    ]
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
