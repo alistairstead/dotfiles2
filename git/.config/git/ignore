@@ -20,6 +20,8 @@ result-*
 .direnv/
 .devenv.flake.nix
 .envrc
+.plans
+.plan
 devenv.lock
 devenv.nix
 devenv.yaml

@@ -1,5 +1,11 @@
 [
   {
+    "label": "Vitest",
+    "command": "bun run test",
+    "args": ["\"$ZED_RELATIVE_FILE\" -t=\"$ZED_SYMBOL\""],
+    "tags": ["js-test", "ts-test", "tsx-test"]
+  },
+  {
     "label": "LazyDocker",
     "command": "lazydocker",
     "shell": {

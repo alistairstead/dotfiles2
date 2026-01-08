@@ -1,27 +1,19 @@
 #!/usr/bin/env bun
 
+import { existsSync } from "fs";
+import { join } from "path";
+
 const projectDir = process.env.CLAUDE_PROJECT_DIR;
 
-// Validate environment
+// Validate environment - exit silently if not set
 if (!projectDir) {
-  console.error("[post-format] CLAUDE_PROJECT_DIR not set");
-  process.exit(1); // Non-blocking error - let Claude continue
+  process.exit(0);
 }
 
 try {
-  // if projectDir does not contain biome.jsonc return early
-  if (!fs.existsSync(path.join(projectDir, "biome.jsonc"))) {
-    console.log(
-      JSON.stringify({
-        decision: "block",
-        hookSpecificOutput: {
-          additionalContext: `biome.jsonc not found`,
-          hookEventName: "PostToolUse",
-        },
-        reason: "biome.jsonc not found",
-      })
-    );
-    process.exit(0); // Exit 0 for JSON to be processed
+  // if projectDir does not contain biome.jsonc return early (no lint needed)
+  if (!existsSync(join(projectDir, "biome.jsonc"))) {
+    process.exit(0);
   }
 
   const proc = Bun.spawnSync(["bun", "run", "lint"], {

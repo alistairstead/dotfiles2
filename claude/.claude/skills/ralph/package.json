@@ -1,0 +1,17 @@
+{
+  "name": "ralph",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "ralph": "./bin/ralph.ts"
+  },
+  "scripts": {
+    "build": "mkdir -p ~/.local/bin && bun build --compile ./bin/ralph.ts --outfile ~/.local/bin/ralph"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

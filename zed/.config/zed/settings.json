@@ -1,7 +1,30 @@
 {
-	"close_on_file_delete": true,
- "always_treat_brackets_as_autoclosed": true,
- "restore_on_startup": "last_session",
+	"which_key": {
+  "enabled": true
+ },
+ "prettier": {
+  "allowed": false
+ },
+ "image_viewer": {
+  "unit": "decimal"
+ },
+ "colorize_brackets": true,
+ "middle_click_paste": false,
+ "tasks": {
+  "prefer_lsp": true
+ },
+ "lsp_document_colors": "background",
+ "completion_menu_scrollbar": "auto",
+ "use_auto_surround": true,
+ "use_on_type_format": true,
+ "inline_code_actions": true,
+ "drag_and_drop_selection": {
+  "enabled": false
+ },
+ "use_system_prompts": true,
+ "close_on_file_delete": true,
+ "always_treat_brackets_as_autoclosed": false,
+ "restore_on_startup": "launchpad",
  "buffer_line_height": "comfortable",
  "git": {
   "inline_blame": {
@@ -10,7 +33,7 @@
  },
  "minimum_contrast_for_highlights": 60.0,
  "hover_popover_enabled": false,
- "show_completion_documentation": false,
+ "show_completion_documentation": true,
  "audio": {
   "experimental.rodio_audio": true
  },
@@ -53,10 +76,10 @@
   "show_other_hints": false,
   "show_value_hints": true,
   "show_background": false,
-  "enabled": false
+  "enabled": true
  },
  "completions": {
-  "lsp_insert_mode": "insert"
+  "lsp_insert_mode": "replace_subsequence"
  },
  "tabs": {
   "show_diagnostics": "errors",
@@ -78,10 +101,6 @@
 				"database_url": "postgresql://postgres:password@dev-postgres.orb.local:5432/local"
 			}
 		},
-		"container-use-mcp": {
-   "enabled": false,
-			"settings": {}
-		},
 		"mcp-server-context7": {
    "enabled": true,
 			"settings": {
@@ -93,7 +112,7 @@
 	"theme": {
   "mode": "system",
   "light": "Catppuccin Frappé",
-  "dark": "Catppuccin Frappé"
+  "dark": "Catppuccin Macchiato"
  },
 	"icon_theme": {
   "mode": "system",
@@ -141,7 +160,7 @@
 	},
 	"load_direnv": "shell_hook",
 	"relative_line_numbers": "enabled",
-	"cursor_blink": true,
+	"cursor_blink": false,
 	"vertical_scroll_margin": 5,
 	"indent_guides": {
 		"enabled": false,
@@ -163,13 +182,13 @@
 				"source.organizeImports.biome": true
 			}
 		},
-		// "JSX": {
-		// 	"formatter": { "language_server": { "name": "biome" } },
-		// 	"code_actions_on_format": {
-		// 		"source.fixAll.biome": true,
-		// 		"source.organizeImports.biome": true
-		// 	}
-		// },
+		"JSX": {
+			"formatter": { "language_server": { "name": "biome" } },
+			"code_actions_on_format": {
+				"source.fixAll.biome": true,
+				"source.organizeImports.biome": true
+			}
+		},
 		"TSX": {
 			"formatter": { "language_server": { "name": "biome" } },
 			"code_actions_on_format": {
@@ -256,16 +275,17 @@
 		// Whether to show the branch name button in the titlebar.
 		"show_branch_name": false,
 		// Whether to show the project host and name in the titlebar.
-		"show_project_items": false,
+		"show_project_items": true,
 		// Whether to show onboarding banners in the titlebar.
-		"show_onboarding_banner": false,
+		"show_onboarding_banner": true,
 		// Whether to show user picture in the titlebar.
-		"show_user_picture": false,
+		"show_user_picture": true,
 		// Whether to show the sign in button in the titlebar.
-		"show_sign_in": false
+		"show_sign_in": true
 	},
 	"scrollbar": {
-		"show": "never",
+		"diagnostics": "none",
+  "show": "never",
 		"axes": {
 			// When false, forcefully disables the horizontal scrollbar. Otherwise, obey other settings.
 			"horizontal": false,
