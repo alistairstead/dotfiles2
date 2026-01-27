@@ -104,3 +104,57 @@ wt() {
     # Confirm success
     echo "✅ Worktree '$feature_name' created at $worktree_path and checked out."
 }
+
+jjw() {
+    cmd="$1"
+    shift
+
+    case "$cmd" in
+    new | add)
+        name="$1"
+        rev="${2:-@}"
+        if [ -z "$name" ]; then
+            echo "Usage: jjw new <name> [revision]"
+            return 1
+        fi
+
+        root=$(jj root) || return 1
+        dest="../$(basename "$root")__${name}"
+
+        jj workspace add "$dest" -r "$rev" || return 1
+
+        # Create .git file for IDE compatibility
+        echo "gitdir: $root/.git" >"$dest/.git"
+        echo "✓ Created .git link for IDE compatibility"
+
+        # Copy env files
+        for f in .env .env.local .envrc .tool-versions mise.toml .claude; do
+            if [ -e "$root/$f" ]; then
+                cp -R "$root/$f" "$dest/" && echo "✓ $f"
+            fi
+        done
+
+        if [ -f "$dest/.envrc" ] && command -v direnv >/dev/null 2>&1; then
+            (cd "$dest" && direnv allow)
+        fi
+
+        echo "→ cd $dest"
+        ;;
+    go | cd)
+        name="$1"
+        root=$(jj root) || return 1
+        dest="../$(basename "$root")__${name}"
+        if [ -d "$dest" ]; then
+            cd "$dest" || return 1
+        else
+            echo "Workspace not found: $dest"
+        fi
+        ;;
+    list | ls)
+        jj workspace list
+        ;;
+    *)
+        echo "Usage: jjw {new|go|list} ..."
+        ;;
+    esac
+}

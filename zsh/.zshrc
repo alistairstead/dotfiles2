@@ -196,6 +196,9 @@ fi
 eval "$(zoxide init --cmd j zsh)"
 
 
+eval "$(ww init zsh)"
+
+
 # bun completions
 [ -s "/Users/alistairstead/.bun/_bun" ] && source "/Users/alistairstead/.bun/_bun"
 

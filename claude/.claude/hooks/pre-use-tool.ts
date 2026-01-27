@@ -61,13 +61,13 @@ const TOOL_RESTRICTIONS: Record<string, RestrictionRule[]> = {
 			},
 			message: "Use 'bun/bunx' instead of 'npm/npx/yarn/pnpm'",
 		},
-		{
-			condition: (input: any) => {
-				const command = input.command;
-				return command && /\bbun\s+test\b/.test(command);
-			},
-			message: "Use 'bun run test' to run tests with vitest",
-		},
+		// {
+		// 	condition: (input: any) => {
+		// 		const command = input.command;
+		// 		return command && /\bbun\s+test\b/.test(command);
+		// 	},
+		// 	message: "Use 'bun run test' to run tests with vitest",
+		// },
 	],
 };
 

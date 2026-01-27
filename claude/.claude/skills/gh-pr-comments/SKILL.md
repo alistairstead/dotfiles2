@@ -1,21 +1,23 @@
 ---
 name: gh-pr-comments
-description: List and resolve GitHub PR review comments. Use when working with PR feedback, addressing review comments, or marking threads resolved.
+description: "List and resolve GitHub PR review comments. Use when working with PR feedback, addressing review comments, or marking threads resolved. Triggers on: resolve PR comments, fix pr comments, resolve pr feedback, fix pr feedback"
 allowed-tools: Bash, Read
 ---
 
 # GitHub PR Comments
 
-List unresolved PR review comments and mark them resolved after addressing feedback.
+List unresolved PR review comments and resolve comments after addressing feedback.
 
-## Setup
+## Instructions
 
-Run once in the skill directory:
-```bash
-cd ~/.claude/skills/gh-pr-comments && bun install
-```
+1. List unresolved comments: `bun run ~/.claude/skills/gh-pr-comments/scripts/list-comments.ts --unresolved`
+2. /plan how to address each comment in the code, interview me to discuss the plan and which comments to address.
+3. Resolve each thread: `bun run ~/.claude/skills/gh-pr-comments/scripts/resolve-comment.ts <thread_id />`
+
 
 ## List Comments
+
+How to list unresolved comments:
 
 ```bash
 bun run ~/.claude/skills/gh-pr-comments/scripts/list-comments.ts [options]
@@ -54,10 +56,10 @@ bun run ~/.claude/skills/gh-pr-comments/scripts/list-comments.ts --unresolved --
 
 ## Resolve Comment
 
-After addressing feedback, mark the thread resolved:
+How to mark a comment as resolved:
 
 ```bash
-bun run ~/.claude/skills/gh-pr-comments/scripts/resolve-comment.ts <thread_id>
+bun run ~/.claude/skills/gh-pr-comments/scripts/resolve-comment.ts <thread_id />
 ```
 
 ### Example
@@ -69,9 +71,3 @@ bun run ~/.claude/skills/gh-pr-comments/scripts/resolve-comment.ts PRRT_kwDOLsFq
 ```json
 { "resolved": true }
 ```
-
-## Workflow
-
-1. List unresolved comments: `bun run ~/.claude/skills/gh-pr-comments/scripts/list-comments.ts --unresolved`
-2. Address each comment in the code
-3. Resolve each thread: `bun run ~/.claude/skills/gh-pr-comments/scripts/resolve-comment.ts <thread_id>`

@@ -24,6 +24,14 @@ format to add the TODO. For instance:
 - I use jj to interact with git repositories. When you need to run git commands,
   run them through jj. For instance, to create a commit, run `jj commit -m "message"`
 
+## jj
+
+- **ALWAYS** use `--git` argument with `jj diff`
+
+## Javascript and Typescript
+
+- Prefer using objects as function parameters instead of multiple arguments.
+
 ## Plans
 
 - Ask any questions needed to complete the planning task. Make the

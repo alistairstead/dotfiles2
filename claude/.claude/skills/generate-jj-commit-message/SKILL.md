@@ -1,6 +1,6 @@
 ---
 name: generating-jj-commit-messages
-description: Generates clear commit messages from jj diffs. Use when writing commit messages or reviewing staged changes.
+description: "Generates clear commit messages from jj diffs. Use when writing jj commit messages, Triggers on: commit changes, commit files, commit with jj, jj commit"
 ---
 
 # Generating Commit Messages

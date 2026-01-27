@@ -6,6 +6,7 @@ tap "neovim/neovim"
 tap "common-fate/granted"
 tap "nikitabobko/tap"
 tap "koekeishiya/formulae"
+tap "omihirofumi/tap"
 
 # Core utilities
 brew "coreutils"
@@ -33,6 +34,7 @@ brew "deno"
 brew "pipx"
 brew "luarocks"
 brew "luajit"
+brew "ww"
 
 # Cloud and infrastructure
 brew "awscli"

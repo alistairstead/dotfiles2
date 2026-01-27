@@ -30,7 +30,8 @@ system = "system"
 # Default tool versions (can be overridden by project-specific files)
 [tools]
 # These are examples - adjust to your needs
-# node = "lts"
+node = "lts"
+bun = "latest"
 # python = "3.12"
 # ruby = "3.3"
 # go = "1.21"
@@ -48,4 +49,3 @@ MISE_ASDF_COMPAT = "true"
 
 # Project-specific settings can be defined in .mise.toml in project root
 # This global config provides sensible defaults for all projects
-

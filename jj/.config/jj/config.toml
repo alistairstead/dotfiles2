@@ -21,6 +21,9 @@ auto-track-bookmarks = "glob:*"
 [remotes.upstream]
 auto-track-bookmarks = "main"
 
+[working-copy]
+auto-update-stale = true
+
 [fix.tools.biome]
 command = ["bunx", "@biomejs/biome", "check", "--stdin-file-path=$path", "--write"]
 
@@ -33,7 +36,8 @@ patterns = [
     ]
 
 [ui]
-diff-formatter = "ksdiff"
+# diff-formatter = "ksdiff"
+diff-formatter = "git"
 merge-editor = "ksdiff"
 
 [merge-tools.ksdiff]
