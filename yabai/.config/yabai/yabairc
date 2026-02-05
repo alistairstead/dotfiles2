@@ -13,6 +13,7 @@ sudo yabai --load-sa
 
 /opt/homebrew/bin/yabai -m signal --add event=dock_did_restart action="sudo /opt/homebrew/bin/yabai --load-sa"
 /opt/homebrew/bin/yabai -m signal --add event=space_changed action="nohup open -g raycast://extensions/krzysztoff1/yabai/screens-menu-bar?launchType=background > /dev/null 2>&1 &"
+/opt/homebrew/bin/yabai -m signal --add event=display_changed action="~/.config/yabai/scripts/padding.sh"
 
 # global settings
 yabai -m config mouse_follows_focus off
@@ -37,11 +38,20 @@ yabai -m config mouse_drop_action swap
 
 # general space settings
 yabai -m config layout bsp # bsp, stack, float, or chain
-yabai -m config top_padding 10
-yabai -m config bottom_padding 10
-yabai -m config left_padding 10
-yabai -m config right_padding 10
-yabai -m config window_gap 10
+WIDTH=$(yabai -m query --displays --display | jq '.frame.w')
+
+if (($(echo "$WIDTH > 1600" | bc -l))); then
+    PADDING=10
+    GAP=10
+else
+    PADDING=5
+    GAP=5
+fi
+yabai -m config top_padding $PADDING
+yabai -m config bottom_padding $PADDING
+yabai -m config left_padding $PADDING
+yabai -m config right_padding $PADDING
+yabai -m config window_gap $GAP
 
 #!/usr/bin/env bash
 

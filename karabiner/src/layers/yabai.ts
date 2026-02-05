@@ -34,6 +34,9 @@ export function yabaiLayer() {
         x: toYabai$('space --mirror x-axis'),
         y: toYabai$('space --mirror y-axis'),
         r: toYabai$('space --rotate 270'),
+        // split ratio (display-aware)
+        '[': to$('/Users/alistairstead/.config/yabai/scripts/ratio.sh'),
+        ']': to$('/Users/alistairstead/.config/yabai/scripts/ratio.sh reset'),
       }),
     ]),
     rule('Yabai move window or space').manipulators([

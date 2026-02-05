@@ -6,7 +6,6 @@ tap "neovim/neovim"
 tap "common-fate/granted"
 tap "nikitabobko/tap"
 tap "koekeishiya/formulae"
-tap "omihirofumi/tap"
 
 # Core utilities
 brew "coreutils"
@@ -31,16 +30,9 @@ brew "wget"
 brew "curl"
 brew "go"
 brew "deno"
-brew "pipx"
-brew "luarocks"
-brew "luajit"
-brew "ww"
 
 # Cloud and infrastructure
 brew "awscli"
-brew "terraform"
-brew "terraform-ls"
-brew "tflint"
 brew "granted"
 
 # Terminal tools
@@ -67,11 +59,11 @@ brew "fastfetch"
 brew "yq"
 
 # Enhanced shell tools
-brew "navi"        # Interactive cheatsheet tool
-brew "glow"        # Markdown rendering in terminal
-brew "just"        # Modern command runner
-brew "watchexec"   # File watcher for development
-brew "carapace"    # Multi-shell command argument completion
+brew "navi"      # Interactive cheatsheet tool
+brew "glow"      # Markdown rendering in terminal
+brew "just"      # Modern command runner
+brew "watchexec" # File watcher for development
+brew "carapace"  # Multi-shell command argument completion
 
 # Database tools
 brew "mysql-client@8.4"
@@ -93,11 +85,11 @@ brew "uv"
 
 # Advanced development tools
 brew "mise"
-brew "git-cliff"    # Automated changelog generation
-brew "lefthook"     # Modern git hooks manager
-brew "git-absorb"   # Automatically fixup commits
-brew "gitui"        # TUI for git
-brew "sccache"      # Shared compilation cache
+brew "git-cliff"  # Automated changelog generation
+brew "lefthook"   # Modern git hooks manager
+brew "git-absorb" # Automatically fixup commits
+brew "gitui"      # TUI for git
+brew "sccache"    # Shared compilation cache
 
 # Window management
 brew "yabai"

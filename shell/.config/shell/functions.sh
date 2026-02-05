@@ -119,13 +119,10 @@ jjw() {
         fi
 
         root=$(jj root) || return 1
-        dest="../$(basename "$root")__${name}"
+        mkdir -p "$root/.workspaces"
+        dest="$root/.workspaces/${name}"
 
         jj workspace add "$dest" -r "$rev" || return 1
-
-        # Create .git file for IDE compatibility
-        echo "gitdir: $root/.git" >"$dest/.git"
-        echo "✓ Created .git link for IDE compatibility"
 
         # Copy env files
         for f in .env .env.local .envrc .tool-versions mise.toml .claude; do
@@ -143,7 +140,7 @@ jjw() {
     go | cd)
         name="$1"
         root=$(jj root) || return 1
-        dest="../$(basename "$root")__${name}"
+        dest="$root/.workspaces/${name}"
         if [ -d "$dest" ]; then
             cd "$dest" || return 1
         else
