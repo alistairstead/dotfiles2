@@ -1,5 +1,5 @@
 {
-  "name": "gh-pr-comments",
+  "name": "pr-comments",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -7,6 +7,6 @@
     "resolve": "bun run scripts/resolve-comment.ts"
   },
   "dependencies": {
-    "zod": "^3.24.0"
+    "zod": "^4.3.6"
   }
 }

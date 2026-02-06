@@ -2,7 +2,7 @@
 import { z } from "zod";
 
 const ArgsSchema = z.object({
-  threadId: z.string().min(1, "Thread ID is required"),
+  threadId: z.string().min(1, { error: "Thread ID is required" }),
 });
 
 const RESOLVE_MUTATION = `
