@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+
 import { z } from "zod";
 
 const ArgsSchema = z.object({
