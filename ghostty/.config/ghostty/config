@@ -96,8 +96,6 @@ adjust-underline-position = 30%
 # THEME AND COLORS
 # =====================================
 
-# Catppuccin theme - automatic light/dark switching
-# theme = light:catppuccin-latte,dark:catppuccin-mocha
 bold-is-bright = true
 cursor-invert-fg-bg = true
 
@@ -113,5 +111,5 @@ clipboard-trim-trailing-spaces = true
 # VISUAL EFFECTS
 # =====================================
 
-# Custom shader for visual enhancement
-custom-shader = shaders/starfield-colors.glsl
+# Catppuccin theme - automatic light/dark switching
+theme = light:catppuccin-latte,dark:catppuccin-mocha

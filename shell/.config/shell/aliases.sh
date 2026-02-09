@@ -7,14 +7,6 @@ alias vim='nvim'
 
 # Navigation
 alias c='clear'
-alias ll='ls -la'
-
-# Git shortcuts
-alias ga='git add'
-alias gs='git status -sb'
-alias gco='git checkout'
-alias push='git push'
-alias pull='git pull'
 
 # Common command improvements
 alias mkdir="mkdir -p"

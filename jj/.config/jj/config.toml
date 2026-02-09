@@ -21,8 +21,16 @@ auto-track-bookmarks = "glob:*"
 [remotes.upstream]
 auto-track-bookmarks = "main"
 
-[working-copy]
-auto-update-stale = true
+[revset-aliases]
+'trunk()' = 'latest(remote_bookmarks(exact:"main", exact:"origin"))'
+'mine()' = 'mutable() & mine()'
+'stack()' = 'trunk()..@'
+
+[aliases]
+l = ['log', '-r', 'trunk()..@ | ancestors(trunk(), 2)']
+la = ['log', '-r', 'all()']
+sync = ['rebase', '-d', 'main']
+tidy = ['git', 'push', '-b', 'glob:feat/*', '-b', 'glob:fix/*']
 
 [fix.tools.biome]
 command = ["bunx", "@biomejs/biome", "check", "--stdin-file-path=$path", "--write"]

@@ -66,7 +66,17 @@ abbr -q gc="git commit"
 abbr -q gco="git checkout"
 abbr -q gd="git diff"
 abbr -q gs="git status"
-abbr -q ll="ls -la"
+abbr -q ll="eza --all --header --long"
+abbr -q jl="jj log"
+abbr -q jn="jj new"
+abbr -q jc="jj commit"
+abbr -q je="jj edit"
+abbr -q jd="jj describe"
+abbr -q js="jj status"
+abbr -q jdf="jj diff"
+abbr -q jgf="jj git fetch"
+abbr -q jgp="jj git push"
+abbr -q jrs="jj rebase -d main"
 
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
@@ -77,12 +87,12 @@ zstyle ':completion:*' menu no
 alias zshrc="vim ~/.zshrc"
 alias vimrc="vim ~/.config/nvim"
 alias tmuxrc="vim ~/.tmux.conf"
-alias pn=pnpm
 # Remove all items safely, to Trash (`brew install trash`).
 if which trash >/dev/null 2>&1; then
   alias rm='trash'
 fi
-# Additional eza aliases
+# Eza defaults and aliases
+eza_params="--group-directories-first --icons"
 alias l='eza --git-ignore $eza_params'
 alias llm='eza --all --header --long --sort=modified $eza_params'
 alias lx='eza -lbhHigUmuSa@'
@@ -98,12 +108,6 @@ alias null="/dev/null"
 # ZSH-specific functions
 alias granted-refresh="granted sso populate --sso-region eu-west-2 https://kodehort.awsapps.com/start"
 alias cb='git branch --sort=-committerdate | fzf --header "Checkout Recent Branch" --preview "git diff --color=always {1} " --pointer="" | xargs git checkout'
-
-# Copy to clipboard
-copy() {
-  cat "$@" | pbcopy
-}
-
 
 # Shell integrations
 eval "$(direnv hook zsh)"
@@ -129,8 +133,8 @@ zle -N zle-keymap-select
 bindkey "^?" backward-delete-char
 
 # History substring search bindings
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
+bindkey "$terminfo[kcuu1]" history-substring-search-up
+bindkey "$terminfo[kcud1]" history-substring-search-down
 
 # Initialize mise (if installed)
 if command -v mise >/dev/null 2>&1; then

@@ -60,8 +60,8 @@ Each application directory follows the Stow convention:
 
 - **Shell**: `zsh/` (with Zap plugin manager), `bash/`, `shell/` (common configs)
 - **Editor**: `nvim/` - Neovim with LazyVim configuration
-- **Terminal**: `ghostty/`, `wezterm/`, `tmux/` (with custom theme and plugins)
-- **Window Management**: `aerospace/` (modern tiling), `yabai/` (traditional tiling)
+- **Terminal**: `ghostty/`, `tmux/` (with custom theme and plugins)
+- **Window Management**: `yabai/` (tiling window manager)
 - **Development**: `git/`, `gh/`, `direnv/`, `mise/` (runtime management)
 - **Automation**: `karabiner/` - TypeScript-based keyboard customization
 - **Claude Integration**: `claude/` - Custom hooks for Claude Code

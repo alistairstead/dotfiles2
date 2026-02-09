@@ -149,8 +149,6 @@ info "Creating symlinks with GNU Stow..."
 
 # Define stow folders
 STOW_FOLDERS=(
-  "aerospace"
-  "atuin"
   "bash"
   "bin"
   "direnv"
@@ -160,10 +158,10 @@ STOW_FOLDERS=(
   "ghostty"
   "mise"
   "nvim"
+  "shell"
   "ssh"
   "starship"
   "tmux"
-  "wezterm"
   "yabai"
   "zsh"
 )
