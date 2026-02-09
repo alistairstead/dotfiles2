@@ -6,6 +6,7 @@ tap "neovim/neovim"
 tap "common-fate/granted"
 tap "nikitabobko/tap"
 tap "koekeishiya/formulae"
+tap "olets/tap"
 
 # Core utilities
 brew "coreutils"
@@ -57,6 +58,13 @@ brew "sesh"
 brew "tree"
 brew "fastfetch"
 brew "yq"
+
+# Zsh plugins (via Homebrew)
+brew "zsh-syntax-highlighting"
+brew "zsh-completions"
+brew "zsh-autosuggestions"
+brew "zsh-history-substring-search"
+brew "zsh-abbr"
 
 # Enhanced shell tools
 brew "navi"      # Interactive cheatsheet tool

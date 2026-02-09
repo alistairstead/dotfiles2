@@ -6,10 +6,6 @@
 # Enable experimental features
 experimental = true
 
-# Legacy version file support
-# This allows mise to read version files from other tools
-legacy_version_file = true
-
 # Jobs to run in parallel (for installations)
 jobs = 4
 

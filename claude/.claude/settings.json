@@ -90,6 +90,9 @@
     "claude-reflect@claude-reflect-marketplace": true,
     "ralph@ralph-marketplace": true
   },
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754066916309

@@ -3,8 +3,8 @@
 import { z } from "zod";
 
 const ArgsSchema = z.object({
-  repo: z.string().optional(),
-  prNumber: z.number().optional(),
+  repo: z.string().nullable().optional(),
+  prNumber: z.number().nullable().optional(),
   noBots: z.boolean().default(false),
   unresolvedOnly: z.boolean().default(false),
 });

@@ -1,31 +1,21 @@
 #!/bin/zsh
-# Created by Zap installer https://www.zapzsh.org
-[ -f "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh" ] && source "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh"
 
 # Source shared shell configurations
 for file in ~/.config/shell/*.sh; do
   [ -r "$file" ] && source "$file"
 done
 
-# Initialize completion system early to avoid menuselect keymap errors
+# Initialize completion system
 autoload -Uz compinit && compinit -C
 zmodload zsh/complist
-# Ensure menuselect keymap exists
 bindkey -M menuselect '^?' backward-delete-char 2>/dev/null || true
 
-# Add zsh plugins
-plug "zsh-users/zsh-syntax-highlighting" # Command-line syntax highlighting
-plug "zsh-users/zsh-completions"
-plug "zsh-users/zsh-autosuggestions" # Inline suggestions
-plug "Aloxaf/fzf-tab"
-plug "zsh-users/zsh-history-substring-search" # History search
-# plug "marlonrichert/zsh-edit" # Better keyboard shortcuts
-# plug "marlonrichert/zsh-hist" # Edit history from the command line.
-# plug "zap-zsh/supercharge"
-# plug "zap-zsh/exa"
-plug "zap-zsh/vim"
-# plug "zap-zsh/fzf"
-plug "reegnz/jq-zsh-plugin"
+# Zsh plugins (via Homebrew)
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
+fpath=(/opt/homebrew/share/zsh-completions $fpath)
 
 # Configure syntax highlighting styles
 ZSH_HIGHLIGHT_STYLES[command]='fg=green'
@@ -68,37 +58,20 @@ setopt MENU_COMPLETE        # Tab cycles through options
 setopt AUTO_LIST            # List choices on ambiguous completion
 setopt COMPLETE_IN_WORD     # Complete from cursor position
 
-# Fish-like abbreviations (expand on space)
-typeset -Ag abbreviations
-abbreviations=(
-  "g"    "git"
-  "ga"   "git add"
-  "gc"   "git commit"
-  "gco"  "git checkout"
-  "gd"   "git diff"
-  "gs"   "git status"
-  "ll"   "ls -la"
-)
-
-# Expand abbreviations
-magic-abbrev-expand() {
-  local left prefix
-  left=$(echo -nE "$LBUFFER" | sed -e "s/[[:space:]]*$//")
-  prefix=$(echo -nE "$LBUFFER" | sed -e "s/.*[[:space:]]//")
-  if [[ -n "$abbreviations[$prefix]" ]]; then
-    LBUFFER=$left" "$abbreviations[$prefix]
-  fi
-  zle self-insert
-}
-zle -N magic-abbrev-expand
-bindkey " " magic-abbrev-expand
+# Abbreviations (managed by zsh-abbr, persist in ~/.config/zsh-abbr/user-abbreviations)
+# Seed defaults on first run — zsh-abbr skips duplicates
+abbr -q g=git
+abbr -q ga="git add"
+abbr -q gc="git commit"
+abbr -q gco="git checkout"
+abbr -q gd="git diff"
+abbr -q gs="git status"
+abbr -q ll="ls -la"
 
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
-zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
 # ZSH-specific aliases
 alias zshrc="vim ~/.zshrc"
@@ -136,8 +109,9 @@ copy() {
 eval "$(direnv hook zsh)"
 eval "$(starship init zsh)"
 
-# Better vi mode
+# Vi mode
 bindkey -v
+bindkey -M viins 'jk' vi-cmd-mode
 bindkey '^a' beginning-of-line
 bindkey '^e' end-of-line
 
@@ -164,11 +138,9 @@ if command -v mise >/dev/null 2>&1; then
 fi
 
 # Source fzf key bindings (includes Ctrl+R for history search)
+[ -f /opt/homebrew/opt/fzf/shell/completion.zsh ] && source /opt/homebrew/opt/fzf/shell/completion.zsh
 [ -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ] && source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
 [ -r ~/private/.zshrc ] && source ~/private/.zshrc
-
-# ZSH-specific environment variables
-export VI_MODE_ESC_INSERT="jk"
 
 # Performance optimizations
 export KEYTIMEOUT=1  # Faster vi mode switching
@@ -193,7 +165,7 @@ fi
 
 
 # Initialize zoxide (must be at the very end)
-eval "$(zoxide init --cmd j zsh)"
+eval "$(zoxide init --cmd cd zsh)"
 
 
 eval "$(ww init zsh)"
