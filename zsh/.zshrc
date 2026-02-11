@@ -169,7 +169,9 @@ fi
 
 
 # Initialize zoxide (must be at the very end)
-eval "$(zoxide init --cmd cd zsh)"
+if [[ $- == *i* ]]; then
+  eval "$(zoxide init zsh --cmd cd)"
+fi
 
 
 eval "$(ww init zsh)"

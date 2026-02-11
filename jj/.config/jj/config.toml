@@ -43,12 +43,12 @@ patterns = [
     "glob:'**/*.json'",
     ]
 
-[ui]
-# diff-formatter = "ksdiff"
-diff-formatter = "git"
-merge-editor = "ksdiff"
+# [ui]
+# # diff-formatter = "ksdiff"
+# diff-formatter = "git"
+# merge-editor = "ksdiff"
 
-[merge-tools.ksdiff]
-diff-invocation-mode = "file-by-file"
-diff-args = ["--partial-changeset", "$left", "$right"]
-merge-args = ["--merge", "--output", "$output", "--base", "$base", "$left", "$right"]
+# [merge-tools.ksdiff]
+# diff-invocation-mode = "file-by-file"
+# diff-args = ["--partial-changeset", "$left", "$right"]
+# merge-args = ["--merge", "--output", "$output", "--base", "$base", "$left", "$right"]
