@@ -3,6 +3,9 @@ import { rule, to$, withModifier } from 'karabiner.ts'
 export const toYabai$ = (command: string) =>
   to$(`/opt/homebrew/bin/yabai -m ${command}`)
 
+const moveAndFollow = (space: number) =>
+  to$(`/opt/homebrew/bin/yabai -m window --space ${space} && /opt/homebrew/bin/yabai -m space --focus ${space}`)
+
 export function yabaiLayer() {
   return [
     rule('Yabai select window or space').manipulators([
@@ -41,16 +44,16 @@ export function yabaiLayer() {
     ]),
     rule('Yabai move window or space').manipulators([
       withModifier(['option', 'shift'])({
-        1: toYabai$('window --space 1'),
-        2: toYabai$('window --space 2'),
-        3: toYabai$('window --space 3'),
-        4: toYabai$('window --space 4'),
-        5: toYabai$('window --space 5'),
-        6: toYabai$('window --space 6'),
-        7: toYabai$('window --space 7'),
-        8: toYabai$('window --space 8'),
-        9: toYabai$('window --space 9'),
-        0: toYabai$('window --space 10'),
+        1: moveAndFollow(1),
+        2: moveAndFollow(2),
+        3: moveAndFollow(3),
+        4: moveAndFollow(4),
+        5: moveAndFollow(5),
+        6: moveAndFollow(6),
+        7: moveAndFollow(7),
+        8: moveAndFollow(8),
+        9: moveAndFollow(9),
+        0: moveAndFollow(10),
         h: toYabai$('window --swap west'),
         j: toYabai$('window --swap south'),
         k: toYabai$('window --swap north'),
