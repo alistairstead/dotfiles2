@@ -65,6 +65,7 @@ brew "zsh-completions"
 brew "zsh-autosuggestions"
 brew "zsh-history-substring-search"
 brew "zsh-abbr"
+brew "fzf-tab"
 
 # Enhanced shell tools
 brew "navi"      # Interactive cheatsheet tool
@@ -101,6 +102,7 @@ brew "sccache"    # Shared compilation cache
 
 # Window management
 brew "yabai"
+brew "sleepwatcher"
 
 # Casks (GUI applications)
 cask "1password"

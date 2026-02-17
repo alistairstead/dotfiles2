@@ -55,12 +55,16 @@
 			"space m P": "markdown::OpenPreview",
 
 			"space l d": [
-			    "task::Spawn",
-					{ "task_name": "LazyDocker", "reveal_target": "center" }
+				"task::Spawn",
+				{ "task_name": "LazyDocker", "reveal_target": "center" }
 			],
 			"space l j": [
-			    "task::Spawn",
-					{ "task_name": "LazyJJ", "reveal_target": "center" }
+				"task::Spawn",
+				{ "task_name": "LazyJJ", "reveal_target": "center" }
+			],
+			"space g h": [
+				"task::Spawn",
+				{ "task_name": "GithubDash", "reveal_target": "center" }
 			],
 
 			"shift-h": "pane::ActivatePreviousItem",

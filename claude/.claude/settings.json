@@ -17,12 +17,18 @@
       "Bash(cat:*)",
       "Bash(bun vitest:*)",
       "Bash(bun run test:*)",
-      "Bash(bun turbo:*)"
+      "Bash(bun turbo:*)",
+      "mcp__pencil"
     ],
     "deny": [
+      "Edit(.env)",
+      "Edit(.env.*)",
+      "Edit(**/.env)",
+      "Edit(**/.env.*)",
       "Read(.env)",
-      "Read(**/.env*)",
-      "Read(**/env*)",
+      "Read(.env.*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
       "Read(**/*.pem)",
       "Read(**/*.key)",
       "Read(**/*.crt)",
@@ -31,9 +37,18 @@
       "Read(**/credentials/**)"
     ]
   },
-  "model": "opus",
+  "model": "opus[1m]",
   "hooks": {
     "PostToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jj claude-checkpoint 'claude@kde.sh' >> /tmp/claude-checkpoint.log 2>&1 || true"
+          }
+        ]
+      },
       {
         "matcher": "Edit|Write|MultiEdit",
         "hooks": [
@@ -45,6 +60,15 @@
       }
     ],
     "PreToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jj claude-checkpoint || true"
+          }
+        ]
+      },
       {
         "matcher": "Bash",
         "hooks": [
@@ -61,12 +85,39 @@
         "hooks": [
           {
             "type": "command",
+            "command": "jq -r .message | say"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r .message | terminal-notifier -title 'Claude Code needs you' -sender com.anthropic.claudefordesktop"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
             "command": "~/.claude/hooks/notification.ts"
           }
         ]
       }
     ],
     "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jj claude-checkpoint 'Claude <claude@kde.sh>' >> /tmp/claude-checkpoint.log 2>&1 || true"
+          }
+        ]
+      },
       {
         "matcher": "",
         "hooks": [
@@ -90,11 +141,39 @@
     "feature-dev@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "dev-browser@dev-browser-marketplace": true,
-    "claude-reflect@claude-reflect-marketplace": true,
     "ralph@ralph-marketplace": true,
-    "lua-lsp@claude-plugins-official": true
+    "lua-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true,
+    "jj@kodehort-skills": true,
+    "github@kodehort-skills": true,
+    "bdd@kodehort-skills": true,
+    "code-review@kodehort-skills": true,
+    "skill-creator@claude-plugins-official": true,
+    "ddd@kodehort-skills": true,
+    "tdd@kodehort-skills": true,
+    "architect@kodehort-skills": true,
+    "prd@kodehort-skills": true,
+    "solid-js@kodehort-skills": true,
+    "second-brain@kodehort-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "context-mode": {
+      "source": {
+        "source": "github",
+        "repo": "mksglu/context-mode"
+      }
+    },
+    "kodehort-skills": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/alistairstead/dev/kodehort/agent-skills"
+      },
+      "autoUpdate": true
+    }
   },
   "alwaysThinkingEnabled": true,
+  "autoDreamEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754066916309
   }

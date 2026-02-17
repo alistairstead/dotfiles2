@@ -18,6 +18,12 @@ format to add the TODO. For instance:
 ## Git
 
 - I use jj to interact with git repositories. When you need to run git commands instead use `jj`.
+- Prefer `jj commit` over `jj describe`. Only use `jj describe` when explicitly asked to describe/amend a changeset.
+
+## Shell
+
+- Use `rg` (ripgrep) instead of `grep` for better performance and features.
+- `rm` is aliased to `trash` which Claude can't use. Use `/bin/rm` instead.
 
 ## Javascript and Typescript
 

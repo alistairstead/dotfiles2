@@ -1,0 +1,2 @@
+#!/bin/sh
+yabai --stop-service

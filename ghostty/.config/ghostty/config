@@ -35,7 +35,6 @@ title = Ghostty
 # SHELL INTEGRATION
 # =====================================
 
-
 # =====================================
 # WINDOW AND DISPLAY
 # =====================================
@@ -62,35 +61,35 @@ mouse-hide-while-typing = true
 
 # Monaspace font family with variants for different styles
 font-family = Monaspace Neon Var
-font-family-bold  = Monaspace Neon Var
+font-family-bold = Monaspace Neon Var
 font-family-italic = Monaspace Radon Var
-font-family-bold-italic  = Monaspace Radon Var
+font-family-bold-italic = Monaspace Radon Var
 window-title-font-family = Monaspace Neon Var
 
 # Font weights for different styles
-font-variation = wght = 100
-font-variation-italic = wght = 100
-font-variation-bold = wght = 400
-font-variation-bold-italic = wght = 400
+# font-variation = wght = 100
+# font-variation-italic = wght = 100
+# font-variation-bold = wght = 400
+# font-variation-bold-italic = wght = 400
 
 # OpenType features for enhanced typography
-font-feature = calt  # Contextual alternates
-font-feature = liga  # Ligatures
-font-feature = ss01  # Stylistic set 1
-font-feature = ss02  # Stylistic set 2
-font-feature = ss03  # Stylistic set 3
-font-feature = ss04  # Stylistic set 4
-font-feature = ss05  # Stylistic set 5
-font-feature = ss06  # Stylistic set 6
-font-feature = ss07  # Stylistic set 7
-font-feature = ss08  # Stylistic set 8
-font-feature = ss09  # Stylistic set 9
+font-feature = calt # Contextual alternates
+font-feature = liga # Ligatures
+font-feature = ss01 # Stylistic set 1
+font-feature = ss02 # Stylistic set 2
+font-feature = ss03 # Stylistic set 3
+font-feature = ss04 # Stylistic set 4
+font-feature = ss05 # Stylistic set 5
+font-feature = ss06 # Stylistic set 6
+font-feature = ss07 # Stylistic set 7
+font-feature = ss08 # Stylistic set 8
+font-feature = ss09 # Stylistic set 9
 
 # Font sizing and cell adjustments
 font-size = 14
-adjust-cell-width = 10%
+# adjust-cell-width = 10%
 adjust-cell-height = 45%
-adjust-underline-position = 30%
+# adjust-underline-position = 30%
 
 # =====================================
 # THEME AND COLORS
@@ -112,4 +111,4 @@ clipboard-trim-trailing-spaces = true
 # =====================================
 
 # Catppuccin theme - automatic light/dark switching
-theme = light:catppuccin-latte,dark:catppuccin-mocha
+# theme = light:catppuccin-latte,dark:catppuccin-mocha

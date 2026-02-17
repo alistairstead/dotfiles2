@@ -23,25 +23,53 @@ auto-track-bookmarks = "main"
 
 [revset-aliases]
 'trunk()' = 'latest(remote_bookmarks(exact:"main", exact:"origin"))'
-'mine()' = 'mutable() & mine()'
-'stack()' = 'trunk()..@'
+'mine()' = "mutable() & mine()"
+'stack()' = "trunk()..@"
 
 [aliases]
-l = ['log', '-r', 'trunk()..@ | ancestors(trunk(), 2)']
-la = ['log', '-r', 'all()']
-sync = ['rebase', '-d', 'main']
-tidy = ['git', 'push', '-b', 'glob:feat/*', '-b', 'glob:fix/*']
+l = ["log", "-r", "trunk()..@ | ancestors(trunk(), 15)"]
+la = ["log", "-r", "all()"]
+sync = ["rebase", "-d", "main"]
+tidy = ["git", "push", "-b", "glob:feat/*", "-b", "glob:fix/*"]
+claude-checkpoint = [
+  "util",
+  "exec",
+  "--",
+  "bash",
+  "-c",
+  """
+  set -euo pipefail
+  is_empty=$(jj show @ -T 'self.empty()' --no-pager)
+  if [ "$is_empty" = "true" ]; then
+    echo "No changes to checkpoint."
+    exit 0
+  fi
+  jj new
+  author="$1"
+  # if author is set, describe the previous commit with the author
+  if [ -n "$author" ]; then
+    jj describe -r @- -m "$author"
+  fi
+""",
+  ""
+]
 
 [fix.tools.biome]
-command = ["bunx", "@biomejs/biome", "check", "--stdin-file-path=$path", "--write"]
+command = [
+  "bunx",
+  "@biomejs/biome",
+  "check",
+  "--stdin-file-path=$path",
+  "--write"
+]
 
 patterns = [
-    "glob:'**/*.js'",
-    "glob:'**/*.jsx'",
-    "glob:'**/*.ts'",
-    "glob:'**/*.tsx'",
-    "glob:'**/*.json'",
-    ]
+  "glob:'**/*.js'",
+  "glob:'**/*.jsx'",
+  "glob:'**/*.ts'",
+  "glob:'**/*.tsx'",
+  "glob:'**/*.json'",
+]
 
 # [ui]
 # # diff-formatter = "ksdiff"
