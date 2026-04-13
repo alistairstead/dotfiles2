@@ -31,6 +31,7 @@ bun = "latest"
 # python = "3.12"
 # ruby = "3.3"
 # go = "1.21"
+"pipx:piper-tts" = "latest"
 
 # Environment variables
 [env]
