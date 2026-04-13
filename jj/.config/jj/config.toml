@@ -31,7 +31,7 @@ l = ["log", "-r", "trunk()..@ | ancestors(trunk(), 15)"]
 la = ["log", "-r", "all()"]
 sync = ["rebase", "-d", "main"]
 tidy = ["git", "push", "-b", "glob:feat/*", "-b", "glob:fix/*"]
-claude-checkpoint = [
+claude-snapshot = [
   "util",
   "exec",
   "--",
@@ -41,15 +41,14 @@ claude-checkpoint = [
   set -euo pipefail
   is_empty=$(jj show @ -T 'self.empty()' --no-pager)
   if [ "$is_empty" = "true" ]; then
-    echo "No changes to checkpoint."
+    echo "No changes to snapshot"
     exit 0
   fi
-  jj new
-  author="$1"
-  # if author is set, describe the previous commit with the author
-  if [ -n "$author" ]; then
-    jj describe -r @- -m "$author"
-  fi
+  # Trigger operation recording with jj status
+  jj status > /dev/null
+  op_id=$(jj op log --no-pager -T 'id.short()' --limit 1)
+  echo "Snapshot: operation $op_id"
+  echo "Use 'jj op log' to view history and 'jj op restore --to $op_id' to restore if needed."
 """,
   ""
 ]

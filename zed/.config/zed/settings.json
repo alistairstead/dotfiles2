@@ -1,5 +1,28 @@
 {
-	"agent_servers": {
+	"ssh_connections": [
+  {
+   "host": "192.168.0.187",
+   "username": "hassio",
+   "args": [],
+   "projects": [
+    {
+     "paths": [
+      "/./"
+     ]
+    },
+    {
+     "paths": [
+      "/home/hassio"
+     ]
+    }
+   ],
+   "nickname": "Homeassistant"
+  }
+ ],
+ "git_panel": {
+  "dock": "right"
+ },
+ "agent_servers": {
   "claude-acp": {
    "type": "registry"
   }
@@ -55,13 +78,15 @@
   }
  },
  "collaboration_panel": {
-  "dock": "left"
+  "dock": "right"
  },
  "outline_panel": {
+  "dock": "right",
   "auto_reveal_entries": false,
   "auto_fold_dirs": false
  },
  "project_panel": {
+  "dock": "right",
   "hide_gitignore": false,
   "hide_root": true,
   "drag_and_drop": true,
@@ -314,7 +339,9 @@
 	// if it contains only lowercase letters, the search becomes case-insensitive.
 	"use_smartcase_search": true,
 	"agent": {
-		"tool_permissions": {
+		"new_thread_location": "local_project",
+  "dock": "left",
+  "tool_permissions": {
    "default": "allow"
   },
   "default_profile": "write",
@@ -358,7 +385,7 @@
 				}
 			}
 		},
-		"play_sound_when_agent_done": true,
+		"play_sound_when_agent_done": "always",
 		"default_model": {
 			"provider": "copilot_chat",
 			"model": "claude-sonnet-4"
