@@ -45,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jj claude-checkpoint 'claude@kde.sh' >> /tmp/claude-checkpoint.log 2>&1 || true"
+            "command": "jj claude-snapshot >> /tmp/claude-snapshot.log 2>&1 || true"
           }
         ]
       },
@@ -85,7 +85,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r .message | say"
+            "command": "~/.claude/hooks/speak-notification.sh"
           }
         ]
       },
@@ -94,7 +94,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r .message | terminal-notifier -title 'Claude Code needs you' -sender com.anthropic.claudefordesktop"
+            "command": "jq -r .message | terminal-notifier -title 'I need your attention' -sender com.anthropic.claudefordesktop"
           }
         ]
       },
@@ -114,7 +114,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jj claude-checkpoint 'Claude <claude@kde.sh>' >> /tmp/claude-checkpoint.log 2>&1 || true"
+            "command": "jj claude-snapshot  >> /tmp/claude-snapshot.log 2>&1 || true"
           }
         ]
       },
@@ -124,6 +124,27 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/notification.ts"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/speak-notification.sh"
+          }
+        ]
+      }
+    ],
+    "WorktreeCreate": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git worktree add -b \"worktree-$(basename \"$1\")\" \"$1\" origin/main",
+            "timeout": 10000
           }
         ]
       }
@@ -155,7 +176,8 @@
     "architect@kodehort-skills": true,
     "prd@kodehort-skills": true,
     "solid-js@kodehort-skills": true,
-    "second-brain@kodehort-skills": true
+    "second-brain@kodehort-skills": true,
+    "swift-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "context-mode": {
@@ -170,9 +192,22 @@
         "path": "/Users/alistairstead/dev/kodehort/agent-skills"
       },
       "autoUpdate": true
+    },
+    "obsidian-skills": {
+      "source": {
+        "source": "github",
+        "repo": "kepano/obsidian-skills"
+      }
+    },
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
     }
   },
   "alwaysThinkingEnabled": true,
+  "advisorModel": "opus",
   "autoDreamEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754066916309

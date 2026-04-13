@@ -151,6 +151,7 @@ info "Creating symlinks with GNU Stow..."
 STOW_FOLDERS=(
   "bash"
   "bin"
+  "claude"
   "direnv"
   "gh"
   "git"
@@ -181,6 +182,19 @@ for folder in "${STOW_FOLDERS[@]}"; do
   fi
 done
 success "Dotfiles linked"
+
+# =====================================
+# 6b. Compile Claude Code TTS binary
+# =====================================
+
+if [ -f "$HOME/.claude/hooks/speak.swift" ]; then
+  info "Compiling Claude Code TTS binary..."
+  swiftc -o "$HOME/.claude/hooks/speak" "$HOME/.claude/hooks/speak.swift" -framework AVFoundation 2>/dev/null \
+    && success "TTS binary compiled" \
+    || error "Failed to compile TTS binary (say fallback will be used)"
+else
+  info "Skipping TTS binary (speak.swift not found)"
+fi
 
 # =====================================
 # 7. Zap (Zsh Plugin Manager)

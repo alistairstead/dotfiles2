@@ -251,7 +251,7 @@ class NotificationHandler {
       // Extract notification details
       const message = this.truncateMessage(
         this.sanitizeInput(
-          toolInput.tool_input?.message || "Claude Code notification",
+          toolInput.tool_input?.message || "I have a notification",
         ),
       );
       const sessionId = this.sanitizeInput(toolInput.session_id || "default");
@@ -262,8 +262,8 @@ class NotificationHandler {
 
       // Build notification title
       const title = toolInput.session_id
-        ? `Claude Code [${sessionId}]`
-        : "Claude Code";
+        ? `Session ${sessionId}`
+        : "Claude";
 
       // Get appropriate sound
       const sound = this.getNotificationSound(notificationType);
