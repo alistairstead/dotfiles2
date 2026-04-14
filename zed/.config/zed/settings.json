@@ -136,7 +136,7 @@
 			}
 		},
 		"mcp-server-context7": {
-   "enabled": true,
+   "enabled": false,
 			"settings": {
 				"default_minimum_tokens": "10000"
 			}

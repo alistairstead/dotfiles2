@@ -18,17 +18,21 @@
       "Bash(bun vitest:*)",
       "Bash(bun run test:*)",
       "Bash(bun turbo:*)",
-      "mcp__pencil"
+      "mcp__pencil",
+      "Edit(.env.schema)",
+      "Edit(**/.env.schema)",
+      "Read(.env.schema)",
+      "Read(**/.env.schema)"
     ],
     "deny": [
       "Edit(.env)",
-      "Edit(.env.*)",
+      "Edit(.env.[!s]*)",
       "Edit(**/.env)",
-      "Edit(**/.env.*)",
+      "Edit(**/.env.[!s]*)",
       "Read(.env)",
-      "Read(.env.*)",
+      "Read(.env.[!s]*)",
       "Read(**/.env)",
-      "Read(**/.env.*)",
+      "Read(**/.env.[!s]*)",
       "Read(**/*.pem)",
       "Read(**/*.key)",
       "Read(**/*.crt)",
@@ -37,7 +41,6 @@
       "Read(**/credentials/**)"
     ]
   },
-  "model": "opus[1m]",
   "hooks": {
     "PostToolUse": [
       {
@@ -85,7 +88,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/speak-notification.sh"
+            "command": "bun ~/.claude/hooks/speak-notification.ts"
           }
         ]
       },
@@ -132,7 +135,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/speak-notification.sh"
+            "command": "bun ~/.claude/hooks/speak-notification.ts"
           }
         ]
       }
@@ -152,32 +155,27 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "~/.claude/statusline-command.sh"
+    "command": "sh $HOME/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true,
     "playwright@claude-plugins-official": false,
-    "context7@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true,
-    "feature-dev@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": false,
     "dev-browser@dev-browser-marketplace": true,
     "ralph@ralph-marketplace": true,
-    "lua-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
     "jj@kodehort-skills": true,
     "github@kodehort-skills": true,
     "bdd@kodehort-skills": true,
-    "code-review@kodehort-skills": true,
     "skill-creator@claude-plugins-official": true,
     "ddd@kodehort-skills": true,
     "tdd@kodehort-skills": true,
     "architect@kodehort-skills": true,
     "prd@kodehort-skills": true,
     "solid-js@kodehort-skills": true,
-    "second-brain@kodehort-skills": true,
-    "swift-lsp@claude-plugins-official": true
+    "interview@kodehort-skills": true,
+    "agent@kodehort-skills": true
   },
   "extraKnownMarketplaces": {
     "context-mode": {
@@ -198,17 +196,13 @@
         "source": "github",
         "repo": "kepano/obsidian-skills"
       }
-    },
-    "caveman": {
-      "source": {
-        "source": "github",
-        "repo": "JuliusBrussee/caveman"
-      }
     }
   },
   "alwaysThinkingEnabled": true,
+  "effortLevel": "xhigh",
   "advisorModel": "opus",
   "autoDreamEnabled": true,
+  "skipAutoPermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754066916309
   }

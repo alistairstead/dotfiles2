@@ -24,6 +24,7 @@ format to add the TODO. For instance:
 
 - Use `rg` (ripgrep) instead of `grep` for better performance and features.
 - `rm` is aliased to `trash` which Claude can't use. Use `/bin/rm` instead.
+- Use `bunx` or `bun` instead of `npx` or `npm`
 
 ## Javascript and Typescript
 
