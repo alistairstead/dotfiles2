@@ -243,9 +243,11 @@ function extractQuestionText(msg: string): string | null {
 
   const spoken = questionLines.join(" ").trim();
   if (spoken.length < 80) {
-    const paragraphs = msg.split(/\n\n+/);
+    const clean = normalizeSpeech(msg);
+    const paragraphs = clean.split(/\n\n+/);
     const preceding = paragraphs.at(-2)?.trim() ?? "";
-    const context = preceding ? normalizeSpeech(preceding) : "";
+    const firstSentence = preceding.match(/^[^.!?]+[.!?]/)?.[0]?.trim() ?? preceding;
+    const context = firstSentence.slice(0, 100);
     return context ? `${context} ${spoken}` : spoken;
   }
   return spoken;
