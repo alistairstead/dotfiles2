@@ -127,12 +127,12 @@ const VOICE_PROFILES: Record<VoiceProfile, VoiceConfig> = {
   },
   success: {
     model: "en_GB-jenny_dioco-medium",
-    lengthScale: 1.15,
-    noiseScale: 0.5,
-    noiseWScale: 0.6,
-    sentenceSilence: 0.2,
+    lengthScale: 0.9,
+    noiseScale: 0.35,
+    noiseWScale: 0.4,
+    sentenceSilence: 0.1,
     sayVoice: "Jamie (Premium)",
-    sayRate: 180,
+    sayRate: 200,
     prefixes: [
       "Done! . .",
       "Sorted! . .",
@@ -143,12 +143,12 @@ const VOICE_PROFILES: Record<VoiceProfile, VoiceConfig> = {
   },
   prompt: {
     model: "en_GB-jenny_dioco-medium",
-    lengthScale: 1.15,
-    noiseScale: 0.7,
-    noiseWScale: 0.7,
-    sentenceSilence: 0.3,
+    lengthScale: 0.9,
+    noiseScale: 0.4,
+    noiseWScale: 0.45,
+    sentenceSilence: 0.15,
     sayVoice: "Serena (Premium)",
-    sayRate: 160,
+    sayRate: 190,
     prefixes: [
       "I need your input.",
       "Over to you!",
@@ -176,14 +176,6 @@ function pick<T>(arr: T[]): T {
 
 const GREETINGS = ["Hey!\n\n", "Hi!\n\n", "Right then!\n\n", "Heads up!\n\n"];
 
-const STOP_COMPLETIONS = [
-  "I've finished.",
-  "I'm done.",
-  "All wrapped up.",
-  "That's done.",
-  "Sorted.",
-  "I've completed the task.",
-];
 
 function resolveVoiceProfile(payload: HookPayload): VoiceProfile {
   if (payload.hook_event_name === "StopFailure") return "error";
@@ -193,6 +185,22 @@ function resolveVoiceProfile(payload: HookPayload): VoiceProfile {
   return "default";
 }
 
+const SPEECH_REPLACEMENTS: [RegExp, string][] = [
+  [/```[\s\S]*?```/g, ""],         // fenced code blocks
+  [/===?/g, "equals"],
+  [/!=/g, "not equal to"],
+  [/=>/g, "to"],
+  [/->/g, "to"],
+  [/<-/g, "from"],
+  [/>=/g, "greater than or equal to"],
+  [/<=/g, "less than or equal to"],
+  [/&&/g, "and"],
+  [/\|\|/g, "or"],
+  [/~/g, "approximately"],
+  [/%/g, "percent"],
+  [/\|/g, ""],
+];
+
 function stripMarkdown(text: string): string {
   return text
     .replace(/^#{1,6}\s+/gm, "")
@@ -201,6 +209,29 @@ function stripMarkdown(text: string): string {
     .replace(/`[^`]+`/g, "")
     .replace(/^\s*[-*+]\s+/gm, "")
     .trim();
+}
+
+function normalizeSpeech(text: string): string {
+  let result = text;
+  for (const [pattern, replacement] of SPEECH_REPLACEMENTS) {
+    result = result.replace(pattern, replacement);
+  }
+  result = stripMarkdown(result);
+  // remove remaining non-speech characters
+  result = result.replace(/[^\w\s.,!?;:'"()\-\n]/g, "");
+  return result.replace(/\s{2,}/g, " ").trim();
+}
+
+// ─── Text extraction ─────────────────────────────────────────────────────────
+
+function truncateToSentences(text: string, maxChars = 300): string {
+  const sentences = text.match(/[^.!?]+[.!?]+/g) ?? [text];
+  let result = "";
+  for (const s of sentences.slice(0, 3)) {
+    if ((result + s).length > maxChars) break;
+    result += s;
+  }
+  return result.trim() || text.slice(0, maxChars);
 }
 
 // ─── Question extraction ──────────────────────────────────────────────────────
@@ -214,17 +245,10 @@ function extractQuestionText(msg: string): string | null {
   if (spoken.length < 80) {
     const paragraphs = msg.split(/\n\n+/);
     const preceding = paragraphs.at(-2)?.trim() ?? "";
-    const context = preceding ? stripMarkdown(preceding) : "";
+    const context = preceding ? normalizeSpeech(preceding) : "";
     return context ? `${context} ${spoken}` : spoken;
   }
   return spoken;
-}
-
-function extractCompletionText(msg: string): string {
-  const cleaned = stripMarkdown(msg);
-  const match = cleaned.match(/^[^.!\n]+[.!]?/);
-  const sentence = match ? match[0].trim() : "";
-  return sentence.length > 10 ? sentence : pick(STOP_COMPLETIONS);
 }
 
 // ─── Logging ─────────────────────────────────────────────────────────────────
@@ -304,8 +328,17 @@ async function speakWithPiper(
   });
   await piperProc.exited;
 
+  // Normalize to -1dB to prevent clipping artifacts
+  const soxProc = Bun.spawn(
+    ["sox", "/tmp/claude-speak.wav", "/tmp/claude-speak-norm.wav", "gain", "-n", "-1"],
+    { stdout: "ignore", stderr: "ignore" },
+  );
+  await soxProc.exited;
+  const normalized = await Bun.file("/tmp/claude-speak-norm.wav").exists();
+  const playFile = normalized ? "/tmp/claude-speak-norm.wav" : "/tmp/claude-speak.wav";
+
   // Fire and forget — don't block hook exit on playback
-  Bun.spawn(["afplay", "/tmp/claude-speak.wav"], {
+  Bun.spawn(["afplay", playFile], {
     stdout: "ignore",
     stderr: "ignore",
   });
@@ -328,7 +361,11 @@ async function speakFallback(
 
 // ─── Main ────────────────────────────────────────────────────────────────────
 
+const MUTE_FLAG = `${homedir()}/.claude/hooks/.speak-muted`;
+
 async function main(): Promise<void> {
+  appendFileSync("/tmp/speak-notification.log", JSON.stringify({ ts: new Date().toISOString(), hook: "invoked" }) + "\n");
+  if (await Bun.file(MUTE_FLAG).exists()) process.exit(0);
   const inputData = await Bun.stdin.text();
   if (!inputData.trim()) process.exit(0);
 
@@ -351,19 +388,17 @@ async function main(): Promise<void> {
       spoken = questionText;
     } else {
       voiceProfile = "success";
-      const config = VOICE_PROFILES.success;
-      const prefix = pick(config.prefixes);
-      const completion = extractCompletionText(lastMsg);
-      spoken = [pick(GREETINGS), prefix, completion]
-        .filter(Boolean)
-        .join("\n");
+      spoken = truncateToSentences(stripMarkdown(lastMsg));
     }
   } else if (hook === "StopFailure") {
     voiceProfile = "error";
-    const config = VOICE_PROFILES.error;
-    const prefix = pick(config.prefixes);
-    const detail = payload.error_details ?? payload.error ?? "Unknown error";
-    spoken = [pick(GREETINGS), prefix, detail].filter(Boolean).join("\n");
+    spoken = payload.error_details ?? payload.error ?? "Unknown error";
+  } else if (hook === "TaskCompleted") {
+    voiceProfile = "success";
+    spoken = payload.message ?? "Task completed.";
+  } else if (hook === "PreCompact") {
+    voiceProfile = "warning";
+    spoken = "Context compacting. I may lose some memory of earlier work.";
   } else {
     const config = VOICE_PROFILES[voiceProfile];
     const message = (payload.message ?? "I have a notification").slice(0, 120);
@@ -371,8 +406,11 @@ async function main(): Promise<void> {
     spoken = [pick(GREETINGS), prefix, message].filter(Boolean).join("\n");
   }
 
+  spoken = normalizeSpeech(spoken);
   const config = VOICE_PROFILES[voiceProfile];
   logInvocation(payload, voiceProfile, spoken);
+
+  Bun.spawn(["pkill", "afplay"], { stdout: "ignore", stderr: "ignore" });
 
   const piperPath = await findPiper();
   if (piperPath) {

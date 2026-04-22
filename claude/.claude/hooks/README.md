@@ -273,6 +273,73 @@ The hook is automatically executable when checked out. If needed:
 chmod +x ts-lint.ts
 ```
 
+## speak-notification.ts
+
+Text-to-speech hook that speaks Claude events aloud using Piper TTS (primary) or macOS `say` (fallback).
+
+### Events
+
+| Event | Voice | What is spoken |
+|---|---|---|
+| `Stop` (with question) | prompt | Question verbatim, with preceding paragraph for context if short |
+| `Stop` (no question) | success | First 2–3 sentences of the response, ≤300 chars |
+| `StopFailure` | error | `error_details` or `error` type directly |
+| `TaskCompleted` | success | `message` payload or "Task completed." |
+| `PreCompact` | warning | Fixed warning about context compaction |
+| `Notification` | prompt/default | `message` payload, ≤120 chars |
+
+### Voice profiles
+
+| Profile | Speed | Use |
+|---|---|---|
+| `success` | 0.9x | Task/stop completion |
+| `prompt` | 0.9x | Questions, permission prompts |
+| `error` | 1.2x (slower) | Failures |
+| `warning` | 1.15x | Heads-up events |
+| `default` | 1.15x | General notifications |
+
+### Message normalisation
+
+All spoken text passes through `normalizeSpeech` which:
+- Strips fenced code blocks
+- Replaces symbols: `->` → "to", `~` → "approximately", `>=` → "greater than or equal to", `&&` → "and", `%` → "percent", etc.
+- Strips markdown (headers, bold, italic, inline code, list bullets)
+- Removes remaining non-speech characters
+
+### Interruption
+
+Each invocation runs `pkill afplay` before speaking, so a new event always cuts off the previous one.
+
+### Mute
+
+Create the flag file to silence all speech:
+
+```bash
+touch ~/.claude/hooks/.speak-muted
+```
+
+Remove it to restore:
+
+```bash
+/bin/rm ~/.claude/hooks/.speak-muted
+```
+
+Bind a Karabiner rule to toggle the file for hands-free mute.
+
+### TTS engines
+
+1. **Piper** (primary) — looks up `piper` via `mise exec pipx:piper-tts`. Voice models stored in `~/.local/share/piper-voices/`. Current voice: `en_GB-jenny_dioco-medium`.
+2. **Swift binary** `~/.claude/hooks/speak` — fallback if present.
+3. **macOS `say`** — final fallback using the voice and rate from the active voice profile.
+
+### Logging
+
+Structured JSON appended to `/tmp/speak-notification.log`. Each entry includes timestamp, event type, voice profile, original message, and the final spoken string.
+
+### Settings
+
+Registered in `.claude/settings.json` under `Stop`, `Notification`, `TaskCompleted`, and `PreCompact` hooks with an empty matcher (fires on all).
+
 ## notification.ts
 
 A TypeScript hook that sends macOS notifications for Claude Code events and user interactions.
