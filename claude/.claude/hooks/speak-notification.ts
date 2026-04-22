@@ -187,6 +187,8 @@ function resolveVoiceProfile(payload: HookPayload): VoiceProfile {
 
 const SPEECH_REPLACEMENTS: [RegExp, string][] = [
   [/```[\s\S]*?```/g, ""],         // fenced code blocks
+  [/—/g, "EM_DASH_PAUSE"],           // em dash → placeholder for sox silence splice
+  [/–/g, ", "],                    // en dash → short pause
   [/===?/g, "equals"],
   [/!=/g, "not equal to"],
   [/=>/g, "to"],
@@ -296,6 +298,29 @@ async function findPiper(): Promise<string | null> {
   }
 }
 
+const EM_DASH_PAUSE_S = 0.9; // seconds of silence per em dash
+
+async function synthesizeSegment(
+  text: string,
+  outFile: string,
+  config: VoiceConfig,
+  piperPath: string,
+  onnxPath: string,
+): Promise<void> {
+  const args = [
+    piperPath,
+    "--model", onnxPath,
+    "--length-scale", String(config.lengthScale),
+    "--noise-scale", String(config.noiseScale),
+    "--noise-w-scale", String(config.noiseWScale),
+    "--sentence-silence", String(config.sentenceSilence),
+    "--output_file", outFile,
+  ];
+  if (config.speaker !== undefined) args.push("--speaker", String(config.speaker));
+  const proc = Bun.spawn(args, { stdin: new Response(text), stdout: "ignore", stderr: "ignore" });
+  await proc.exited;
+}
+
 async function speakWithPiper(
   spoken: string,
   config: VoiceConfig,
@@ -303,47 +328,48 @@ async function speakWithPiper(
 ): Promise<void> {
   const home = homedir();
   const onnxPath = `${home}/.local/share/piper-voices/${config.model}.onnx`;
+  const segments = spoken.split("EM_DASH_PAUSE");
 
-  const args = [
-    piperPath,
-    "--model",
-    onnxPath,
-    "--length-scale",
-    String(config.lengthScale),
-    "--noise-scale",
-    String(config.noiseScale),
-    "--noise-w-scale",
-    String(config.noiseWScale),
-    "--sentence-silence",
-    String(config.sentenceSilence),
-    "--output_file",
-    "/tmp/claude-speak.wav",
-  ];
-  if (config.speaker !== undefined) {
-    args.push("--speaker", String(config.speaker));
+  let partFiles: string[];
+
+  if (segments.length === 1) {
+    await synthesizeSegment(spoken, "/tmp/claude-speak.wav", config, piperPath, onnxPath);
+    partFiles = ["/tmp/claude-speak.wav"];
+  } else {
+    // Synthesize each segment, interleave with silence
+    const silenceFile = "/tmp/claude-speak-silence.wav";
+    await Bun.spawn(
+      ["sox", "-n", "-r", "22050", "-c", "1", silenceFile, "trim", "0.0", String(EM_DASH_PAUSE_S)],
+      { stdout: "ignore", stderr: "ignore" },
+    ).exited;
+
+    const segFiles: string[] = [];
+    for (let i = 0; i < segments.length; i++) {
+      const seg = segments[i].trim();
+      if (!seg) continue;
+      const f = `/tmp/claude-speak-seg${i}.wav`;
+      await synthesizeSegment(seg, f, config, piperPath, onnxPath);
+      if (await Bun.file(f).exists()) segFiles.push(f);
+      if (i < segments.length - 1) segFiles.push(silenceFile);
+    }
+    await Bun.spawn(
+      ["sox", ...segFiles, "/tmp/claude-speak.wav"],
+      { stdout: "ignore", stderr: "ignore" },
+    ).exited;
+    partFiles = ["/tmp/claude-speak.wav"];
   }
-
-  const piperProc = Bun.spawn(args, {
-    stdin: new Response(spoken),
-    stdout: "ignore",
-    stderr: "ignore",
-  });
-  await piperProc.exited;
 
   // Normalize to -1dB to prevent clipping artifacts
   const soxProc = Bun.spawn(
-    ["sox", "/tmp/claude-speak.wav", "/tmp/claude-speak-norm.wav", "gain", "-n", "-1"],
+    ["sox", partFiles[0], "/tmp/claude-speak-norm.wav", "gain", "-n", "-1"],
     { stdout: "ignore", stderr: "ignore" },
   );
   await soxProc.exited;
   const normalized = await Bun.file("/tmp/claude-speak-norm.wav").exists();
-  const playFile = normalized ? "/tmp/claude-speak-norm.wav" : "/tmp/claude-speak.wav";
+  const playFile = normalized ? "/tmp/claude-speak-norm.wav" : partFiles[0];
 
   // Fire and forget — don't block hook exit on playback
-  Bun.spawn(["afplay", playFile], {
-    stdout: "ignore",
-    stderr: "ignore",
-  });
+  Bun.spawn(["afplay", playFile], { stdout: "ignore", stderr: "ignore" });
 }
 
 async function speakFallback(
