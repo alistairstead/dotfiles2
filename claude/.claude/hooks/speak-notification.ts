@@ -107,7 +107,7 @@ const VOICE_PROFILES: Record<VoiceProfile, VoiceConfig> = {
       "I've hit a problem, and need help.",
       "Something went wrong, I don't know how to proceed.",
       "There's an issue, many many issues.",
-      "I've run into B.I.G. trouble!",
+      "I've run into B–I–G trouble!",
     ],
   },
   warning: {
@@ -134,11 +134,11 @@ const VOICE_PROFILES: Record<VoiceProfile, VoiceConfig> = {
     sayVoice: "Jamie (Premium)",
     sayRate: 200,
     prefixes: [
-      "Done! . .",
-      "Sorted! . .",
-      "All good! . .",
-      "That kinda worked. . .",
-      "Naaiiiiled it! . .",
+      "Done – ",
+      "Sorted – ",
+      "All good – ",
+      "That kinda worked – ",
+      "Nailed it – ",
     ],
   },
   prompt: {
@@ -151,9 +151,9 @@ const VOICE_PROFILES: Record<VoiceProfile, VoiceConfig> = {
     sayRate: 190,
     prefixes: [
       "I need your input.",
-      "Over to you!",
-      "I need a decision!",
-      "Quiiiiick, question?",
+      "Over to you.",
+      "I need a decision.",
+      "Quick, question.",
     ],
   },
   default: {
@@ -174,7 +174,7 @@ function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-const GREETINGS = ["Hey!\n\n", "Hi!\n\n", "Right then!\n\n", "Heads up!\n\n"];
+const GREETINGS = ["Hey – ", "Hi – ", "Right then – ", "Heads up – "];
 
 
 function resolveVoiceProfile(payload: HookPayload): VoiceProfile {
@@ -198,12 +198,14 @@ const SPEECH_REPLACEMENTS: [RegExp, string][] = [
   [/<=/g, "less than or equal to"],
   [/&&/g, "and"],
   [/\|\|/g, "or"],
+  [/#(\d+)/g, "number $1"],
+  [/(\w+)\/(\w+)/g, "$1 of $2"],
   [/~/g, "approximately"],
   [/%/g, "percent"],
   [/\|/g, ""],
 ];
 
-function stripMarkdown(text: string): string {
+export function stripMarkdown(text: string): string {
   return text
     .replace(/^#{1,6}\s+/gm, "")
     .replace(/\*\*([^*]+)\*\*/g, "$1")
@@ -213,32 +215,66 @@ function stripMarkdown(text: string): string {
     .trim();
 }
 
-function normalizeSpeech(text: string): string {
+export function normalizeSpeech(text: string): string {
   let result = text;
   for (const [pattern, replacement] of SPEECH_REPLACEMENTS) {
     result = result.replace(pattern, replacement);
   }
   result = stripMarkdown(result);
+  result = result.replace(/\n+/g, " ");
   // remove remaining non-speech characters
-  result = result.replace(/[^\w\s.,!?;:'"()\-\n]/g, "");
+  result = result.replace(/[^\w\s.,!?;:'"()\-]/g, "");
   return result.replace(/\s{2,}/g, " ").trim();
 }
 
 // ─── Text extraction ─────────────────────────────────────────────────────────
 
-function truncateToSentences(text: string, maxChars = 300): string {
-  const sentences = text.match(/[^.!?]+[.!?]+/g) ?? [text];
-  let result = "";
-  for (const s of sentences.slice(0, 3)) {
-    if ((result + s).length > maxChars) break;
-    result += s;
+export const SPOKEN_MIN_WORDS = 13; // target 15 - 2
+export const SPOKEN_MAX_WORDS = 17; // target 15 + 2
+
+export function wordCount(text: string): number {
+  return text.split(/\s+/).filter(Boolean).length;
+}
+
+export function inRange(n: number): boolean {
+  return n >= SPOKEN_MIN_WORDS && n <= SPOKEN_MAX_WORDS;
+}
+
+const DECIMAL_PLACEHOLDER = "\x00";
+
+function splitIntoSentences(text: string): string[] {
+  // Temporarily replace digit.digit (decimals, versions) so they don't split sentences
+  const safe = text.replace(/(?<=\d)\.(?=\d)/g, DECIMAL_PLACEHOLDER);
+  const byPunct = safe.match(/[^.!?]+[.!?]+/g);
+  if (byPunct && byPunct.length > 1) {
+    return byPunct.map((s) => s.replace(/\x00/g, ".").trim());
   }
-  return result.trim() || text.slice(0, maxChars);
+  const byLine = text.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  if (byLine.length > 1) return byLine;
+  return [text];
+}
+
+export function extractSpokenSentences(text: string): string {
+  const sentences = splitIntoSentences(text);
+  const first = sentences[0];
+
+  if (first.trimEnd().endsWith(":")) {
+    return `${first.trimEnd().slice(0, -1)}, see screen for details`;
+  }
+
+  if (inRange(wordCount(first))) return first;
+
+  if (sentences.length >= 2) {
+    const combined = `${first} ${sentences[1]}`;
+    if (inRange(wordCount(combined))) return combined;
+  }
+
+  return first;
 }
 
 // ─── Question extraction ──────────────────────────────────────────────────────
 
-function extractQuestionText(msg: string): string | null {
+export function extractQuestionText(msg: string): string | null {
   const lines = msg.split("\n");
   const questionLines = lines.filter((l) => l.trimEnd().endsWith("?"));
   if (questionLines.length === 0) return null;
@@ -328,45 +364,43 @@ async function speakWithPiper(
 ): Promise<void> {
   const home = homedir();
   const onnxPath = `${home}/.local/share/piper-voices/${config.model}.onnx`;
-  const segments = spoken.split("EM_DASH_PAUSE");
-
-  let partFiles: string[];
+  const segments = spoken.split("EM_DASH_PAUSE").map((s) => s.trim()).filter(Boolean);
 
   if (segments.length === 1) {
     await synthesizeSegment(spoken, "/tmp/claude-speak.wav", config, piperPath, onnxPath);
-    partFiles = ["/tmp/claude-speak.wav"];
   } else {
-    // Synthesize each segment, interleave with silence
-    const silenceFile = "/tmp/claude-speak-silence.wav";
-    await Bun.spawn(
-      ["sox", "-n", "-r", "22050", "-c", "1", silenceFile, "trim", "0.0", String(EM_DASH_PAUSE_S)],
-      { stdout: "ignore", stderr: "ignore" },
-    ).exited;
-
+    // Synthesize each segment with sentence-silence=0 to avoid piper's noisy model tail,
+    // then pad clean silence (true zeros, same format) after each segment except the last.
     const segFiles: string[] = [];
     for (let i = 0; i < segments.length; i++) {
-      const seg = segments[i].trim();
-      if (!seg) continue;
-      const f = `/tmp/claude-speak-seg${i}.wav`;
-      await synthesizeSegment(seg, f, config, piperPath, onnxPath);
-      if (await Bun.file(f).exists()) segFiles.push(f);
-      if (i < segments.length - 1) segFiles.push(silenceFile);
+      const segFile = `/tmp/claude-speak-seg${i}.wav`;
+      await synthesizeSegment(segments[i], segFile, { ...config, sentenceSilence: 0 }, piperPath, onnxPath);
+      if (!(await Bun.file(segFile).exists())) continue;
+      if (i < segments.length - 1) {
+        const paddedFile = `/tmp/claude-speak-pad${i}.wav`;
+        await Bun.spawn(
+          ["sox", segFile, paddedFile, "pad", "0", String(EM_DASH_PAUSE_S)],
+          { stdout: "ignore", stderr: "ignore" },
+        ).exited;
+        segFiles.push(paddedFile);
+      } else {
+        segFiles.push(segFile);
+      }
     }
     await Bun.spawn(
       ["sox", ...segFiles, "/tmp/claude-speak.wav"],
       { stdout: "ignore", stderr: "ignore" },
     ).exited;
-    partFiles = ["/tmp/claude-speak.wav"];
   }
 
   // Normalize to -1dB to prevent clipping artifacts
   const soxProc = Bun.spawn(
-    ["sox", partFiles[0], "/tmp/claude-speak-norm.wav", "gain", "-n", "-1"],
+    ["sox", "/tmp/claude-speak.wav", "/tmp/claude-speak-norm.wav", "gain", "-n", "-1"],
     { stdout: "ignore", stderr: "ignore" },
   );
   await soxProc.exited;
   const normalized = await Bun.file("/tmp/claude-speak-norm.wav").exists();
-  const playFile = normalized ? "/tmp/claude-speak-norm.wav" : partFiles[0];
+  const playFile = normalized ? "/tmp/claude-speak-norm.wav" : "/tmp/claude-speak.wav";
 
   // Fire and forget — don't block hook exit on playback
   Bun.spawn(["afplay", playFile], { stdout: "ignore", stderr: "ignore" });
@@ -409,14 +443,16 @@ async function main(): Promise<void> {
   let voiceProfile = resolveVoiceProfile(payload);
   let spoken: string;
 
-  if (hook === "Stop" && lastMsg) {
+  if (hook === "Stop" && !lastMsg) {
+    process.exit(0);
+  } else if (hook === "Stop" && lastMsg) {
     const questionText = extractQuestionText(lastMsg);
     if (questionText) {
       voiceProfile = "prompt";
       spoken = questionText;
     } else {
       voiceProfile = "success";
-      spoken = truncateToSentences(stripMarkdown(lastMsg));
+      spoken = extractSpokenSentences(stripMarkdown(lastMsg));
     }
   } else if (hook === "StopFailure") {
     voiceProfile = "error";
@@ -431,7 +467,7 @@ async function main(): Promise<void> {
     const config = VOICE_PROFILES[voiceProfile];
     const message = (payload.message ?? "I have a notification").slice(0, 120);
     const prefix = config.prefixes.length ? pick(config.prefixes) : "";
-    spoken = [pick(GREETINGS), prefix, message].filter(Boolean).join("\n");
+    spoken = [pick(GREETINGS), prefix, message].filter(Boolean).join(" — ");
   }
 
   spoken = normalizeSpeech(spoken);
@@ -453,4 +489,6 @@ async function main(): Promise<void> {
   process.exit(0);
 }
 
-main().catch(() => process.exit(1));
+if (import.meta.main) {
+  main().catch(() => process.exit(1));
+}
