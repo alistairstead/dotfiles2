@@ -46,6 +46,13 @@ describe("stripMarkdown", () => {
   test("removes headings", () => {
     expect(stripMarkdown("## Title")).toBe("Title");
   });
+  test("drops inline commit hash refs", () => {
+    expect(stripMarkdown("committed `24563e56`")).toBe("committed");
+    expect(stripMarkdown("see `zwtyoptm 24563e56`")).toBe("see");
+  });
+  test("keeps normal inline code content", () => {
+    expect(stripMarkdown("use `foo()` here")).toBe("use foo() here");
+  });
 });
 
 describe("normalizeSpeech", () => {

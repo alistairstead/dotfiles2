@@ -210,7 +210,9 @@ export function stripMarkdown(text: string): string {
     .replace(/^#{1,6}\s+/gm, "")
     .replace(/\*\*([^*]+)\*\*/g, "$1")
     .replace(/\*([^*]+)\*/g, "$1")
-    .replace(/`([^`]+)`/g, "$1")
+    .replace(/`([^`]+)`/g, (_, c) =>
+      /^([a-z]{8}\s+)?[0-9a-f]{7,40}$/.test(c.trim()) ? "" : c
+    )
     .replace(/^\s*[-*+]\s+/gm, "")
     .trim();
 }
