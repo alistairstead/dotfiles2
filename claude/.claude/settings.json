@@ -197,7 +197,8 @@
     "prd@kodehort-skills": true,
     "solid-js@kodehort-skills": true,
     "interview@kodehort-skills": true,
-    "agent@kodehort-skills": true
+    "agent@kodehort-skills": true,
+    "code-review@kodehort-skills": true
   },
   "extraKnownMarketplaces": {
     "context-mode": {
