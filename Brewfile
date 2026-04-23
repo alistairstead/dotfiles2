@@ -106,8 +106,8 @@ brew "yabai"
 brew "sleepwatcher"
 
 # Casks (GUI applications)
-cask "1password"
-cask "1password-cli"
+cask "1password@beta"
+cask "1password-cli@beta"
 cask "bartender"
 cask "choosy"
 cask "cleanmymac"
