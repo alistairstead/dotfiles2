@@ -210,7 +210,7 @@ export function stripMarkdown(text: string): string {
     .replace(/^#{1,6}\s+/gm, "")
     .replace(/\*\*([^*]+)\*\*/g, "$1")
     .replace(/\*([^*]+)\*/g, "$1")
-    .replace(/`[^`]+`/g, "")
+    .replace(/`([^`]+)`/g, "$1")
     .replace(/^\s*[-*+]\s+/gm, "")
     .trim();
 }
@@ -297,6 +297,7 @@ function logInvocation(
   payload: HookPayload,
   voiceProfile: VoiceProfile,
   spoken: string,
+  audioFile?: string,
 ): void {
   try {
     const entry = JSON.stringify({
@@ -307,6 +308,7 @@ function logInvocation(
       message: payload.message ?? null,
       last: payload.last_assistant_message ?? null,
       spoken,
+      audio_file: audioFile ?? null,
     });
     appendFileSync("/tmp/speak-notification.log", entry + "\n");
     Bun.write(
@@ -361,23 +363,28 @@ async function speakWithPiper(
   spoken: string,
   config: VoiceConfig,
   piperPath: string,
-): Promise<void> {
+  runId: string,
+): Promise<string> {
   const home = homedir();
   const onnxPath = `${home}/.local/share/piper-voices/${config.model}.onnx`;
+  const rawFile = `/tmp/claude-speak-${runId}.wav`;
+  const normFile = `/tmp/claude-speak-norm-${runId}.wav`;
   const segments = spoken.split("EM_DASH_PAUSE").map((s) => s.trim()).filter(Boolean);
 
+  // Always synthesize with sentenceSilence: 0 — the jenny_dioco model generates
+  // loud broadband noise when sentenceSilence > 0. Use sox pad for intentional pauses.
   if (segments.length === 1) {
-    await synthesizeSegment(spoken, "/tmp/claude-speak.wav", config, piperPath, onnxPath);
+    await synthesizeSegment(spoken, rawFile, { ...config, sentenceSilence: 0 }, piperPath, onnxPath);
   } else {
     // Synthesize each segment with sentence-silence=0 to avoid piper's noisy model tail,
     // then pad clean silence (true zeros, same format) after each segment except the last.
     const segFiles: string[] = [];
     for (let i = 0; i < segments.length; i++) {
-      const segFile = `/tmp/claude-speak-seg${i}.wav`;
+      const segFile = `/tmp/claude-speak-seg-${runId}-${i}.wav`;
       await synthesizeSegment(segments[i], segFile, { ...config, sentenceSilence: 0 }, piperPath, onnxPath);
       if (!(await Bun.file(segFile).exists())) continue;
       if (i < segments.length - 1) {
-        const paddedFile = `/tmp/claude-speak-pad${i}.wav`;
+        const paddedFile = `/tmp/claude-speak-pad-${runId}-${i}.wav`;
         await Bun.spawn(
           ["sox", segFile, paddedFile, "pad", "0", String(EM_DASH_PAUSE_S)],
           { stdout: "ignore", stderr: "ignore" },
@@ -388,22 +395,18 @@ async function speakWithPiper(
       }
     }
     await Bun.spawn(
-      ["sox", ...segFiles, "/tmp/claude-speak.wav"],
+      ["sox", ...segFiles, rawFile],
       { stdout: "ignore", stderr: "ignore" },
     ).exited;
   }
 
   // Normalize to -1dB to prevent clipping artifacts
   const soxProc = Bun.spawn(
-    ["sox", "/tmp/claude-speak.wav", "/tmp/claude-speak-norm.wav", "gain", "-n", "-1"],
+    ["sox", rawFile, normFile, "gain", "-n", "-1"],
     { stdout: "ignore", stderr: "ignore" },
   );
   await soxProc.exited;
-  const normalized = await Bun.file("/tmp/claude-speak-norm.wav").exists();
-  const playFile = normalized ? "/tmp/claude-speak-norm.wav" : "/tmp/claude-speak.wav";
-
-  // Fire and forget — don't block hook exit on playback
-  Bun.spawn(["afplay", playFile], { stdout: "ignore", stderr: "ignore" });
+  return await Bun.file(normFile).exists() ? normFile : rawFile;
 }
 
 async function speakFallback(
@@ -463,6 +466,13 @@ async function main(): Promise<void> {
   } else if (hook === "PreCompact") {
     voiceProfile = "warning";
     spoken = "Context compacting. I may lose some memory of earlier work.";
+  } else if (payload.notification_type === "idle_prompt") {
+    voiceProfile = "default";
+    const idleVerb = pick([
+      "waiting", "idle", "pondering", "musing", "contemplating",
+      "daydreaming", "reflecting", "cogitating", "noodling",
+    ]);
+    spoken = `Hi — I'm ${idleVerb}.`;
   } else {
     const config = VOICE_PROFILES[voiceProfile];
     const message = (payload.message ?? "I have a notification").slice(0, 120);
@@ -472,7 +482,7 @@ async function main(): Promise<void> {
 
   spoken = normalizeSpeech(spoken);
   const config = VOICE_PROFILES[voiceProfile];
-  logInvocation(payload, voiceProfile, spoken);
+  const runId = `${payload.session_id.slice(0, 8)}-${Date.now()}`;
 
   Bun.spawn(["pkill", "afplay"], { stdout: "ignore", stderr: "ignore" });
 
@@ -480,11 +490,14 @@ async function main(): Promise<void> {
   if (piperPath) {
     const onnxPath = `${homedir()}/.local/share/piper-voices/${config.model}.onnx`;
     if (await Bun.file(onnxPath).exists()) {
-      await speakWithPiper(spoken, config, piperPath);
+      const playFile = await speakWithPiper(spoken, config, piperPath, runId);
+      logInvocation(payload, voiceProfile, spoken, playFile);
+      Bun.spawn(["afplay", playFile], { stdout: "ignore", stderr: "ignore" });
       process.exit(0);
     }
   }
 
+  logInvocation(payload, voiceProfile, spoken);
   await speakFallback(spoken, config);
   process.exit(0);
 }

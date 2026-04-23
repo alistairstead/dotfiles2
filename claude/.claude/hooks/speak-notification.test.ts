@@ -34,8 +34,8 @@ describe("stripMarkdown", () => {
   test("removes bold", () => {
     expect(stripMarkdown("**bold** text")).toBe("bold text");
   });
-  test("removes inline code", () => {
-    expect(stripMarkdown("use `foo()` here")).toBe("use  here");
+  test("removes inline code markers but keeps content", () => {
+    expect(stripMarkdown("use `foo()` here")).toBe("use foo() here");
   });
   test("removes bullet points", () => {
     expect(stripMarkdown("- item one\n- item two")).toBe("item one\nitem two");
