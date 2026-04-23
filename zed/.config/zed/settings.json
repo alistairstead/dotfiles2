@@ -1,5 +1,8 @@
 {
-	"ssh_connections": [
+	"status_bar": {
+  "show_active_file": true
+ },
+ "ssh_connections": [
   {
    "host": "192.168.0.187",
    "username": "hassio",
@@ -302,7 +305,6 @@
 	// Titlebar related settings
 	"title_bar": {
 		// Whether to show the branch icon beside branch switcher in the titlebar.
-		"show_branch_icon": false,
 		// Whether to show the branch name button in the titlebar.
 		"show_branch_name": false,
 		// Whether to show the project host and name in the titlebar.
@@ -339,7 +341,12 @@
 	// if it contains only lowercase letters, the search becomes case-insensitive.
 	"use_smartcase_search": true,
 	"agent": {
-		"new_thread_location": "local_project",
+		"show_turn_stats": true,
+  "message_editor_min_lines": 6,
+  "expand_terminal_card": false,
+  "expand_edit_card": false,
+  "single_file_review": true,
+  "new_thread_location": "local_project",
   "dock": "left",
   "tool_permissions": {
    "default": "allow"
@@ -431,7 +438,7 @@
 		// copy to the system clipboard.
 		"copy_on_select": true,
 		// Whether to show the terminal button in the status bar
-		"button": false,
+		"button": true,
 		"toolbar": {
 			// Whether to display the terminal title in its toolbar's breadcrumbs.
 			// Only shown if the terminal title is not empty.
