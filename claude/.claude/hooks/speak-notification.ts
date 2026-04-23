@@ -2,72 +2,17 @@
 
 import { appendFileSync } from "fs";
 import { homedir } from "os";
+import {
+  type HookPayload,
+  IDLE_VERBS,
+  normalizeSpeech,
+  stripMarkdown,
+  extractSpokenSentences,
+  extractQuestionText,
+  pick,
+} from "./hooks-shared";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type HookEventName =
-  | "SessionStart"
-  | "UserPromptSubmit"
-  | "UserPromptExpansion"
-  | "PreToolUse"
-  | "PermissionRequest"
-  | "PermissionDenied"
-  | "PostToolUse"
-  | "PostToolUseFailure"
-  | "Notification"
-  | "SubagentStart"
-  | "SubagentStop"
-  | "TaskCreated"
-  | "TaskCompleted"
-  | "Stop"
-  | "StopFailure"
-  | "TeammateIdle"
-  | "InstructionsLoaded"
-  | "ConfigChange"
-  | "CwdChanged"
-  | "FileChanged"
-  | "WorktreeCreate"
-  | "WorktreeRemove"
-  | "PreCompact"
-  | "PostCompact"
-  | "Elicitation"
-  | "ElicitationResult"
-  | "SessionEnd";
-
-type NotificationType =
-  | "permission_prompt" // → prompt voice
-  | "idle_prompt" // → default voice
-  | "auth_success" // → success voice
-  | "elicitation_dialog"; // → prompt voice
-
-type StopFailureError =
-  | "rate_limit"
-  | "authentication_failed"
-  | "billing_error"
-  | "invalid_request"
-  | "server_error"
-  | "max_output_tokens"
-  | "unknown";
-
-interface HookPayload {
-  hook_event_name: HookEventName;
-  session_id: string;
-  transcript_path: string;
-  cwd: string;
-  permission_mode?: string;
-  // Notification-specific
-  notification_type?: NotificationType;
-  message?: string;
-  title?: string;
-  // Stop-specific
-  stop_hook_active?: boolean;
-  last_assistant_message?: string;
-  // StopFailure-specific
-  error?: StopFailureError;
-  error_details?: string;
-}
-
-type VoiceProfile = "error" | "warning" | "success" | "prompt" | "default";
+export { normalizeSpeech, stripMarkdown, extractSpokenSentences, extractQuestionText, wordCount, inRange, SPOKEN_MIN_WORDS, SPOKEN_MAX_WORDS } from "./hooks-shared";
 
 // ─── Voice config ─────────────────────────────────────────────────────────────
 
@@ -81,6 +26,8 @@ type VoiceProfile = "error" | "warning" | "success" | "prompt" | "default";
 //   en_US-lessac-high                   — American male, clear/professional (high quality)
 //
 // Current assignment: Jenny for all event types.
+
+type VoiceProfile = "error" | "warning" | "success" | "prompt" | "default";
 
 interface VoiceConfig {
   model: string;
@@ -170,12 +117,7 @@ const VOICE_PROFILES: Record<VoiceProfile, VoiceConfig> = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function pick<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
 const GREETINGS = ["Hey – ", "Hi – ", "Right then – ", "Heads up – "];
-
 
 function resolveVoiceProfile(payload: HookPayload): VoiceProfile {
   if (payload.hook_event_name === "StopFailure") return "error";
@@ -185,115 +127,9 @@ function resolveVoiceProfile(payload: HookPayload): VoiceProfile {
   return "default";
 }
 
-const SPEECH_REPLACEMENTS: [RegExp, string][] = [
-  [/```[\s\S]*?```/g, ""],         // fenced code blocks
-  [/—/g, "EM_DASH_PAUSE"],           // em dash → placeholder for sox silence splice
-  [/–/g, ", "],                    // en dash → short pause
-  [/===?/g, "equals"],
-  [/!=/g, "not equal to"],
-  [/=>/g, "to"],
-  [/->/g, "to"],
-  [/<-/g, "from"],
-  [/>=/g, "greater than or equal to"],
-  [/<=/g, "less than or equal to"],
-  [/&&/g, "and"],
-  [/\|\|/g, "or"],
-  [/#(\d+)/g, "number $1"],
-  [/(\w+)\/(\w+)/g, "$1 of $2"],
-  [/~/g, "approximately"],
-  [/%/g, "percent"],
-  [/\|/g, ""],
-];
-
-export function stripMarkdown(text: string): string {
-  return text
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/\*\*([^*]+)\*\*/g, "$1")
-    .replace(/\*([^*]+)\*/g, "$1")
-    .replace(/`([^`]+)`/g, (_, c) =>
-      /^([a-z]{8}\s+)?[0-9a-f]{7,40}$/.test(c.trim()) ? "" : c
-    )
-    .replace(/^\s*[-*+]\s+/gm, "")
-    .trim();
-}
-
-export function normalizeSpeech(text: string): string {
-  let result = text;
-  for (const [pattern, replacement] of SPEECH_REPLACEMENTS) {
-    result = result.replace(pattern, replacement);
-  }
-  result = stripMarkdown(result);
-  result = result.replace(/\n+/g, " ");
-  // remove remaining non-speech characters
-  result = result.replace(/[^\w\s.,!?;:'"()\-]/g, "");
-  return result.replace(/\s{2,}/g, " ").trim();
-}
-
-// ─── Text extraction ─────────────────────────────────────────────────────────
-
-export const SPOKEN_MIN_WORDS = 13; // target 15 - 2
-export const SPOKEN_MAX_WORDS = 17; // target 15 + 2
-
-export function wordCount(text: string): number {
-  return text.split(/\s+/).filter(s => /\w/.test(s)).length;
-}
-
-export function inRange(n: number): boolean {
-  return n >= SPOKEN_MIN_WORDS && n <= SPOKEN_MAX_WORDS;
-}
-
-const DECIMAL_PLACEHOLDER = "\x00";
-
-function splitIntoSentences(text: string): string[] {
-  // Temporarily replace digit.digit (decimals, versions) so they don't split sentences
-  const safe = text.replace(/(?<=\d)\.(?=\d)/g, DECIMAL_PLACEHOLDER);
-  const byPunct = safe.match(/[^.!?]+[.!?]+/g);
-  if (byPunct && byPunct.length > 1) {
-    return byPunct.map((s) => s.replace(/\x00/g, ".").trim());
-  }
-  const byLine = text.split(/\n+/).map((s) => s.trim()).filter(Boolean);
-  if (byLine.length > 1) return byLine;
-  return [text];
-}
-
-export function extractSpokenSentences(text: string): string {
-  const sentences = splitIntoSentences(text);
-  const first = sentences[0];
-
-  if (first.trimEnd().endsWith(":")) {
-    return `${first.trimEnd().slice(0, -1)}, see screen for details`;
-  }
-
-  if (inRange(wordCount(first))) return first;
-
-  if (sentences.length >= 2) {
-    const combined = `${first} ${sentences[1]}`;
-    if (inRange(wordCount(combined))) return combined;
-  }
-
-  return first;
-}
-
-// ─── Question extraction ──────────────────────────────────────────────────────
-
-export function extractQuestionText(msg: string): string | null {
-  const lines = msg.split("\n");
-  const questionLines = lines.filter((l) => l.trimEnd().endsWith("?"));
-  if (questionLines.length === 0) return null;
-
-  const spoken = questionLines.join(" ").trim();
-  if (spoken.length < 80) {
-    const clean = normalizeSpeech(msg);
-    const paragraphs = clean.split(/\n\n+/);
-    const preceding = paragraphs.at(-2)?.trim() ?? "";
-    const firstSentence = preceding.match(/^[^.!?]+[.!?]/)?.[0]?.trim() ?? preceding;
-    const context = firstSentence.slice(0, 100);
-    return context ? `${context} ${spoken}` : spoken;
-  }
-  return spoken;
-}
-
 // ─── Logging ─────────────────────────────────────────────────────────────────
+
+const LOG_PATH = process.env.CLAUDE_SPEAK_LOG ?? "/tmp/speak-notification.log";
 
 function logInvocation(
   payload: HookPayload,
@@ -312,7 +148,7 @@ function logInvocation(
       spoken,
       audio_file: audioFile ?? null,
     });
-    appendFileSync("/tmp/speak-notification.log", entry + "\n");
+    appendFileSync(LOG_PATH, entry + "\n");
     Bun.write(
       "/tmp/hook-notification-payload.json",
       JSON.stringify(payload, null, 2),
@@ -426,32 +262,22 @@ async function speakFallback(
   }
 }
 
-// ─── Main ────────────────────────────────────────────────────────────────────
+// ─── Adapter ─────────────────────────────────────────────────────────────────
 
 const MUTE_FLAG = `${homedir()}/.claude/hooks/.speak-muted`;
 
-async function main(): Promise<void> {
-  appendFileSync("/tmp/speak-notification.log", JSON.stringify({ ts: new Date().toISOString(), hook: "invoked" }) + "\n");
-  if (await Bun.file(MUTE_FLAG).exists()) process.exit(0);
-  const inputData = await Bun.stdin.text();
-  if (!inputData.trim()) process.exit(0);
-
-  let payload: HookPayload;
-  try {
-    payload = JSON.parse(inputData);
-  } catch {
-    process.exit(1);
-  }
+export async function speak(payload: HookPayload): Promise<void> {
+  appendFileSync(LOG_PATH, JSON.stringify({ ts: new Date().toISOString(), hook: "invoked" }) + "\n");
 
   const hook = payload.hook_event_name;
   const lastMsg = payload.last_assistant_message ?? "";
   let voiceProfile = resolveVoiceProfile(payload);
   let spoken: string;
 
-  if (hook === "Stop" && !lastMsg) {
-    process.exit(0);
-  } else if (hook === "Stop" && lastMsg) {
-    const questionText = extractQuestionText(lastMsg);
+  if (hook === "Stop" && !lastMsg) return;
+
+  if (hook === "Stop") {
+    const questionText = extractQuestionText(lastMsg, normalizeSpeech);
     if (questionText) {
       voiceProfile = "prompt";
       spoken = questionText;
@@ -470,11 +296,7 @@ async function main(): Promise<void> {
     spoken = "Context compacting. I may lose some memory of earlier work.";
   } else if (payload.notification_type === "idle_prompt") {
     voiceProfile = "default";
-    const idleVerb = pick([
-      "waiting", "idle", "pondering", "musing", "contemplating",
-      "daydreaming", "reflecting", "cogitating", "noodling",
-    ]);
-    spoken = `Hi — I'm ${idleVerb}.`;
+    spoken = `Hi — I'm ${pick(IDLE_VERBS)}.`;
   } else {
     const config = VOICE_PROFILES[voiceProfile];
     const message = (payload.message ?? "I have a notification").slice(0, 120);
@@ -494,13 +316,31 @@ async function main(): Promise<void> {
     if (await Bun.file(onnxPath).exists()) {
       const playFile = await speakWithPiper(spoken, config, piperPath, runId);
       logInvocation(payload, voiceProfile, spoken, playFile);
+      if (await Bun.file(MUTE_FLAG).exists()) return;
       Bun.spawn(["afplay", playFile], { stdout: "ignore", stderr: "ignore" });
-      process.exit(0);
+      return;
     }
   }
 
   logInvocation(payload, voiceProfile, spoken);
+  if (await Bun.file(MUTE_FLAG).exists()) return;
   await speakFallback(spoken, config);
+}
+
+// ─── Standalone ───────────────────────────────────────────────────────────────
+
+async function main(): Promise<void> {
+  const inputData = await Bun.stdin.text();
+  if (!inputData.trim()) process.exit(0);
+
+  let payload: HookPayload;
+  try {
+    payload = JSON.parse(inputData);
+  } catch {
+    process.exit(1);
+  }
+
+  await speak(payload);
   process.exit(0);
 }
 

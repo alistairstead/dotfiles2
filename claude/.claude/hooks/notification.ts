@@ -1,328 +1,220 @@
 #!/usr/bin/env bun
 
-import { spawn } from "bun";
-import { writeFileSync, readFileSync, existsSync, mkdirSync } from "fs";
-import { dirname, join } from "path";
+import { appendFileSync } from "fs";
+import {
+  type HookPayload,
+  IDLE_VERBS,
+  stripMarkdown,
+  extractSpokenSentences,
+  extractQuestionText,
+  pick,
+} from "./hooks-shared";
 
-// TypeScript interfaces
-interface ToolInput {
-  tool_name?: string;
-  tool_input: {
-    message?: string;
-    type?: "info" | "warning" | "error" | "success" | "prompt";
-    choices?: string[];
-    callback_url?: string;
-    [key: string]: unknown;
-  };
-  session_id?: string;
+export { type HookPayload };
+
+// ─── Config ───────────────────────────────────────────────────────────────────
+
+type NotificationProfile = "error" | "warning" | "success" | "prompt" | "default";
+
+const SOUNDS: Record<NotificationProfile, string | null> = {
+  error: "Basso",
+  warning: "Purr",
+  success: "Glass",
+  prompt: "Ping",
+  default: null,
+};
+
+const PREFIXES: Record<NotificationProfile, string[]> = {
+  error: [
+    "I've hit a problem",
+    "Something went wrong",
+    "There's an issue",
+  ],
+  warning: ["Just so you know,", "Quick heads up,", "Be aware,"],
+  success: ["Done –", "Sorted –", "All good –", "Nailed it –"],
+  prompt: ["I need your input.", "Over to you.", "I need a decision."],
+  default: [],
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function resolveProfile(payload: HookPayload): NotificationProfile {
+  if (payload.hook_event_name === "StopFailure") return "error";
+  if (payload.notification_type === "permission_prompt") return "prompt";
+  if (payload.notification_type === "elicitation_dialog") return "prompt";
+  if (payload.notification_type === "auth_success") return "success";
+  return "default";
 }
 
-interface NotificationEntry {
-  timestamp: string;
-  session_id?: string;
+// ─── Content ──────────────────────────────────────────────────────────────────
+
+interface NotificationContent {
+  title: string;
   message: string;
-  type: string;
-  response?: string;
+  profile: NotificationProfile;
 }
 
-class NotificationHandler {
-  private readonly logFile: string;
+function buildContent(payload: HookPayload): NotificationContent | null {
+  const hook = payload.hook_event_name;
+  const lastMsg = payload.last_assistant_message ?? "";
 
-  constructor() {
-    // Use /tmp for log files
-    this.logFile = "/tmp/claude_notifications.json";
+  if (hook === "Stop" && !lastMsg) return null;
 
-    // Ensure the directory exists
-    this.ensureDirectories();
-  }
-
-  private ensureDirectories(): void {
-    const dir = dirname(this.logFile);
-    if (!existsSync(dir)) {
-      mkdirSync(dir, { recursive: true });
+  if (hook === "Stop") {
+    const questionText = extractQuestionText(lastMsg);
+    if (questionText) {
+      return { title: "Claude — Done", message: questionText, profile: "prompt" };
     }
-  }
-
-  private async validateDependencies(): Promise<void> {
-    try {
-      const proc = spawn(["which", "terminal-notifier"], {
-        stdout: "pipe",
-        stderr: "pipe",
-      });
-
-      const exitCode = await proc.exited;
-
-      if (exitCode !== 0) {
-        console.error(
-          "terminal-notifier is required but not installed. Please install it with: brew install terminal-notifier",
-        );
-        process.exit(1);
-      }
-    } catch (error) {
-      console.error(
-        `Failed to validate dependencies: ${error}. Ensure terminal-notifier is installed.`,
-      );
-      process.exit(1);
-    }
-  }
-
-  private sanitizeInput(input: string): string {
-    return input
-      .replace(/[\x00-\x1F\x7F]/g, "") // Remove control characters
-      .replace(/[`$]/g, "\\$&") // Escape shell metacharacters
-      .trim();
-  }
-
-  private truncateMessage(message: string): string {
-    const maxLength = 256;
-    if (message.length > maxLength) {
-      return message.substring(0, maxLength) + "...";
-    }
-    return message;
-  }
-
-  private getNotificationSound(type: string): string {
-    const soundMap: Record<string, string> = {
-      error: "Basso",
-      warning: "Purr",
-      success: "Glass",
-      prompt: "Ping",
+    return {
+      title: "Claude — Done",
+      message: extractSpokenSentences(stripMarkdown(lastMsg)),
+      profile: "success",
     };
-    return soundMap[type] || "default";
   }
 
-  private async sendNotification(
-    title: string,
-    message: string,
-    sound: string,
-    sessionId: string,
-    choices?: string[],
-  ): Promise<string | null> {
-    const args = [
-      "terminal-notifier",
-      "-title",
-      title,
-      "-message",
-      message,
-      "-sound",
-      sound,
-      "-group",
-      `claude-code-${sessionId}`,
-      "-timeout",
-      "30",
-    ];
-
-    // Add interactive elements for prompts
-    if (choices && choices.length > 0) {
-      const limitedChoices = choices.slice(0, 3);
-      args.push("-actions", limitedChoices.join(","));
-    }
-
-    try {
-      const proc = spawn(args, {
-        stdout: "pipe",
-        stderr: "pipe",
-      });
-
-      const timeoutId = setTimeout(() => {
-        proc.kill();
-      }, 30000);
-
-      const exitCode = await proc.exited;
-      clearTimeout(timeoutId);
-
-      if (exitCode === 0) {
-        const stdout = await new Response(proc.stdout).text();
-        if (stdout?.trim()) {
-          const actionMatch = stdout.trim().match(/@ACTIONCLICKED@(.+)/);
-          if (actionMatch) {
-            return actionMatch[1];
-          }
-          return stdout.trim();
-        }
-      } else {
-        const stderr = await new Response(proc.stderr).text();
-        throw new Error(
-          `terminal-notifier exited with code ${exitCode}: ${stderr}`,
-        );
-      }
-
-      return null;
-    } catch (error) {
-      // Fallback to basic macOS notification
-      try {
-        const escapedMessage = message
-          .replace(/\\/g, "\\\\")
-          .replace(/"/g, '\\"');
-        const escapedTitle = title.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-        const fallbackScript = `display notification "${escapedMessage}" with title "${escapedTitle}"`;
-        const fallbackProc = spawn(["osascript", "-e", fallbackScript]);
-        await fallbackProc.exited;
-      } catch (fallbackError) {
-        throw new Error("All notification methods failed");
-      }
-
-      return null;
-    }
-  }
-
-  private loadExistingLogs(): NotificationEntry[] {
-    if (!existsSync(this.logFile)) {
-      return [];
-    }
-
-    try {
-      const data = readFileSync(this.logFile, "utf8");
-      return JSON.parse(data);
-    } catch (error) {
-      console.error(`Warning: Failed to read existing logs: ${error}`);
-      return [];
-    }
-  }
-
-  private saveLogs(logs: NotificationEntry[]): void {
-    try {
-      writeFileSync(this.logFile, JSON.stringify(logs, null, 2));
-    } catch (error) {
-      console.error(`Error writing to log file: ${error}`);
-      throw error;
-    }
-  }
-
-  private logNotification(
-    sessionId: string | undefined,
-    message: string,
-    type: string,
-    response?: string,
-  ): void {
-    const logs = this.loadExistingLogs();
-
-    const logEntry: NotificationEntry = {
-      timestamp: new Date().toISOString(),
-      session_id: sessionId,
-      message: message,
-      type: type,
-      response: response,
+  if (hook === "StopFailure") {
+    return {
+      title: "Claude — Error",
+      message: payload.error_details ?? payload.error ?? "Unknown error",
+      profile: "error",
     };
-
-    logs.push(logEntry);
-    this.saveLogs(logs);
   }
 
-  private async readStdin(): Promise<string> {
-    try {
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(
-          () => reject(new Error("Timeout reading from stdin")),
-          10000,
-        );
-      });
-
-      const stdinPromise = Bun.stdin.text();
-
-      return await Promise.race([stdinPromise, timeoutPromise]);
-    } catch (error) {
-      throw new Error(`Failed to read stdin: ${error}`);
-    }
+  if (hook === "TaskCompleted") {
+    return {
+      title: "Claude — Task Complete",
+      message: payload.message ?? "Task completed.",
+      profile: "success",
+    };
   }
 
-  public async run(): Promise<void> {
-    try {
-      // Validate dependencies
-      await this.validateDependencies();
+  if (hook === "PreCompact") {
+    return {
+      title: "Claude — Compacting",
+      message: "Context compacting. I may lose some memory of earlier work.",
+      profile: "warning",
+    };
+  }
 
-      // Read input from stdin
-      const inputData = await this.readStdin();
+  if (payload.notification_type === "idle_prompt") {
+    return {
+      title: "Claude — Waiting",
+      message: `Hi — I'm ${pick(IDLE_VERBS)}.`,
+      profile: "default",
+    };
+  }
 
-      if (!inputData.trim()) {
-        console.error("No input provided");
-        process.exit(1);
-      }
+  const profile = resolveProfile(payload);
+  const prefixes = PREFIXES[profile];
+  const raw = (payload.message ?? "I have a notification").slice(0, 120);
+  const prefix = prefixes.length ? pick(prefixes) : "";
+  return {
+    title: "Claude — Notification",
+    message: [prefix, raw].filter(Boolean).join(" — "),
+    profile,
+  };
+}
 
-      // Parse JSON input
-      let toolInput: ToolInput;
-      try {
-        toolInput = JSON.parse(inputData);
-      } catch (error) {
-        console.error(`Error parsing JSON input: ${error}`);
-        process.exit(1);
-      }
+// ─── Notification ─────────────────────────────────────────────────────────────
 
-      // Extract notification details
-      const message = this.truncateMessage(
-        this.sanitizeInput(
-          toolInput.tool_input?.message || "I have a notification",
-        ),
-      );
-      const sessionId = this.sanitizeInput(toolInput.session_id || "default");
-      const notificationType = toolInput.tool_input?.type || "info";
-      const choices = toolInput.tool_input?.choices?.map((choice) =>
-        this.sanitizeInput(choice),
-      );
+async function sendNotification({
+  title,
+  message,
+  profile,
+  sessionId,
+  hook,
+}: {
+  title: string;
+  message: string;
+  profile: NotificationProfile;
+  sessionId: string;
+  hook: string;
+}): Promise<void> {
+  const truncated =
+    message.length > 256 ? `${message.slice(0, 253)}...` : message;
+  const sound = SOUNDS[profile];
 
-      // Build notification title
-      const title = toolInput.session_id
-        ? `Session ${sessionId}`
-        : "Claude";
+  const args = [
+    "terminal-notifier",
+    "-title", title,
+    "-message", truncated,
+    "-group", `claude-code-${sessionId}-${hook}`,
+  ];
+  if (sound) args.push("-sound", sound);
 
-      // Get appropriate sound
-      const sound = this.getNotificationSound(notificationType);
-
-      // Send notification
-      const response = await this.sendNotification(
-        title,
-        message,
-        sound,
-        sessionId,
-        choices,
-      );
-
-      // Log the notification
-      this.logNotification(
-        toolInput.session_id,
-        message,
-        notificationType,
-        response || undefined,
-      );
-
-      // Handle callback if provided
-      if (toolInput.tool_input?.callback_url && response) {
-        try {
-          const url = new URL(toolInput.tool_input.callback_url);
-          if (!["http:", "https:"].includes(url.protocol)) {
-            throw new Error("Invalid protocol - only http/https allowed");
-          }
-
-          await fetch(toolInput.tool_input.callback_url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              session_id: sessionId,
-              response: response,
-              timestamp: new Date().toISOString(),
-            }),
-          });
-        } catch (callbackError) {
-          console.error(`Callback failed: ${callbackError}`);
-        }
-      }
-
-      console.log(`Notification sent for session ${sessionId}`);
-      process.exit(0);
-    } catch (error) {
-      console.error(`Error in notification hook: ${error}`);
-      process.exit(1);
-    }
+  try {
+    const proc = Bun.spawn(args, { stdout: "ignore", stderr: "ignore" });
+    const tid = setTimeout(() => proc.kill(), 15000);
+    await proc.exited;
+    clearTimeout(tid);
+  } catch {
+    const esc = (s: string) =>
+      s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+    const script = `display notification "${esc(truncated)}" with title "${esc(title)}"`;
+    await Bun.spawn(["osascript", "-e", script], {
+      stdout: "ignore",
+      stderr: "ignore",
+    }).exited;
   }
 }
 
-// Main execution
-if (import.meta.main) {
-  const handler = new NotificationHandler();
-  handler.run().catch((error) => {
-    console.error("Fatal error:", error);
-    process.exit(1);
+// ─── Logging ─────────────────────────────────────────────────────────────────
+
+const LOG_PATH = process.env.CLAUDE_NOTIFICATION_LOG ?? "/tmp/claude-notification.log";
+
+function logNotification(
+  payload: HookPayload,
+  content: NotificationContent,
+): void {
+  try {
+    const entry = JSON.stringify({
+      ts: new Date().toISOString(),
+      hook: payload.hook_event_name,
+      notification_type: payload.notification_type ?? null,
+      profile: content.profile,
+      title: content.title,
+      message: content.message,
+    });
+    appendFileSync(LOG_PATH, entry + "\n");
+  } catch {
+    // ignore log errors
+  }
+}
+
+// ─── Adapter ─────────────────────────────────────────────────────────────────
+
+export async function notify(payload: HookPayload): Promise<void> {
+  const content = buildContent(payload);
+  if (!content) return;
+
+  await sendNotification({
+    title: content.title,
+    message: content.message,
+    profile: content.profile,
+    sessionId: payload.session_id,
+    hook: payload.hook_event_name,
   });
+
+  logNotification(payload, content);
 }
 
-export { NotificationHandler, type ToolInput, type NotificationEntry };
+// ─── Standalone ───────────────────────────────────────────────────────────────
+
+async function main(): Promise<void> {
+  const inputData = await Bun.stdin.text();
+  if (!inputData.trim()) process.exit(0);
+
+  let payload: HookPayload;
+  try {
+    payload = JSON.parse(inputData);
+  } catch {
+    process.exit(1);
+  }
+
+  await notify(payload);
+  process.exit(0);
+}
+
+if (import.meta.main) {
+  main().catch(() => process.exit(1));
+}

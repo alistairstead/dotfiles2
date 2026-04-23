@@ -88,25 +88,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/speak-notification.ts"
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jq -r .message | terminal-notifier -title 'I need your attention' -sender com.anthropic.claudefordesktop"
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/notification.ts"
+            "command": "~/.claude/hooks/notifications.ts"
           }
         ]
       }
@@ -126,16 +108,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/notification.ts"
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/speak-notification.ts"
+            "command": "~/.claude/hooks/notifications.ts"
           }
         ]
       }
@@ -146,7 +119,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/speak-notification.ts"
+            "command": "~/.claude/hooks/notifications.ts"
           }
         ]
       }
@@ -157,7 +130,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/speak-notification.ts"
+            "command": "~/.claude/hooks/notifications.ts"
           }
         ]
       }
