@@ -233,7 +233,7 @@ export const SPOKEN_MIN_WORDS = 13; // target 15 - 2
 export const SPOKEN_MAX_WORDS = 17; // target 15 + 2
 
 export function wordCount(text: string): number {
-  return text.split(/\s+/).filter(Boolean).length;
+  return text.split(/\s+/).filter(s => /\w/.test(s)).length;
 }
 
 export function inRange(n: number): boolean {

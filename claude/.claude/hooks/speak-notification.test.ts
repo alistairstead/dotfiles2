@@ -16,6 +16,9 @@ describe("wordCount", () => {
     expect(wordCount("  spaced   out  ")).toBe(2);
     expect(wordCount("")).toBe(0);
   });
+  test("does not count pure-punctuation tokens like em dash", () => {
+    expect(wordCount("silence — no hiss")).toBe(3);
+  });
 });
 
 describe("inRange", () => {
