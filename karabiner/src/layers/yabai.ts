@@ -30,7 +30,7 @@ export function yabaiLayer() {
         f: toYabai$('space --toggle float'),
         // choose layout
         s: toYabai$('space --layout stack'),
-        d: toYabai$('space --layout bsp'),
+        d: to$('/opt/homebrew/bin/yabai -m space --layout bsp && /Users/alistairstead/.config/yabai/scripts/ratio.sh'),
         b: toYabai$('space --balance'),
         '=': toYabai$('space --balance'),
         // flip and rotate
@@ -39,7 +39,7 @@ export function yabaiLayer() {
         r: toYabai$('space --rotate 270'),
         // split ratio (display-aware)
         '[': to$('/Users/alistairstead/.config/yabai/scripts/ratio.sh'),
-        ']': to$('/Users/alistairstead/.config/yabai/scripts/ratio.sh reset'),
+        ']': toYabai$('space --balance'),
       }),
     ]),
     rule('Yabai move window or space').manipulators([
