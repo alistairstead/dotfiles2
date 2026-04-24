@@ -24,8 +24,9 @@ export { normalizeSpeech, stripMarkdown, extractSpokenSentences, extractQuestion
 //   en_GB-jenny_dioco-medium            — British female, distinctive character (medium quality)
 //   en_GB-semaine-medium                — Multi-speaker GB: speaker 0=Prudence, 1=Spike, 2=Obadiah, 3=Poppy
 //   en_US-lessac-high                   — American male, clear/professional (high quality)
+//   en_GB-alan-medium                   — British male, neutral RP (medium quality)
 //
-// Current assignment: Jenny for all event types.
+// Current assignment: Northern English Male for all event types.
 
 type VoiceProfile = "error" | "warning" | "success" | "prompt" | "default";
 
@@ -43,7 +44,7 @@ interface VoiceConfig {
 
 const VOICE_PROFILES: Record<VoiceProfile, VoiceConfig> = {
   error: {
-    model: "en_GB-jenny_dioco-medium",
+    model: "en_GB-northern_english_male-medium",
     lengthScale: 1.2,
     noiseScale: 0.9,
     noiseWScale: 0.9,
@@ -58,7 +59,7 @@ const VOICE_PROFILES: Record<VoiceProfile, VoiceConfig> = {
     ],
   },
   warning: {
-    model: "en_GB-jenny_dioco-medium",
+    model: "en_GB-northern_english_male-medium",
     lengthScale: 1.15,
     noiseScale: 0.8,
     noiseWScale: 0.8,
@@ -73,7 +74,7 @@ const VOICE_PROFILES: Record<VoiceProfile, VoiceConfig> = {
     ],
   },
   success: {
-    model: "en_GB-jenny_dioco-medium",
+    model: "en_GB-northern_english_male-medium",
     lengthScale: 0.9,
     noiseScale: 0.35,
     noiseWScale: 0.4,
@@ -89,7 +90,7 @@ const VOICE_PROFILES: Record<VoiceProfile, VoiceConfig> = {
     ],
   },
   prompt: {
-    model: "en_GB-jenny_dioco-medium",
+    model: "en_GB-northern_english_male-medium",
     lengthScale: 0.9,
     noiseScale: 0.4,
     noiseWScale: 0.45,
@@ -104,7 +105,7 @@ const VOICE_PROFILES: Record<VoiceProfile, VoiceConfig> = {
     ],
   },
   default: {
-    model: "en_GB-jenny_dioco-medium",
+    model: "en_GB-northern_english_male-medium",
     lengthScale: 1.15,
     noiseScale: 0.667,
     noiseWScale: 0.8,
@@ -209,8 +210,8 @@ async function speakWithPiper(
   const normFile = `/tmp/claude-speak-norm-${runId}.wav`;
   const segments = spoken.split("EM_DASH_PAUSE").map((s) => s.trim()).filter(Boolean);
 
-  // Always synthesize with sentenceSilence: 0 — the jenny_dioco model generates
-  // loud broadband noise when sentenceSilence > 0. Use sox pad for intentional pauses.
+  // Synthesize with sentenceSilence: 0 and use sox pad for intentional pauses —
+  // some piper models emit broadband noise during model-driven silence.
   if (segments.length === 1) {
     await synthesizeSegment(spoken, rawFile, { ...config, sentenceSilence: 0 }, piperPath, onnxPath);
   } else {
@@ -298,10 +299,14 @@ export async function speak(payload: HookPayload): Promise<void> {
     voiceProfile = "default";
     spoken = `Hi — I'm ${pick(IDLE_VERBS)}.`;
   } else {
-    const config = VOICE_PROFILES[voiceProfile];
     const message = (payload.message ?? "I have a notification").slice(0, 120);
-    const prefix = config.prefixes.length ? pick(config.prefixes) : "";
-    spoken = [pick(GREETINGS), prefix, message].filter(Boolean).join(" — ");
+    if (voiceProfile === "prompt") {
+      spoken = message;
+    } else {
+      const config = VOICE_PROFILES[voiceProfile];
+      const prefix = config.prefixes.length ? pick(config.prefixes) : "";
+      spoken = [pick(GREETINGS), prefix, message].filter(Boolean).join(" — ");
+    }
   }
 
   spoken = normalizeSpeech(spoken);
