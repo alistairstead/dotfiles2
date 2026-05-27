@@ -4,10 +4,10 @@
 --ignore='\.git'
 --ignore='install\.sh'
 --ignore='Makefile'
---ignore=.github/*
---ignore=apps/*
---ignore=modules/*
---ignore=overlays/*
---ignore=scripts/*
+--ignore=^/\.github$
+--ignore=^/apps$
+--ignore=^/modules$
+--ignore=^/overlays$
+--ignore=^/scripts$
 --ignore=flake.*
 --ignore=.editorconfig

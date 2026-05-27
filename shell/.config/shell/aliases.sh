@@ -39,3 +39,4 @@ alias assume=". assume"
 
 # Claude notify wrapper
 alias claude-notify="~/dev/personal/dotfiles/scripts/claude-notify"
+alias claude-speak-toggle="~/dev/personal/dotfiles/scripts/claude-speak-toggle"

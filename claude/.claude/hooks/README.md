@@ -312,19 +312,22 @@ Each invocation runs `pkill afplay` before speaking, so a new event always cuts 
 
 ### Mute
 
-Create the flag file to silence all speech:
+The flag file `~/.claude/hooks/.speak-muted` silences all speech while it exists.
+
+Toggle it via the shared script `scripts/claude-speak-toggle`, which prints the new state, fires a macOS banner, and speaks a brief confirmation:
+
+```bash
+claude-speak-toggle           # shell alias (shell/.config/shell/aliases.sh)
+```
+
+It is also available in Raycast as "Toggle Claude Speech" (`raycast/.config/raycast/scripts/claude-speak-toggle.sh`). After `stow raycast`, add `~/.config/raycast/scripts` once in Raycast → Extensions → Script Commands → Add Directory.
+
+Direct flag manipulation still works:
 
 ```bash
 touch ~/.claude/hooks/.speak-muted
-```
-
-Remove it to restore:
-
-```bash
 /bin/rm ~/.claude/hooks/.speak-muted
 ```
-
-Bind a Karabiner rule to toggle the file for hands-free mute.
 
 ### TTS engines
 

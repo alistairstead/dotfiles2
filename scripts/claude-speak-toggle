@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Toggle the mute flag for the Claude speak-notification hook.
+# Flag path is read by claude/.claude/hooks/speak-notification.ts.
+
+set -euo pipefail
+
+flag="${HOME}/.claude/hooks/.speak-muted"
+
+if [[ -e "$flag" ]]; then
+    /bin/rm -f "$flag"
+    state="unmuted"
+    icon="🔊"
+else
+    mkdir -p "$(dirname "$flag")"
+    : > "$flag"
+    state="muted"
+    icon="🔇"
+fi
+
+printf '%s Claude speech: %s\n' "$icon" "$state"
+
+osascript -e "display notification \"Claude speech ${state}\" with title \"Claude Speak\"" >/dev/null 2>&1 || true
