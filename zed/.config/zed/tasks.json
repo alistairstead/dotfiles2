@@ -32,8 +32,8 @@
     "use_new_terminal": false
   },
   {
-    "label": "LazyJJ",
-    "command": "lazyjj",
+    "label": "JJUI",
+    "command": "jjui",
     "shell": {
       "program": "sh"
     },

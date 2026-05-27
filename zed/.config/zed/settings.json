@@ -1,12 +1,17 @@
 {
-	"cursor_shape": "underline",
- "multi_cursor_modifier": "cmd_or_ctrl",
- "text_rendering_mode": "platform_default",
- "cli_default_open_behavior": "existing_window",
- "status_bar": {
-  "show_active_file": true
- },
- "ssh_connections": [
+	"diff_view_style": "unified",
+ "vim_mode": true,
+ "document_folding_ranges": "on",
+  "semantic_tokens": "combined",
+  "cursor_shape": "underline",
+  "multi_cursor_modifier": "cmd_or_ctrl",
+  "text_rendering_mode": "platform_default",
+  "cli_default_open_behavior": "existing_window",
+  "status_bar": {
+    "show_active_file": true
+  },
+  "code_lens": "on",
+  "ssh_connections": [
   {
    "host": "192.168.0.187",
    "username": "hassio",
@@ -39,7 +44,8 @@
   "provider": "copilot"
  },
  "which_key": {
-  "enabled": true
+  "delay_ms": 500,
+  "enabled": false
  },
  "prettier": {
   "allowed": false
@@ -151,9 +157,9 @@
 	},
 	"use_system_window_tabs": false,
 	"theme": {
-  "mode": "system",
-  "light": "Catppuccin Frappé",
-  "dark": "Zedokai (Filter Octagon)"
+  "mode": "dark",
+  "light": "Zedokai Light (Filter Sun)",
+  "dark": "Zedokai Darker (Filter Spectrum)"
  },
 	"icon_theme": {
   "mode": "system",
@@ -189,9 +195,8 @@
 	"expand_excerpt_lines": 10,
 	// The default number of context lines shown in multibuffer excerpts.
 	"excerpt_context_lines": 10,
-	"vim_mode": true,
 	"vim": {
-		"use_system_clipboard": "always",
+    "use_system_clipboard": "always",
 		"use_smartcase_find": true,
 		"toggle_relative_line_numbers": true,
 		"custom_digraphs": {}
@@ -346,15 +351,15 @@
 	"use_smartcase_search": true,
 	"agent": {
 		"thinking_display": "preview",
-  "show_turn_stats": true,
-  "message_editor_min_lines": 6,
-  "expand_terminal_card": false,
-  "expand_edit_card": true,
-  "single_file_review": true,
-  "new_thread_location": "local_project",
-  "dock": "left",
-  "tool_permissions": {
-   "default": "allow"
+    "show_turn_stats": true,
+    "message_editor_min_lines": 6,
+    "expand_terminal_card": false,
+    "expand_edit_card": true,
+    "single_file_review": true,
+    "new_thread_location": "local_project",
+    "dock": "left",
+    "tool_permissions": {
+    "default": "allow"
   },
   "default_profile": "write",
 		"profiles": {
@@ -434,7 +439,8 @@
 	},
 	// Settings specific to the terminal
 	"terminal": {
-		"font_weight": 100,
+		"bell": "system",
+    "font_weight": 100,
 		"font_size": 14,
 		"font_family": "Victor Mono",
 		"line_height": "standard",

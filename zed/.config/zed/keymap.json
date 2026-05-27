@@ -60,7 +60,7 @@
 			],
 			"space l j": [
 				"task::Spawn",
-				{ "task_name": "LazyJJ", "reveal_target": "center" }
+				{ "task_name": "JJUI", "reveal_target": "center" }
 			],
 			"space g h": [
 				"task::Spawn",
