@@ -16,7 +16,7 @@ try {
 		process.exit(0);
 	}
 
-	const proc = Bun.spawnSync(["bun", "run", "lint"], {
+	const proc = Bun.spawnSync(["bunx", "ultracite", "check"], {
 		cwd: projectDir,
 		stderr: "pipe",
 		stdout: "pipe",
@@ -25,7 +25,6 @@ try {
 	const stderr = proc.stderr?.toString() ?? "";
 	const stdout = proc.stdout?.toString() ?? "";
 
-	// Ultracite exits 0 even with errors, so parse output for "Found X errors"
 	const hasErrors =
 		proc.exitCode !== 0 || /Found \d+ error/.test(stdout + stderr);
 

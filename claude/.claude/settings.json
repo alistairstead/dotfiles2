@@ -1,7 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_FORK_SUBAGENT": "1",
+    "USE_BUILTIN_RIPGREP": "1"
   },
   "includeCoAuthoredBy": false,
   "permissions": {
@@ -18,11 +20,19 @@
       "Bash(bun vitest:*)",
       "Bash(bun run test:*)",
       "Bash(bun turbo:*)",
+      "Bash(jj log *)",
+      "Bash(jj diff *)",
+      "Bash(jj status)",
+      "Bash(jj root)",
+      "Bash(bunx tsc *)",
+      "Bash(mise list *)",
       "mcp__pencil",
       "Edit(.env.schema)",
       "Edit(**/.env.schema)",
       "Read(.env.schema)",
-      "Read(**/.env.schema)"
+      "Read(**/.env.schema)",
+      "Write(.env.schema)",
+      "Write(**/.env.schema)"
     ],
     "deny": [
       "Edit(.env)",
@@ -49,15 +59,6 @@
           {
             "type": "command",
             "command": "jj claude-snapshot >> /tmp/claude-snapshot.log 2>&1 || true"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun ~/.claude/hooks/post-format.ts"
           }
         ]
       }
@@ -157,21 +158,11 @@
     "playwright@claude-plugins-official": false,
     "feature-dev@claude-plugins-official": false,
     "dev-browser@dev-browser-marketplace": true,
-    "ralph@ralph-marketplace": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
-    "jj@kodehort-skills": true,
-    "github@kodehort-skills": true,
-    "bdd@kodehort-skills": true,
     "skill-creator@claude-plugins-official": true,
-    "ddd@kodehort-skills": true,
-    "tdd@kodehort-skills": true,
-    "architect@kodehort-skills": true,
-    "prd@kodehort-skills": true,
-    "solid-js@kodehort-skills": true,
-    "interview@kodehort-skills": true,
-    "agent@kodehort-skills": true,
-    "code-review@kodehort-skills": true
+    "fallow@fallow-skills": true,
+    "chrome-devtools-mcp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "context-mode": {
@@ -180,25 +171,32 @@
         "repo": "mksglu/context-mode"
       }
     },
-    "kodehort-skills": {
-      "source": {
-        "source": "directory",
-        "path": "/Users/alistairstead/dev/kodehort/agent-skills"
-      },
-      "autoUpdate": true
-    },
     "obsidian-skills": {
       "source": {
         "source": "github",
         "repo": "kepano/obsidian-skills"
       }
+    },
+    "fallow-skills": {
+      "source": {
+        "source": "github",
+        "repo": "fallow-rs/fallow-skills"
+      }
     }
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "xhigh",
   "advisorModel": "opus",
+  "tui": "fullscreen",
+  "voice": {
+    "enabled": false,
+    "mode": "hold"
+  },
   "autoDreamEnabled": true,
+  "theme": "dark",
+  "editorMode": "vim",
+  "teammateMode": "tmux",
   "skipAutoPermissionPrompt": true,
+  "voiceEnabled": false,
   "feedbackSurveyState": {
     "lastShownTime": 1754066916309
   }

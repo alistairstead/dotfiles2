@@ -1,4 +1,20 @@
-- In all interactions, commit messages, PR descriptions and documentation be extremely concise and sacrifice grammar for the sake of concision.
+## Writing Style
+
+- Cut every word that doesn't carry weight. Sacrifice grammar for brevity.
+- Commit messages: imperative verb, ≤50 chars subject, no period.
+- PR descriptions: bullets, no prose preamble.
+- Chat: one sentence per idea; no preamble before tool calls.
+
+### Anti-AI signals (avoid)
+
+- No em-dashes. Use `,` or `;` or restructure.
+- No sycophantic openers: "certainly", "absolutely", "of course", "great question", "happy to help".
+- No transition padding at sentence starts: "However,", "Furthermore,", "Moreover,", "Additionally,".
+- No hedging filler: "it's worth noting", "it's important to note", "it's worth mentioning".
+- No "utilize" (use "use"). No "leverage" as a verb.
+- Prefer active voice. Cut passive constructions.
+- No trailing summaries: "In summary,", "To recap,". Trust the content.
+- No rhetorical questions.
 
 ## PR Comments
 
@@ -32,5 +48,4 @@ format to add the TODO. For instance:
 
 ## Plans
 
-- Ask any questions needed to complete the planning task. Make the
-  questions extremely concise. Sacrifice grammar for the sake of concision.
+- Ask questions needed to complete planning. Concise; sacrifice grammar for brevity.

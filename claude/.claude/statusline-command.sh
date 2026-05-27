@@ -43,10 +43,46 @@ else
   all_str=""
 fi
 
+five_pct=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+five_reset=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
+five_str=""
+if [ -n "$five_pct" ] && [ -n "$five_reset" ]; then
+  now=$(date +%s)
+  delta=$(( five_reset - now ))
+  if [ "$delta" -gt 0 ]; then
+    hrs=$(( delta / 3600 ))
+    mins=$(( (delta % 3600) / 60 ))
+    five_str=$(printf "5h:%.0f%% resets:%dh%dm" "$five_pct" "$hrs" "$mins")
+  else
+    five_str=$(printf "5h:%.0f%%" "$five_pct")
+  fi
+fi
+
+seven_pct=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+seven_reset=$(echo "$input" | jq -r '.rate_limits.seven_day.resets_at // empty')
+seven_str=""
+if [ -n "$seven_pct" ] && [ -n "$seven_reset" ]; then
+  now=$(date +%s)
+  delta=$(( seven_reset - now ))
+  if [ "$delta" -gt 0 ]; then
+    days=$(( delta / 86400 ))
+    hrs=$(( (delta % 86400) / 3600 ))
+    seven_str=$(printf "7d:%.0f%% resets:%dd%dh" "$seven_pct" "$days" "$hrs")
+  else
+    seven_str=$(printf "7d:%.0f%%" "$seven_pct")
+  fi
+fi
+
 line=$(printf "\033[01;35m%s\033[00m | \033[36meffort:%s\033[00m | \033[33mctx:%s\033[00m" \
   "$model" "$effort" "$ctx_str")
 
-[ -n "$sess_str" ] && line=$(printf "%s | \033[32msess:%s\033[00m" "$line" "$sess_str")
-[ -n "$all_str" ]  && line=$(printf "%s | \033[34mall:%s\033[00m"  "$line" "$all_str")
+[ -n "$sess_str" ]  && line=$(printf "%s | \033[32msess:%s\033[00m"  "$line" "$sess_str")
+[ -n "$all_str" ]   && line=$(printf "%s | \033[34mall:%s\033[00m"   "$line" "$all_str")
+thinking_enabled=$(echo "$input" | jq -r '.thinking.enabled // empty')
+[ "$thinking_enabled" = "true" ] && thinking_str="thinking:on" || thinking_str="thinking:off"
+
+[ -n "$five_str" ]  && line=$(printf "%s | \033[90m%s\033[00m"       "$line" "$five_str")
+[ -n "$seven_str" ] && line=$(printf "%s | \033[90m%s\033[00m"       "$line" "$seven_str")
+line=$(printf "%s | \033[90m%s\033[00m" "$line" "$thinking_str")
 
 printf "%s" "$line"
