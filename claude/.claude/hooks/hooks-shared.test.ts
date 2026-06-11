@@ -50,8 +50,19 @@ describe("stripMarkdown", () => {
     expect(stripMarkdown("committed `24563e56`")).toBe("committed");
     expect(stripMarkdown("see `zwtyoptm 24563e56`")).toBe("see");
   });
+  test("drops bare backticked jj change ids", () => {
+    expect(stripMarkdown("Committed as `nutsqmql` done")).toBe("Committed as  done");
+    expect(stripMarkdown("keep `describe` here")).toBe("keep describe here");
+  });
   test("keeps normal inline code content", () => {
     expect(stripMarkdown("use `foo()` here")).toBe("use foo() here");
+  });
+});
+
+describe("normalizeSpeech bare hashes", () => {
+  test("drops bare 12+ char hex ids, keeps short hex-like words", () => {
+    expect(normalizeSpeech("at 413da457f5c18218 done")).toBe("at done");
+    expect(normalizeSpeech("a deadbeef cafe")).toBe("a deadbeef cafe");
   });
 });
 

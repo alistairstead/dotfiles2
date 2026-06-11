@@ -34,6 +34,8 @@ async function run(payload: object): Promise<number> {
       ...process.env,
       CLAUDE_SPEAK_LOG: SPEAK_LOG,
       CLAUDE_NOTIFICATION_LOG: NOTIFY_LOG,
+      // dead URL keeps tests off the real voxcpm daemon (seconds per synth)
+      CLAUDE_VOXCPM_URL: "http://127.0.0.1:1",
     },
   });
   return proc.exited;
@@ -137,6 +139,7 @@ describe("notifications.ts controller", () => {
         ...process.env,
         CLAUDE_SPEAK_LOG: SPEAK_LOG,
         CLAUDE_NOTIFICATION_LOG: NOTIFY_LOG,
+        CLAUDE_VOXCPM_URL: "http://127.0.0.1:1",
       },
     });
     expect(await proc.exited).toBe(0);

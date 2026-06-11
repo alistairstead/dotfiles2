@@ -80,8 +80,10 @@ export function stripMarkdown(text: string): string {
     .replace(/^#{1,6}\s+/gm, "")
     .replace(/\*\*([^*]+)\*\*/g, "$1")
     .replace(/\*([^*]+)\*/g, "$1")
+    // jj change IDs use only letters k-z, so a bare backticked [k-z]{8} is an
+    // identifier, not a word
     .replace(/`([^`]+)`/g, (_, c) =>
-      /^([a-z]{8}\s+)?[0-9a-f]{7,40}$/.test(c.trim()) ? "" : c,
+      /^([a-z]{8}\s+)?[0-9a-f]{7,40}$|^[k-z]{8}$/.test(c.trim()) ? "" : c,
     )
     .replace(/^\s*[-*+]\s+/gm, "")
     .trim();
@@ -89,6 +91,7 @@ export function stripMarkdown(text: string): string {
 
 export const SPEECH_REPLACEMENTS: [RegExp, string][] = [
   [/```[\s\S]*?```/g, ""],         // fenced code blocks
+  [/\b[0-9a-f]{12,40}\b/g, ""],    // bare commit hashes / hex ids
   [/—/g, "EM_DASH_PAUSE"],          // em dash → placeholder for sox silence splice
   [/–/g, ", "],                     // en dash → short pause
   [/===?/g, "equals"],

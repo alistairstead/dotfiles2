@@ -136,9 +136,9 @@ describe("speak-notification.ts integration", () => {
     await run({
       ...BASE,
       hook_event_name: "TaskCompleted",
-      message: "Fallback check.",
+      message: "Fallback check unique marker.",
     });
-    const entry = lastEntry()!;
+    const entry = logEntries().findLast((e) => (e.message as string)?.includes("Fallback check unique marker"))!;
     expect(["piper", "fallback"]).toContain(entry.engine as string);
   });
 
