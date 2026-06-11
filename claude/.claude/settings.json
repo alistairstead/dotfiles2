@@ -51,6 +51,7 @@
       "Read(**/credentials/**)"
     ]
   },
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "PostToolUse": [
       {
@@ -162,7 +163,8 @@
     "clangd-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
     "fallow@fallow-skills": true,
-    "chrome-devtools-mcp@claude-plugins-official": true
+    "chrome-devtools-mcp@claude-plugins-official": true,
+    "figma@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "context-mode": {
@@ -185,7 +187,6 @@
     }
   },
   "alwaysThinkingEnabled": true,
-  "advisorModel": "opus",
   "tui": "fullscreen",
   "voice": {
     "enabled": false,
