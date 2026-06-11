@@ -22,12 +22,14 @@ function lastEntry(): Record<string, unknown> | null {
   return entries.length ? entries[entries.length - 1] : null;
 }
 
-async function run(payload: object): Promise<number> {
+async function run(payload: object, env: Record<string, string> = {}): Promise<number> {
   const proc = Bun.spawn(["bun", SCRIPT], {
     stdin: new Response(JSON.stringify(payload)),
     stdout: "ignore",
     stderr: "ignore",
-    env: { ...process.env, CLAUDE_SPEAK_LOG: LOG },
+    // Dead voxcpm URL by default: connection refused is instant, keeps tests
+    // off the real daemon (which takes seconds per synthesis).
+    env: { ...process.env, CLAUDE_SPEAK_LOG: LOG, CLAUDE_VOXCPM_URL: "http://127.0.0.1:1", ...env },
   });
   return proc.exited;
 }
@@ -128,6 +130,66 @@ describe("speak-notification.ts integration", () => {
     });
     const entry = lastEntry()!;
     expect(entry.voice_profile).toBe("prompt");
+  });
+
+  test("down voxcpm daemon falls back to piper or say", async () => {
+    await run({
+      ...BASE,
+      hook_event_name: "TaskCompleted",
+      message: "Fallback check.",
+    });
+    const entry = lastEntry()!;
+    expect(["piper", "fallback"]).toContain(entry.engine as string);
+  });
+
+  test("voxcpm daemon is used when healthy", async () => {
+    // Minimal valid mono 16-bit 8kHz wav: RIFF header + 8 zero samples.
+    const wavPath = `${tmpdir()}/test-voxcpm-${Date.now()}.wav`;
+    const header = Buffer.alloc(44 + 16);
+    header.write("RIFF", 0);
+    header.writeUInt32LE(36 + 16, 4);
+    header.write("WAVE", 8);
+    header.write("fmt ", 12);
+    header.writeUInt32LE(16, 16);
+    header.writeUInt16LE(1, 20); // PCM
+    header.writeUInt16LE(1, 22); // mono
+    header.writeUInt32LE(8000, 24); // sample rate
+    header.writeUInt32LE(16000, 28); // byte rate
+    header.writeUInt16LE(2, 32); // block align
+    header.writeUInt16LE(16, 34); // bits per sample
+    header.write("data", 36);
+    header.writeUInt32LE(16, 40);
+    await Bun.write(wavPath, header);
+
+    const server = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        if (url.pathname === "/health") {
+          return Response.json({ status: "ok", model_loaded: true });
+        }
+        if (url.pathname === "/speak") {
+          return Response.json({ wav_path: wavPath, elapsed_ms: 5 });
+        }
+        return new Response("not found", { status: 404 });
+      },
+    });
+    try {
+      await run(
+        {
+          ...BASE,
+          hook_event_name: "TaskCompleted",
+          message: "VoxCPM happy path.",
+        },
+        { CLAUDE_VOXCPM_URL: `http://127.0.0.1:${server.port}` },
+      );
+      const entry = lastEntry()!;
+      expect(entry.engine).toBe("voxcpm");
+      expect(typeof entry.audio_file).toBe("string");
+    } finally {
+      server.stop(true);
+      if (existsSync(wavPath)) unlinkSync(wavPath);
+    }
   });
 
   test("empty stdin exits 0 without logging", async () => {

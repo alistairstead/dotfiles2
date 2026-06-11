@@ -1,0 +1,49 @@
+{
+  "port": 17865,
+  "voicesDir": "~/.local/share/voxcpm-voices",
+  "voice": {
+    "description": "A cheerful Northern English man in his mid thirties, warm medium-pitch voice with a smooth texture and a gentle Yorkshire lilt. Speaks at an easy lively pace, friendly and upbeat, smiling as he talks."
+  },
+  "profiles": {
+    "error": {
+      "styleInstruction": "speaking urgently, slightly strained and apologetic",
+      "tag": "[sigh]",
+      "tagPlacement": "start",
+      "tagProbability": 0.4,
+      "cfgValue": 2.0,
+      "inferenceTimesteps": 10
+    },
+    "warning": {
+      "styleInstruction": "speaking carefully, a note of caution",
+      "tag": "[dissatisfaction-hnn]",
+      "tagPlacement": "start",
+      "tagProbability": 0.4,
+      "cfgValue": 2.0,
+      "inferenceTimesteps": 10
+    },
+    "success": {
+      "styleInstruction": "speaking very fast, bright and full",
+      "tag": "[laughter]",
+      "tagPlacement": "after-first-clause",
+      "tagProbability": 0.4,
+      "cfgValue": 2.0,
+      "inferenceTimesteps": 10
+    },
+    "prompt": {
+      "styleInstruction": "speaking clearly with rising, expectant intonation",
+      "tag": "[question-ah]",
+      "tagPlacement": "end",
+      "tagProbability": 0.4,
+      "cfgValue": 2.0,
+      "inferenceTimesteps": 10
+    },
+    "default": {
+      "styleInstruction": "speaking evenly, relaxed and conversational",
+      "tag": null,
+      "tagPlacement": null,
+      "tagProbability": 0,
+      "cfgValue": 2.0,
+      "inferenceTimesteps": 10
+    }
+  }
+}

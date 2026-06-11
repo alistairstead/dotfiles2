@@ -132,10 +132,13 @@ function resolveVoiceProfile(payload: HookPayload): VoiceProfile {
 
 const LOG_PATH = process.env.CLAUDE_SPEAK_LOG ?? "/tmp/speak-notification.log";
 
+type SpeechEngine = "voxcpm" | "piper" | "fallback";
+
 function logInvocation(
   payload: HookPayload,
   voiceProfile: VoiceProfile,
   spoken: string,
+  engine: SpeechEngine,
   audioFile?: string,
 ): void {
   try {
@@ -144,6 +147,7 @@ function logInvocation(
       hook: payload.hook_event_name,
       notification_type: payload.notification_type ?? null,
       voice_profile: voiceProfile,
+      engine,
       message: payload.message ?? null,
       last: payload.last_assistant_message ?? null,
       spoken,
@@ -160,6 +164,47 @@ function logInvocation(
 }
 
 // ─── TTS ─────────────────────────────────────────────────────────────────────
+
+// VoxCPM daemon (launchd: com.alistairstead.claude-voxcpm). Voice definitions
+// live in voxcpm-voices.json; the hook only sends {text, profile}.
+const VOXCPM_URL = process.env.CLAUDE_VOXCPM_URL ?? "http://127.0.0.1:17865";
+const VOXCPM_HEALTH_TIMEOUT_MS = 300;
+// Benchmarked on M4 Pro MPS: ~7s synth for a 12-word sentence; 17-word
+// summaries can approach 12s. Past this, piper takes over.
+const VOXCPM_SPEAK_TIMEOUT_MS = 15_000;
+
+async function speakWithVoxCPM(
+  spoken: string,
+  profile: VoiceProfile,
+  runId: string,
+): Promise<string | null> {
+  try {
+    const health = await fetch(`${VOXCPM_URL}/health`, {
+      signal: AbortSignal.timeout(VOXCPM_HEALTH_TIMEOUT_MS),
+    });
+    if (!health.ok) return null;
+    const res = await fetch(`${VOXCPM_URL}/speak`, {
+      method: "POST",
+      body: JSON.stringify({
+        // VoxCPM handles prosody from punctuation; no sox padding needed.
+        text: spoken.replaceAll("EM_DASH_PAUSE", ". "),
+        profile,
+      }),
+      signal: AbortSignal.timeout(VOXCPM_SPEAK_TIMEOUT_MS),
+    });
+    if (!res.ok) return null;
+    const { wav_path } = (await res.json()) as { wav_path?: string };
+    if (!wav_path || !(await Bun.file(wav_path).exists())) return null;
+    const normFile = `/tmp/claude-speak-norm-${runId}.wav`;
+    await Bun.spawn(
+      ["sox", wav_path, normFile, "gain", "-n", "-1"],
+      { stdout: "ignore", stderr: "ignore" },
+    ).exited;
+    return (await Bun.file(normFile).exists()) ? normFile : wav_path;
+  } catch {
+    return null;
+  }
+}
 
 async function findPiper(): Promise<string | null> {
   try {
@@ -315,19 +360,27 @@ export async function speak(payload: HookPayload): Promise<void> {
 
   Bun.spawn(["pkill", "afplay"], { stdout: "ignore", stderr: "ignore" });
 
+  const voxFile = await speakWithVoxCPM(spoken, voiceProfile, runId);
+  if (voxFile) {
+    logInvocation(payload, voiceProfile, spoken, "voxcpm", voxFile);
+    if (await Bun.file(MUTE_FLAG).exists()) return;
+    Bun.spawn(["afplay", voxFile], { stdout: "ignore", stderr: "ignore" });
+    return;
+  }
+
   const piperPath = await findPiper();
   if (piperPath) {
     const onnxPath = `${homedir()}/.local/share/piper-voices/${config.model}.onnx`;
     if (await Bun.file(onnxPath).exists()) {
       const playFile = await speakWithPiper(spoken, config, piperPath, runId);
-      logInvocation(payload, voiceProfile, spoken, playFile);
+      logInvocation(payload, voiceProfile, spoken, "piper", playFile);
       if (await Bun.file(MUTE_FLAG).exists()) return;
       Bun.spawn(["afplay", playFile], { stdout: "ignore", stderr: "ignore" });
       return;
     }
   }
 
-  logInvocation(payload, voiceProfile, spoken);
+  logInvocation(payload, voiceProfile, spoken, "fallback");
   if (await Bun.file(MUTE_FLAG).exists()) return;
   await speakFallback(spoken, config);
 }

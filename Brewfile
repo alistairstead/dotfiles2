@@ -92,6 +92,7 @@ brew "lazydocker"
 brew "lazygit"
 brew "fontconfig"
 brew "imagemagick"
+brew "sox"       # Audio processing, used by claude speak hooks
 brew "shellcheck"
 brew "uv"
 
