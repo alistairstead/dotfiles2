@@ -112,6 +112,10 @@ describe("notifications.ts controller", () => {
     expect(last(SPEAK_LOG)!.voice_profile).toBe("default");
     expect(last(NOTIFY_LOG)!.profile).toBe("default");
     expect(last(NOTIFY_LOG)!.title).toBe("Claude — Waiting");
+
+    // spoken line and banner must use the same idle verb
+    const verb = (s: unknown) => String(s).match(/I'm (\w+)/)?.[1];
+    expect(verb(last(SPEAK_LOG)!.spoken)).toBe(verb(last(NOTIFY_LOG)!.message));
   });
 
   test("Stop without lastMsg: speak skips, notify skips, exits 0", async () => {

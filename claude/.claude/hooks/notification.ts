@@ -3,7 +3,7 @@
 import { appendFileSync } from "fs";
 import {
   type HookPayload,
-  IDLE_VERBS,
+  idleMessage,
   stripMarkdown,
   extractSpokenSentences,
   extractQuestionText,
@@ -99,7 +99,7 @@ function buildContent(payload: HookPayload): NotificationContent | null {
   if (payload.notification_type === "idle_prompt") {
     return {
       title: "Claude — Waiting",
-      message: `Hi — I'm ${pick(IDLE_VERBS)}.`,
+      message: idleMessage(payload),
       profile: "default",
     };
   }

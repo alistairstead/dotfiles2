@@ -4,7 +4,7 @@ import { appendFileSync } from "fs";
 import { homedir } from "os";
 import {
   type HookPayload,
-  IDLE_VERBS,
+  idleMessage,
   normalizeSpeech,
   stripMarkdown,
   extractSpokenSentences,
@@ -342,7 +342,7 @@ export async function speak(payload: HookPayload): Promise<void> {
     spoken = "Context compacting. I may lose some memory of earlier work.";
   } else if (payload.notification_type === "idle_prompt") {
     voiceProfile = "default";
-    spoken = `Hi — I'm ${pick(IDLE_VERBS)}.`;
+    spoken = idleMessage(payload);
   } else {
     const message = (payload.message ?? "I have a notification").slice(0, 120);
     if (voiceProfile === "prompt") {

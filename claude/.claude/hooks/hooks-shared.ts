@@ -62,6 +62,8 @@ export interface HookPayload {
   // StopFailure-specific
   error?: StopFailureError;
   error_details?: string;
+  // Set by idleMessage() so both adapters say the same thing
+  idle_message?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -74,6 +76,13 @@ export const IDLE_VERBS = [
   "waiting", "idle", "pondering", "musing", "contemplating",
   "daydreaming", "reflecting", "cogitating", "noodling",
 ];
+
+// Memoized on the payload so the spoken line and the banner agree when both
+// adapters run in one process (notifications.ts).
+export function idleMessage(payload: HookPayload): string {
+  payload.idle_message ??= `Hi — I'm ${pick(IDLE_VERBS)}.`;
+  return payload.idle_message;
+}
 
 export function stripMarkdown(text: string): string {
   return text
