@@ -2,7 +2,7 @@
   "port": 17865,
   "voicesDir": "~/.local/share/voxcpm-voices",
   "voice": {
-    "description": "A cheerful English man in his mid thirties, warm medium-pitch voice with a smooth texture and a gentle Yorkshire accent. Speaks at an easy lively pace, friendly and upbeat, smiling as he talks."
+    "description": "A poised English man in his early thirties, deep resonant voice with a smooth polished texture and a subtle northern warmth beneath received pronunciation. Speaks with quiet precision and gentle dry humour, composed and reassuring."
   },
   "profiles": {
     "error": {
