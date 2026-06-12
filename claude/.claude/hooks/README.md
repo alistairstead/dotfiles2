@@ -338,7 +338,7 @@ touch ~/.claude/hooks/.speak-muted
 
 ### VoxCPM daemon
 
-`voxcpm-server.py` keeps the [VoxCPM2](https://voxcpm.readthedocs.io) model (~7s per utterance on M4 Pro MPS, ~22s load) resident and serves synthesis over localhost. Managed by launchd as `com.alistairstead.claude-voxcpm` (plist in `hooks/launchd/`, copied to `~/Library/LaunchAgents/` by `install.sh`). Daemon log: `/tmp/claude-voxcpm-daemon.log`.
+`voxcpm-server.py` keeps the [VoxCPM2](https://voxcpm.readthedocs.io) model resident via [mlx-audio](https://github.com/Blaizzy/mlx-audio) 8-bit (`mlx-community/VoxCPM2-8bit`: ~3s short / ~6s long utterance on M4 Pro, ~3.2GB RAM, vs ~4s/~10.5s/~8GB on PyTorch MPS fp32) and serves synthesis over localhost. Managed by launchd as `com.alistairstead.claude-voxcpm` (plist in `hooks/launchd/`, copied to `~/Library/LaunchAgents/` by `install.sh`). Daemon log: `/tmp/claude-voxcpm-daemon.log`.
 
 ```bash
 launchctl bootout "gui/$(id -u)/com.alistairstead.claude-voxcpm"      # stop (frees ~2-4GB RAM)

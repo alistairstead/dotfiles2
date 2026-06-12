@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.10,<3.13"
-# dependencies = ["voxcpm", "soundfile"]
+# dependencies = ["mlx-audio", "soundfile"]
 # ///
 """Materialize the VoxCPM base voice from its text description.
 
@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 CONFIG_PATH = Path(__file__).resolve().parent / "voxcpm-voices.json"
-MODEL_ID = "openbmb/VoxCPM2"
+MODEL_ID = "mlx-community/VoxCPM2-8bit"
 
 # Long enough for a >=5s clone reference, no longer: the daemon re-encodes
 # this audio on every request, so reference length costs latency directly.
@@ -80,19 +80,26 @@ def main() -> None:
     out_dir = Path(os.path.expanduser(config.get("voicesDir", "~/.local/share/voxcpm-voices")))
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    import numpy as np
     import soundfile as sf
-    from voxcpm import VoxCPM
+    from mlx_audio.tts.utils import load
 
     print(f"loading {MODEL_ID}...")
-    model = VoxCPM.from_pretrained(MODEL_ID, load_denoiser=False)
-    sample_rate = getattr(model.tts_model, "sample_rate", 44100)
+    model = load(MODEL_ID)
+
+    def generate(text: str, instruct: str | None, ref_audio: str | None = None, profile_cfg: dict | None = None):
+        cfg = profile_cfg or {}
+        result = next(model.generate(
+            text=text,
+            instruct=instruct,
+            ref_audio=ref_audio,
+            cfg_value=cfg.get("cfgValue", 2.0),
+            inference_timesteps=cfg.get("inferenceTimesteps", 10),
+        ))
+        return np.asarray(result.audio), getattr(result, "sample_rate", 48000) or 48000
 
     print("designing base voice from description...")
-    wav = model.generate(
-        text=f"({description}){AUDITION_PASSAGE}",
-        cfg_value=2.0,
-        inference_timesteps=10,
-    )
+    wav, sample_rate = generate(AUDITION_PASSAGE, instruct=description)
     base_wav = out_dir / "base.wav"
     base_txt = out_dir / "base.txt"
     sf.write(base_wav, wav, sample_rate)
@@ -113,12 +120,7 @@ def main() -> None:
         control = profile_cfg.get("styleInstruction", "")
         out = out_dir / f"audition-{name}.wav"
         print(f"cloning profile '{name}' ({control})...")
-        wav = model.generate(
-            text=f"({control}){text}" if control else text,
-            reference_wav_path=str(base_wav),
-            cfg_value=profile_cfg.get("cfgValue", 2.0),
-            inference_timesteps=profile_cfg.get("inferenceTimesteps", 10),
-        )
+        wav, sample_rate = generate(text, instruct=control or None, ref_audio=str(base_wav), profile_cfg=profile_cfg)
         sf.write(out, wav, sample_rate)
         normalize(out)
         print(f"wrote {out} ({len(wav) / sample_rate:.1f}s)")
