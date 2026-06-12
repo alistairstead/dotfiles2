@@ -275,7 +275,7 @@ chmod +x ts-lint.ts
 
 ## speak-notification.ts
 
-Text-to-speech hook that speaks Claude events aloud using the VoxCPM daemon (primary), Piper TTS, or macOS `say` (fallbacks).
+Text-to-speech hook that speaks Claude events aloud using Piper TTS (primary) or macOS `say` (fallback).
 
 ### Events
 
@@ -331,39 +331,17 @@ touch ~/.claude/hooks/.speak-muted
 
 ### TTS engines
 
-1. **VoxCPM daemon** (primary) — POSTs `{text, profile}` to `http://127.0.0.1:17865/speak` (override with `CLAUDE_VOXCPM_URL`). 300ms health-check timeout, 15s synthesis timeout; any failure falls through silently.
-2. **Piper** — looks up `piper` via `mise exec pipx:piper-tts`. Voice models stored in `~/.local/share/piper-voices/`.
-3. **Swift binary** `~/.claude/hooks/speak` — fallback if present.
-4. **macOS `say`** — final fallback using the voice and rate from the active voice profile.
+1. **Piper** (primary) — looks up `piper` via `mise exec pipx:piper-tts`. Voice models stored in `~/.local/share/piper-voices/`.
+2. **Swift binary** `~/.claude/hooks/speak` — fallback if present.
+3. **macOS `say`** — final fallback using the voice and rate from the active voice profile.
 
-### VoxCPM daemon
+### Piper voices
 
-`voxcpm-server.py` keeps the [VoxCPM2](https://voxcpm.readthedocs.io) model resident via [mlx-audio](https://github.com/Blaizzy/mlx-audio) 8-bit (`mlx-community/VoxCPM2-8bit`: ~3s short / ~6s long utterance on M4 Pro, ~3.2GB RAM, vs ~4s/~10.5s/~8GB on PyTorch MPS fp32) and serves synthesis over localhost. Managed by launchd as `com.alistairstead.claude-voxcpm` (plist in `hooks/launchd/`, copied to `~/Library/LaunchAgents/` by `install.sh`). Daemon log: `/tmp/claude-voxcpm-daemon.log`.
-
-```bash
-launchctl bootout "gui/$(id -u)/com.alistairstead.claude-voxcpm"      # stop (frees ~2-4GB RAM)
-launchctl bootstrap "gui/$(id -u)" ~/Library/LaunchAgents/com.alistairstead.claude-voxcpm.plist  # start
-curl -s localhost:17865/health                                        # check
-```
-
-Voice definition lives in `voxcpm-voices.json`:
-- `voice.description` — the base voice, prose (identity, texture, delivery)
-- per-profile `styleInstruction` — delivery shaping on the cloned voice
-- per-profile `tag`/`tagPlacement`/`tagProbability` — non-verbal tags (`[sigh]`, `[laughter]`, `[dissatisfaction-hnn]`, `[question-ah]`) injected daemon-side so fallback engines never see them. Only the model's canonical lowercase tag set renders as sound (see `VALID_TAGS` in `voxcpm-server.py`); anything else is read aloud literally and the daemon skips it
-- per-profile `cfgValue`/`inferenceTimesteps` — synthesis knobs
-
-The daemon re-reads the JSON per request; style/tag edits apply immediately. The base voice is designed once and cloned thereafter for a stable timbre:
-
-```bash
-uv run --script ~/.claude/hooks/voxcpm-design-voices.py --play                      # regenerate base.wav from voice.description
-uv run --script ~/.claude/hooks/voxcpm-design-voices.py --play --audition-profiles  # + hear all 5 profile deliveries
-```
-
-Reference audio lives in `~/.local/share/voxcpm-voices/` (`base.wav`; `base.txt` records its transcript). The daemon clones via `reference_wav_path`, not `prompt_wav_path`: prompt mode is text continuation, which reads the `(style instruction)` prefix aloud instead of interpreting it. Only description changes need the design script re-run.
+Each voice profile (`VOICE_PROFILES` in `speak-notification.ts`) sets a piper `model`, plus `lengthScale`/`noiseScale`/`noiseWScale`/`sentenceSilence` synthesis knobs. Downloaded models live in `~/.local/share/piper-voices/` (e.g. `en_GB-northern_english_male-medium.onnx`); the active assignment is the northern English male voice for all events. Output is normalised to -1dB via `sox`, with em-dash pauses spliced as clean silence.
 
 ### Logging
 
-Structured JSON appended to `/tmp/speak-notification.log`. Each entry includes timestamp, event type, voice profile, engine (`voxcpm`/`piper`/`fallback`), original message, and the final spoken string.
+Structured JSON appended to `/tmp/speak-notification.log`. Each entry includes timestamp, event type, voice profile, engine (`piper`/`fallback`), original message, and the final spoken string.
 
 ### Settings
 

@@ -197,23 +197,6 @@ else
 fi
 
 # =====================================
-# 6c. VoxCPM TTS daemon (launchd)
-# =====================================
-
-if [ -z "$CI" ] && [ -f "$HOME/.claude/hooks/voxcpm-server.py" ] && command -v uv &>/dev/null; then
-  info "Setting up VoxCPM TTS daemon..."
-  uv run --script "$HOME/.claude/hooks/voxcpm-server.py" --check-deps || true
-  # Copy (not symlink): launchd is unreliable with symlinked plists
-  cp "$HOME/.claude/hooks/launchd/com.alistairstead.claude-voxcpm.plist" "$HOME/Library/LaunchAgents/"
-  launchctl bootout "gui/$(id -u)/com.alistairstead.claude-voxcpm" 2>/dev/null || true
-  launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.alistairstead.claude-voxcpm.plist" \
-    && success "VoxCPM daemon loaded" \
-    || error "Failed to load VoxCPM daemon (piper fallback will be used)"
-else
-  info "Skipping VoxCPM daemon (CI, missing script, or no uv)"
-fi
-
-# =====================================
 # 7. Zap (Zsh Plugin Manager)
 # =====================================
 

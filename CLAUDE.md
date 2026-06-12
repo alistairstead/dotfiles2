@@ -90,7 +90,7 @@ The repository includes custom hooks in `claude/.claude/hooks/` that:
 - Log tool usage for debugging
 - Run TypeScript linting
 - Send macOS notifications for long-running tasks
-- Speak events aloud via a VoxCPM TTS daemon (launchd `com.alistairstead.claude-voxcpm`), falling back to piper then `say`; voice tuning in `claude/.claude/hooks/voxcpm-voices.json` (see hooks README)
+- Speak events aloud via Piper TTS, falling back to `say`; voice tuning in `VOICE_PROFILES` in `claude/.claude/hooks/speak-notification.ts` (see hooks README)
 
 ## Testing
 
