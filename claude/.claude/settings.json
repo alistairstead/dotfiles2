@@ -36,13 +36,15 @@
     ],
     "deny": [
       "Edit(.env)",
-      "Edit(.env.[!s]*)",
       "Edit(**/.env)",
-      "Edit(**/.env.[!s]*)",
+      "Edit(.env.local)",
+      "Edit(**/.env.local)",
+      "Edit(**/.env.*.local)",
       "Read(.env)",
-      "Read(.env.[!s]*)",
       "Read(**/.env)",
-      "Read(**/.env.[!s]*)",
+      "Read(.env.local)",
+      "Read(**/.env.local)",
+      "Read(**/.env.*.local)",
       "Read(**/*.pem)",
       "Read(**/*.key)",
       "Read(**/*.crt)",
@@ -51,7 +53,6 @@
       "Read(**/credentials/**)"
     ]
   },
-  "model": "claude-fable-5[1m]",
   "hooks": {
     "PostToolUse": [
       {
@@ -187,6 +188,7 @@
     }
   },
   "alwaysThinkingEnabled": true,
+  "advisorModel": "opus",
   "tui": "fullscreen",
   "voice": {
     "enabled": false,
