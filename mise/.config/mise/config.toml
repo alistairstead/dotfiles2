@@ -9,28 +9,12 @@ experimental = true
 # Jobs to run in parallel (for installations)
 jobs = 4
 
-# Shorthands for common plugins - using correct syntax
-[alias.node.versions]
-# Support for Nodejs versions
-lts = "lts/latest"
-latest = "latest"
-
-[alias.python.versions]
-# Common Python versions
-system = "system"
-
-[alias.ruby.versions]
-# Common Ruby versions
-system = "system"
-
 # Default tool versions (can be overridden by project-specific files)
 [tools]
-# These are examples - adjust to your needs
+bun = "1.3.14"
+go = "latest"
 node = "lts"
-bun = "latest"
-# python = "3.12"
-# ruby = "3.3"
-# go = "1.21"
+python = "3.14"
 "pipx:piper-tts" = "latest"
 
 # Environment variables
