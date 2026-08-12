@@ -5,7 +5,10 @@
     "CLAUDE_CODE_FORK_SUBAGENT": "1",
     "USE_BUILTIN_RIPGREP": "1"
   },
-  "includeCoAuthoredBy": false,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(grep:*)",
@@ -30,10 +33,9 @@
       "Edit(.env.schema)",
       "Edit(**/.env.schema)",
       "Read(.env.schema)",
-      "Read(**/.env.schema)",
-      "Write(.env.schema)",
-      "Write(**/.env.schema)"
+      "Read(**/.env.schema)"
     ],
+    "defaultMode": "auto",
     "deny": [
       "Edit(.env)",
       "Edit(**/.env)",
@@ -151,6 +153,9 @@
       }
     ]
   },
+  "worktree": {
+    "baseRef": "fresh"
+  },
   "statusLine": {
     "type": "command",
     "command": "sh $HOME/.claude/statusline-command.sh"
@@ -162,10 +167,10 @@
     "dev-browser@dev-browser-marketplace": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true,
     "fallow@fallow-skills": true,
-    "chrome-devtools-mcp@claude-plugins-official": true,
-    "figma@claude-plugins-official": true
+    "figma@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "context-mode": {
@@ -195,9 +200,15 @@
     "mode": "hold"
   },
   "autoDreamEnabled": true,
+  "skipWorkflowUsageWarning": true,
   "theme": "dark",
   "editorMode": "vim",
-  "teammateMode": "tmux",
+  "preferredNotifChannel": "terminal_bell",
+  "terminalProgressBarEnabled": true,
+  "teammateMode": "in-process",
+  "remoteControlAtStartup": true,
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "voiceEnabled": false,
   "feedbackSurveyState": {
