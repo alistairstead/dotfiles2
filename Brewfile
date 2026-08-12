@@ -105,13 +105,12 @@ brew "gitui"      # TUI for git
 brew "sccache"    # Shared compilation cache
 
 # Window management
-brew "yabai"
+brew "asmvik/formulae/yabai"
 brew "sleepwatcher"
 
 # Casks (GUI applications)
 cask "1password@beta"
 cask "1password-cli@beta"
-cask "bartender"
 cask "choosy"
 cask "cleanmymac"
 cask "cleanshot"
@@ -124,6 +123,7 @@ cask "font-victor-mono"
 cask "ghostty"
 cask "google-chrome"
 cask "home-assistant"
+cask "jordanbaird-ice"
 cask "karabiner-elements"
 cask "linearmouse"
 cask "nordvpn"
@@ -133,7 +133,7 @@ cask "raycast"
 cask "readdle-spark"
 cask "sizzy"
 cask "slack"
-cask "todoist"
+cask "todoist-app"
 cask "typewhisper"
 cask "zed"
 cask "zed@preview"
