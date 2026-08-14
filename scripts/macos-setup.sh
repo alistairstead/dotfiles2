@@ -78,9 +78,11 @@ setup_system_defaults() {
     # Automatically quit printer app once the print jobs complete
     defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
     
-    # Remove duplicates in the "Open With" menu
-    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
-    
+    # There used to be an lsregister -kill -r -domain ... call here to rebuild
+    # the "Open With" menu. macOS removed -kill ("dangerous and no longer
+    # useful") and -domain is not an option either, so the command now exits
+    # non-zero and, under set -e, took every setup step below it with it.
+
     # Disable automatic termination of inactive apps
     defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
     
