@@ -1,8 +1,36 @@
 #!/usr/bin/env bash
 # Unified Install Script for macOS dotfiles
 # Combines setup.sh and install.sh into a single, comprehensive installer
+#
+# Usage: install.sh [--dry-run]
 
 set -e
+
+DRY_RUN=${DRY_RUN:-}
+
+case "${1:-}" in
+  -n | --dry-run)
+    DRY_RUN=1
+    ;;
+  -h | --help)
+    cat <<'USAGE'
+Usage: install.sh [--dry-run]
+
+  --dry-run, -n  Report what the install would change and change nothing.
+                 Uses each tool's own dry run where one exists: `brew bundle
+                 check` for packages, `stow --simulate` for symlinks, and
+                 macos-setup.sh --dry-run for system defaults.
+
+Environment: DRY_RUN=1 does the same.
+USAGE
+    exit 0
+    ;;
+  "") ;;
+  *)
+    echo "Unknown option: $1" >&2
+    exit 1
+    ;;
+esac
 
 # =====================================
 # Helper Functions
@@ -47,7 +75,7 @@ fi
 # Sudo Setup (skip in CI)
 # =====================================
 
-if [ -z "$CI" ]; then
+if [ -z "$CI" ] && [ -z "$DRY_RUN" ]; then
   # Keep sudo alive
   sudo -v
   while true; do
@@ -79,7 +107,9 @@ fi
 
 if ! command -v brew &>/dev/null; then
   info "Installing Homebrew..."
-  if [ -z "$CI" ]; then
+  if [ -n "$DRY_RUN" ]; then
+    info "  would install Homebrew"
+  elif [ -z "$CI" ]; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   else
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -90,6 +120,9 @@ if ! command -v brew &>/dev/null; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
   success "Homebrew installed"
+elif [ -n "$DRY_RUN" ]; then
+  info "Homebrew already installed; would run brew update && brew upgrade"
+  info "  outdated: $(brew outdated --quiet | tr '\n' ' ')"
 else
   info "Homebrew already installed, updating..."
   brew update
@@ -104,13 +137,21 @@ if [ -f "Brewfile" ]; then
   info "Installing packages from Brewfile..."
   # Per-push CI installs a subset to stay fast; the scheduled full-install
   # workflow sets DOTFILES_FULL_INSTALL to exercise the real Brewfile.
+  BREWFILE=Brewfile
   if [ -n "$CI" ] && [ -z "$DOTFILES_FULL_INSTALL" ] && [ -f ".github/test/Brewfile.ci" ]; then
     info "Using CI-specific Brewfile"
-    brew bundle --file=.github/test/Brewfile.ci
-  else
-    brew bundle --file=Brewfile
+    BREWFILE=.github/test/Brewfile.ci
   fi
-  success "Homebrew packages installed"
+
+  if [ -n "$DRY_RUN" ]; then
+    # `check` reports the unmet dependencies without installing any of them
+    if brew bundle check --file="$BREWFILE" --verbose; then
+      info "  every $BREWFILE dependency is already installed"
+    fi
+  else
+    brew bundle --file="$BREWFILE"
+    success "Homebrew packages installed"
+  fi
 else
   fail "Brewfile not found"
 fi
@@ -121,8 +162,12 @@ fi
 
 if { [ -z "$CI" ] || [ -n "$DOTFILES_FULL_INSTALL" ]; } && [ -f "scripts/macos-setup.sh" ]; then
   info "Configuring macOS system settings..."
-  ./scripts/macos-setup.sh
-  success "macOS settings configured"
+  if [ -n "$DRY_RUN" ]; then
+    ./scripts/macos-setup.sh --dry-run
+  else
+    ./scripts/macos-setup.sh
+    success "macOS settings configured"
+  fi
 else
   info "Skipping macOS system settings (CI environment or script not found)"
 fi
@@ -132,10 +177,16 @@ fi
 # =====================================
 
 info "Creating required directories..."
-mkdir -p ~/.config
-mkdir -p ~/.local/bin
-mkdir -p ~/.tmux/plugins
-success "Directories created"
+if [ -n "$DRY_RUN" ]; then
+  for dir in ~/.config ~/.local/bin ~/.tmux/plugins; do
+    [ -d "$dir" ] || info "  would create $dir"
+  done
+else
+  mkdir -p ~/.config
+  mkdir -p ~/.local/bin
+  mkdir -p ~/.tmux/plugins
+  success "Directories created"
+fi
 
 # =====================================
 # 6. GNU Stow Setup
@@ -154,7 +205,10 @@ info "Creating symlinks with GNU Stow..."
 
 while IFS= read -r folder; do
   info "Stowing $folder..."
-  if [ -n "$CI" ]; then
+  if [ -n "$DRY_RUN" ]; then
+    # --simulate reports the links it would make and touches nothing
+    stow --simulate -v "$folder" 2>&1 | sed 's/^/    /' || true
+  elif [ -n "$CI" ]; then
     # In CI, adopt existing files to avoid conflicts
     stow -v --adopt "$folder" || fail "Failed to stow $folder"
   else
@@ -177,9 +231,13 @@ success "Dotfiles linked"
 
 if [ -f "$HOME/.claude/hooks/speak.swift" ]; then
   info "Compiling Claude Code TTS binary..."
-  swiftc -o "$HOME/.claude/hooks/speak" "$HOME/.claude/hooks/speak.swift" -framework AVFoundation 2>/dev/null \
-    && success "TTS binary compiled" \
-    || error "Failed to compile TTS binary (say fallback will be used)"
+  if [ -n "$DRY_RUN" ]; then
+    info "  would compile ~/.claude/hooks/speak from speak.swift"
+  else
+    swiftc -o "$HOME/.claude/hooks/speak" "$HOME/.claude/hooks/speak.swift" -framework AVFoundation 2>/dev/null \
+      && success "TTS binary compiled" \
+      || error "Failed to compile TTS binary (say fallback will be used)"
+  fi
 else
   info "Skipping TTS binary (speak.swift not found)"
 fi
@@ -190,7 +248,11 @@ fi
 
 if ! command -v mise &>/dev/null; then
   info "Installing mise..."
-  brew install mise
+  if [ -n "$DRY_RUN" ]; then
+    info "  would brew install mise"
+  else
+    brew install mise
+  fi
 fi
 
 info "Setting up mise for runtime management..."
@@ -199,7 +261,10 @@ info "Setting up mise for runtime management..."
 # ~/.config/mise/config.toml. `mise use --global` would rewrite that file, i.e.
 # write through the symlink and into this repo, so install what is declared
 # rather than redeclaring it here.
-if [ -z "$CI" ]; then
+if [ -n "$DRY_RUN" ]; then
+  # Lists the declared tools and marks the ones not yet installed
+  mise ls --missing 2>/dev/null | sed 's/^/    missing: /' || info "  would run mise install"
+elif [ -z "$CI" ]; then
   mise install
 else
   # In CI, one runtime is enough to prove mise works
@@ -214,8 +279,12 @@ success "Mise configured - will auto-read .nvmrc, .ruby-version, .tool-versions,
 
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
   info "Installing tmux plugin manager..."
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-  ~/.tmux/plugins/tpm/bin/install_plugins || true
+  if [ -n "$DRY_RUN" ]; then
+    info "  would clone tpm into ~/.tmux/plugins/tpm and install plugins"
+  else
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    ~/.tmux/plugins/tpm/bin/install_plugins || true
+  fi
   success "Tmux plugins installed"
 else
   info "Tmux plugin manager already installed"
@@ -227,8 +296,12 @@ fi
 
 if [ -z "$CI" ] && [ "$SHELL" != "/bin/zsh" ]; then
   info "Setting default shell to zsh..."
-  chsh -s /bin/zsh
-  success "Default shell set to zsh"
+  if [ -n "$DRY_RUN" ]; then
+    info "  would change the login shell from $SHELL to /bin/zsh"
+  else
+    chsh -s /bin/zsh
+    success "Default shell set to zsh"
+  fi
 fi
 
 # PATH is not configured here. It is built by shell/.config/shell/path.sh,

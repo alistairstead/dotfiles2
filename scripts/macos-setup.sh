@@ -1,7 +1,137 @@
 #!/bin/bash
+#
+# `defaults` and `sudo` are shadowed by shell functions under --dry-run, which
+# ShellCheck reads as passing a function to an external command. In a real run
+# they are the ordinary commands.
+# shellcheck disable=SC2033
+#
 # macOS System Setup Script
+#
+# Usage: macos-setup.sh [--dry-run]
+#   --dry-run  Print what would change, current value to proposed value, and
+#              write nothing. Also accepted as DRY_RUN=1.
 
 set -e
+
+DRY_RUN=${DRY_RUN:-}
+DRY_VERBOSE=${DRY_VERBOSE:-}
+
+case "${1:-}" in
+    -n | --dry-run)
+        DRY_RUN=1
+        [ "${2:-}" = "--verbose" ] && DRY_VERBOSE=1
+        ;;
+    --verbose)
+        DRY_RUN=1
+        DRY_VERBOSE=1
+        ;;
+    -h | --help)
+        cat <<'USAGE'
+Usage: macos-setup.sh [--dry-run [--verbose]]
+
+  --dry-run, -n  Show what would change and write nothing. Lines are marked
+                 ~ changed, + new, ! other command. Already-correct settings
+                 are counted, not listed.
+  --verbose      With --dry-run, also list settings already at the wanted
+                 value.
+
+Environment: DRY_RUN=1 and DRY_VERBOSE=1 do the same.
+USAGE
+        exit 0
+        ;;
+    "") ;;
+    *)
+        echo "Unknown option: $1" >&2
+        exit 1
+        ;;
+esac
+
+if [ -n "$DRY_RUN" ]; then
+    DRY_CHANGED=0
+    DRY_ADDED=0
+    DRY_SAME=0
+
+    # `defaults write` takes a type flag; `defaults read` prints a bare value.
+    # Normalise the proposed value into what read would print, so the two can
+    # be compared rather than just listed.
+    _dry_normalise() {
+        case "${1:-}" in
+            -bool | -boolean)
+                case "${2:-}" in
+                    true | TRUE | yes | YES | 1) echo 1 ;;
+                    *) echo 0 ;;
+                esac
+                ;;
+            -int | -integer | -float | -string)
+                shift
+                echo "$*"
+                ;;
+            *) echo "$*" ;;
+        esac
+    }
+
+    _dry_write() {
+        local domain=$1 key=$2 proposed current
+        shift 2
+        proposed=$(_dry_normalise "$@")
+
+        if current=$(command defaults read "$domain" "$key" 2>/dev/null); then
+            # Arrays and dicts read back multi-line; keep the diff to one line
+            current=$(echo "$current" | tr '\n' ' ' | sed 's/  */ /g; s/ $//')
+            if [ "$current" = "$proposed" ]; then
+                DRY_SAME=$((DRY_SAME + 1))
+                if [ -n "$DRY_VERBOSE" ]; then
+                    printf '    %s %s = %s (already set)\n' "$domain" "$key" "$current"
+                fi
+            else
+                DRY_CHANGED=$((DRY_CHANGED + 1))
+                printf '  ~ %s %s: %s -> %s\n' "$domain" "$key" "$current" "$proposed"
+            fi
+        else
+            DRY_ADDED=$((DRY_ADDED + 1))
+            printf '  + %s %s = %s\n' "$domain" "$key" "$proposed"
+        fi
+    }
+
+    # Nothing here reads defaults for control flow, so shimming the mutating
+    # commands is enough to make the whole script inert. `command` bypasses
+    # the shim where the real thing is still wanted.
+    defaults() {
+        if [ "${1:-}" != "write" ]; then
+            command defaults "$@"
+            return
+        fi
+        shift
+        _dry_write "$@"
+    }
+
+    sudo() {
+        # sudo defaults write ... is still a defaults write; the plists under
+        # /Library/Preferences are readable without privileges
+        if [ "${1:-}" = "defaults" ] && [ "${2:-}" = "write" ]; then
+            shift 2
+            _dry_write "$@"
+        else
+            printf '  ! would run: sudo %s\n' "$*"
+        fi
+    }
+
+    killall() { printf '  ! would run: killall %s\n' "$*"; }
+    mkdir() { printf '  ! would run: mkdir %s\n' "$*"; }
+
+    dry_run_summary() {
+        echo ""
+        echo "Dry run summary: $DRY_CHANGED changed, $DRY_ADDED new, $DRY_SAME already set"
+        if [ -z "$DRY_VERBOSE" ] && [ "$DRY_SAME" -gt 0 ]; then
+            echo "Re-run with --verbose to see the $DRY_SAME already at the wanted value."
+        fi
+    }
+    trap dry_run_summary EXIT
+
+    echo "DRY RUN: nothing will be written"
+    echo "  ~ changes an existing value   + sets a new one   ! other command"
+    echo ""
+fi
 
 echo "Setting up macOS system preferences..."
 
@@ -38,7 +168,12 @@ setup_homebrew_env() {
 link_mysql_client() {
     if [ -x "/opt/homebrew/bin/brew" ] && /opt/homebrew/bin/brew list mysql-client@8.4 &>/dev/null; then
         echo "Linking MySQL client..."
-        /opt/homebrew/bin/brew link --overwrite --force mysql-client@8.4
+        # Full path, so the dry-run shims do not cover it
+        if [ -n "$DRY_RUN" ]; then
+            echo "    would run: brew link --overwrite --force mysql-client@8.4"
+        else
+            /opt/homebrew/bin/brew link --overwrite --force mysql-client@8.4
+        fi
     fi
 }
 
@@ -357,12 +492,12 @@ setup_applications() {
 main() {
     echo "Starting macOS system setup..."
     
-    # Request sudo access upfront
-    sudo -v
-    
-    # Keep sudo alive
-    while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-    
+    if [ -z "$DRY_RUN" ]; then
+        # Request sudo access upfront, then keep it alive
+        sudo -v
+        while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+    fi
+
     setup_touchid_sudo
     setup_homebrew_env
     link_mysql_client
