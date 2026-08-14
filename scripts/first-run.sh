@@ -243,13 +243,16 @@ grep -n '^mas ' "$REPO_ROOT/Brewfile" | sed 's/^/  /' || true
 step "Open the App Store and sign in with your Apple ID."
 open_url "macappstore://"
 pause "Signed in? Press Enter."
-if command -v mas >/dev/null 2>&1 && mas account >/dev/null 2>&1; then
-  say "${GREEN}signed in as${RESET} $(mas account 2>/dev/null)"
-  if confirm "Install the App Store entries now with brew bundle?"; then
-    brew bundle --file="$REPO_ROOT/Brewfile" || warn "brew bundle reported a problem"
+# mas 7 dropped `mas account`: Apple removed the API it used, so there is no
+# reliable way to detect a sign-in from the CLI. The install is the real test.
+if confirm "Install the App Store entries now?"; then
+  if brew bundle --file="$REPO_ROOT/Brewfile"; then
+    say "${GREEN}App Store entries installed${RESET}"
+  else
+    warn "brew bundle could not finish — usually means no Apple ID session"
+    SKIPPED+=("Mac App Store apps — sign in, then run: brew bundle")
   fi
 else
-  note "mas cannot see an account yet; re-run 'brew bundle' once signed in"
   SKIPPED+=("Mac App Store apps — sign in, then run: brew bundle")
 fi
 
