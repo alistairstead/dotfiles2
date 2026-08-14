@@ -187,17 +187,15 @@ fi
 
 info "Setting up mise for runtime management..."
 
-# Install common development tools with mise
+# The tools are declared in mise/.config/mise/config.toml, which stow links to
+# ~/.config/mise/config.toml. `mise use --global` would rewrite that file, i.e.
+# write through the symlink and into this repo, so install what is declared
+# rather than redeclaring it here.
 if [ -z "$CI" ]; then
-  mise use --global node@lts
-  mise use --global python@latest
-  mise use --global ruby@latest
-  mise use --global go@latest
-  mise use --global pnpm@latest
-  mise use --global bun@latest
+  mise install
 else
-  # In CI, only install essentials
-  mise use --global node@lts || true
+  # In CI, one runtime is enough to prove mise works
+  mise install node || true
 fi
 
 success "Mise configured - will auto-read .nvmrc, .ruby-version, .tool-versions, etc."
@@ -238,10 +236,5 @@ echo ""
 info "Next steps:"
 info "1. Restart your terminal or run: source ~/.zshenv && source ~/.zshrc"
 info "2. Run 'mise doctor' to verify runtime management"
-
-# Run validation in CI
-if [ -n "$CI" ] && [ -f ".github/test/validate.sh" ]; then
-  info "Running CI validation..."
-  bash .github/test/validate.sh
-fi
+info "3. Run '.github/test/validate.sh' to check the install"
 

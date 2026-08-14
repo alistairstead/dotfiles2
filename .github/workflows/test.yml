@@ -11,60 +11,99 @@ jobs:
   test-install:
     name: Test on macOS Latest
     runs-on: macos-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up environment
         run: |
           echo "CI=true" >> $GITHUB_ENV
           echo "HOME=$HOME" >> $GITHUB_ENV
-      
+
+      - name: Record shell versions under test
+        run: |
+          # The Brewfile does not install bash or zsh, so CI exercises the
+          # macOS system shells, same as a real machine. Log which ones.
+          echo "zsh:  $(zsh --version)"
+          echo "bash: $(/bin/bash --version | head -1)"
+
+      - name: Install zsh-abbr
+        continue-on-error: true
+        run: |
+          # zsh-abbr lives in a third-party tap, which Homebrew will not load
+          # without explicit trust. Best effort: the abbr block in .zshrc is
+          # guarded, so CI still passes without it, just with less coverage.
+          brew tap olets/tap
+          brew trust --formula olets/tap/zsh-abbr
+          brew install olets/tap/zsh-abbr
+
       - name: Run installation script
         run: |
-          # Make script executable
           chmod +x install.sh
-          
-          # Run installation
           ./install.sh
-      
-      - name: Validate installation
-        run: |
-          # Check if key tools are installed
-          echo "=== Checking Homebrew ==="
-          which brew && brew --version
-          
-          echo "=== Checking GNU Stow ==="
-          which stow && stow --version
-          
-          echo "=== Checking mise ==="
-          which mise && mise --version
-          
-          echo "=== Checking symlinks ==="
-          ls -la ~/.config/
-          
-          echo "=== Checking shell configurations ==="
-          # Test if configurations load without errors
-          zsh -c "source ~/.zshrc && echo 'Zsh config loads successfully'"
-          bash -c "source ~/.bashrc && echo 'Bash config loads successfully'"
-      
-      - name: Run extended validation
-        if: success()
-        run: |
-          if [ -f ".github/test/validate.sh" ]; then
-            chmod +x .github/test/validate.sh
-            ./.github/test/validate.sh
-          fi
 
-  test-shellcheck:
-    name: ShellCheck
+      - name: Check the install did not write into the repo
+        run: |
+          # ~/.config and ~/.zshenv are symlinks into this checkout, so anything
+          # the installer appends to them lands in tracked files. A dirty tree
+          # here means a step is writing through a stow symlink.
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::install.sh modified tracked files"
+            git status --porcelain
+            git diff
+            exit 1
+          fi
+          echo "Working tree is clean after install"
+
+      - name: Validate installation
+        run: ./.github/test/validate.sh
+
+      - name: Validate under system bash 3.2
+        run: /bin/bash ./.github/test/validate.sh
+
+      - name: Check unstow and restow are clean
+        run: |
+          . ./scripts/stow-modules.sh
+          while IFS= read -r module; do
+            stow -D "$module"
+          done < <(stow_modules .)
+
+          for leftover in "$HOME/.zshrc" "$HOME/.config/starship.toml" "$HOME/.local/bin/update"; do
+            if [ -e "$leftover" ]; then
+              echo "::error::$leftover survived stow -D"
+              exit 1
+            fi
+          done
+
+          while IFS= read -r module; do
+            stow "$module"
+          done < <(stow_modules .)
+
+          ./.github/test/validate.sh
+
+      - name: Re-run the installer
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+        run: |
+          # Installing over an existing install must succeed and must not
+          # change the repo.
+          ./install.sh
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::the second install modified tracked files"
+            git status --porcelain
+            exit 1
+          fi
+          ./.github/test/validate.sh
+
+  test-static:
+    name: Static Checks
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
         with:
@@ -73,14 +112,9 @@ jobs:
           ignore_paths: nvim node_modules .git zsh
           ignore_names: .zshrc .zprofile .zshenv
 
-  test-syntax:
-    name: Test Configuration Syntax
-    runs-on: macos-latest
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
+      - name: Check for shadowed command names
+        run: ./scripts/check-collisions.sh
+
       - name: Check CI Brewfile is a subset of Brewfile
         run: |
           # Brewfile.ci is a hand-picked subset; anything in it that is not in
@@ -95,32 +129,80 @@ jobs:
           done < <(sed -n 's/^brew "\([^"]*\)".*/\1/p' .github/test/Brewfile.ci)
           exit $status
 
+  test-typescript:
+    name: TypeScript
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Test Claude Code hooks
+        working-directory: claude/.claude/hooks
+        run: bun test
+
+      - name: Typecheck Karabiner config
+        working-directory: karabiner
+        run: |
+          # Typecheck rather than build: the build calls writeToProfile, which
+          # targets ~/.config/karabiner/karabiner.json and needs Karabiner.
+          bun install --frozen-lockfile
+          bunx tsc --noEmit
+
+      - name: Validate JSON files
+        run: |
+          status=0
+          while IFS= read -r file; do
+            echo "Validating $file"
+            jq . "$file" > /dev/null || status=1
+          done < <(git ls-files '*.json' | grep -v '^zed/' | grep -v '^karabiner/')
+
+          # Zed configs are JSONC: comments are legal, so strip them first
+          while IFS= read -r file; do
+            echo "Validating (JSONC) $file"
+            bunx --bun strip-json-comments-cli < "$file" | jq . > /dev/null || status=1
+          done < <(git ls-files 'zed/*.json')
+          exit $status
+
+  test-syntax:
+    name: Test Configuration Syntax
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Validate YAML files
         run: |
-          # Install yq for YAML validation
           brew install yq
-          
-          # Find and validate all YAML files
+
           find . -name "*.yml" -o -name "*.yaml" | while read -r file; do
             echo "Validating $file"
             yq eval '.' "$file" > /dev/null || exit 1
           done
-      
+
       - name: Validate TOML files
         run: |
-          # Install taplo for TOML validation
           brew install taplo
-          
-          # Find and validate all TOML files
+
           find . -name "*.toml" | while read -r file; do
             echo "Validating $file"
             taplo lint "$file" || exit 1
           done
-      
-      - name: Validate shell scripts
+
+      - name: Validate shell script syntax
         run: |
-          # Basic syntax check for all shell scripts
-          find . -name "*.sh" -o -name "*.bash" -o -name "*.zsh" | while read -r file; do
-            echo "Checking syntax of $file"
-            bash -n "$file" || zsh -n "$file" || true
-          done
+          # Covers the zsh dotfiles that ShellCheck is configured to skip.
+          status=0
+          while IFS= read -r file; do
+            case "$file" in
+              *.zsh | */.zshrc | */.zshenv | */.zprofile)
+                zsh -n "$file" || { echo "::error file=$file::zsh syntax error"; status=1; } ;;
+              *)
+                bash -n "$file" || { echo "::error file=$file::bash syntax error"; status=1; } ;;
+            esac
+          done < <(git ls-files '*.sh' 'zsh/.zsh*' 'zsh/.zprofile' 'bash/.bash*' 'bash/.profile')
+          exit $status
