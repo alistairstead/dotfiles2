@@ -21,7 +21,7 @@ This is a GNU Stow-based dotfiles repository for macOS. The repository manages p
 
 - **Karabiner configuration**: 
   - Build: `cd karabiner && pnpm build` (uses tsx to compile TypeScript config)
-- **Shell validation**: `shellcheck *.sh scripts/*.sh` (automated via Lefthook pre-commit)
+- **Shell validation**: `shellcheck *.sh scripts/*.sh` (also enforced in CI)
 - **Test installation**: Run GitHub Actions workflow (`.github/workflows/test.yml`)
 
 ### Tmux Plugin Management
@@ -72,15 +72,14 @@ Each application directory follows the Stow convention:
 2. **Shell**: Zsh is default with Starship prompt and extensive aliases
 3. **Theme**: Catppuccin Mocha theme preference across applications
 4. **Version Management**: mise handles Node.js, Ruby, Python, etc. (reads .nvmrc, .ruby-version)
-5. **Git Hooks**: Lefthook runs shellcheck on pre-commit
-6. **CI/CD**: GitHub Actions tests installation on macOS
+5. **CI/CD**: GitHub Actions tests installation on macOS
 
 ## When Making Changes
 
 1. **Config Updates**: After modifying configs, run `stow -R <app>` to update symlinks
 2. **New Applications**: Create directory structure matching home layout, then `stow <app>`
 3. **Brew Packages**: Edit `Brewfile` then run `brew bundle`
-4. **Shell Scripts**: Ensure shellcheck compliance (automated via Lefthook)
+4. **Shell Scripts**: Ensure shellcheck compliance (enforced in CI)
 5. **Karabiner Rules**: Edit TypeScript in `karabiner/src/`, then `pnpm build`
 
 ## Claude Code Hooks

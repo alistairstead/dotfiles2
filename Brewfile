@@ -99,7 +99,6 @@ brew "uv"
 # Advanced development tools
 brew "mise"
 brew "git-cliff"  # Automated changelog generation
-brew "lefthook"   # Modern git hooks manager
 brew "git-absorb" # Automatically fixup commits
 brew "gitui"      # TUI for git
 brew "sccache"    # Shared compilation cache
