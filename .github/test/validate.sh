@@ -202,6 +202,38 @@ else
   info "zsh-abbr not installed; abbreviation reconciliation not covered"
 fi
 
+# Atuin has to win ctrl-r and the up arrow, and that is purely a question of
+# where `atuin init` sits in .zshrc. It must come after the fzf key bindings,
+# which bind ctrl-r themselves, and after `bindkey -v`, which swaps the main
+# keymap to viins and discards anything bound before it. Reordering the file
+# breaks history search with no error at all, so assert the bindings directly.
+info "Testing atuin key bindings..."
+if command -v atuin >/dev/null 2>&1; then
+  while IFS=$'\t' read -r key expected; do
+    [ -n "$key" ] || continue
+    bound=$(clean_zsh -i -c "bindkey \"$key\"" 2>/dev/null)
+    if [[ "$bound" == *"$expected"* ]]; then
+      success "$key is bound to $expected"
+    else
+      error "$key is bound to '${bound:-nothing}', expected $expected"
+    fi
+  done <<EOF
+^R	atuin-search
+$(printf '\\e[A')	atuin-up-search
+EOF
+
+  # Only the interactive-insert keymap gets the AI binding. If it ever lands in
+  # vicmd too, `?` stops being vi's search-backward.
+  vicmd_q=$(clean_zsh -i -c 'bindkey -M vicmd "?"' 2>/dev/null)
+  if [[ "$vicmd_q" == *"vi-history-search-forward"* ]]; then
+    success "? in vicmd is still vi-history-search-forward"
+  else
+    error "? in vicmd is '${vicmd_q:-nothing}', expected vi-history-search-forward"
+  fi
+else
+  info "atuin not installed; its key bindings are not covered"
+fi
+
 # Syntax-checking a config only proves it is well-formed TOML or INI. These
 # hand the file to the tool that actually consumes it, which is what catches an
 # unknown key, a bad value, or a broken include.
@@ -228,6 +260,31 @@ if command -v jj >/dev/null 2>&1; then
   fi
 else
   info "jj not installed; its config is not covered"
+fi
+
+# `atuin config get` reads the merged config, so a key that landed under the
+# wrong TOML table reports "(not set in config file)" rather than its value.
+# Bare keys belong to the root table and must precede the first [table] header;
+# moving one below a header is silently ignored, which is easy to do by hand.
+if command -v atuin >/dev/null 2>&1; then
+  atuin_bad=0
+  while IFS=$'\t' read -r key expected; do
+    [ -n "$key" ] || continue
+    got=$(atuin config get "$key" 2>/dev/null)
+    [ "$got" = "$expected" ] && continue
+    error "atuin $key is '${got:-unset}', expected $expected"
+    atuin_bad=1
+  done <<EOF
+workspaces	true
+enter_accept	false
+keymap_mode	auto
+dotfiles.enabled	false
+daemon.enabled	true
+ai.enabled	true
+EOF
+  [ "$atuin_bad" -eq 0 ] && success "atuin reads ~/.config/atuin/config.toml"
+else
+  info "atuin not installed; its config is not covered"
 fi
 
 # Test mise

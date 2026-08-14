@@ -234,8 +234,37 @@ info "Creating symlinks with GNU Stow..."
 # shellcheck source=scripts/stow-modules.sh
 . ./scripts/stow-modules.sh
 
+# Move aside any real file sitting where a package wants a symlink. stow refuses
+# to link over a regular file and aborts the whole package, which would fail the
+# install outright. Tools that write their own default config on first run hit
+# this routinely: atuin creates ~/.config/atuin/config.toml the first time it is
+# invoked, so any machine that used the tool before adopting these dotfiles has
+# one waiting. The original is kept as .bak rather than deleted; nothing here
+# reads it again.
+#
+# Only regular files are touched. Existing symlinks are left to stow, which
+# re-points its own and reports a genuine conflict for anything else.
+resolve_stow_conflicts() {
+  local folder=$1 rel target moved=0
+  while IFS= read -r rel; do
+    target="$HOME/${rel#"$folder"/}"
+    [ -e "$target" ] || continue
+    [ -L "$target" ] && continue
+    [ -d "$target" ] && continue
+    if [ -n "$DRY_RUN" ]; then
+      info "  would back up $target -> $target.bak"
+    else
+      mv "$target" "$target.bak" || fail "Could not back up $target"
+      info "  backed up $target -> $target.bak"
+    fi
+    moved=$((moved + 1))
+  done < <(git ls-files "$folder")
+  [ "$moved" -eq 0 ] || info "  $moved pre-existing file(s) moved aside"
+}
+
 while IFS= read -r folder; do
   info "Stowing $folder..."
+  [ -n "$CI" ] || resolve_stow_conflicts "$folder"
   if [ -n "$DRY_RUN" ]; then
     # --simulate reports the links it would make and touches nothing
     stow --simulate -v "$folder" 2>&1 | sed 's/^/    /' || true

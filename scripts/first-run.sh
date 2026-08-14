@@ -189,7 +189,7 @@ finish() {
 # Replace the example below. Set TOTAL_STAGES to match the stages you write.
 # ──────────────────────────────────────────────────────────────────────────
 
-TOTAL_STAGES=8
+TOTAL_STAGES=10
 
 # Run from anywhere: every repo path below is resolved from this script.
 REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -389,34 +389,49 @@ else
   fi
 fi
 
-# Agent attribution and the MCP server are machine-local: the hook config is
-# stowed with the repo, but the MCP registration lives in ~/.claude.json, which
-# is not tracked.
-if command -v atuin >/dev/null 2>&1 && command -v claude >/dev/null 2>&1; then
-  printf '\n'
-  say "Let Claude Code search this history (read-only, stays on this machine):"
-  if claude mcp list 2>/dev/null | grep -q '^atuin:'; then
-    say "  MCP server already registered."
-  elif confirm "Register the Atuin MCP server with Claude Code?"; then
-    claude mcp add -s user atuin -- atuin mcp || warn "could not register the MCP server"
-  else
-    SKIPPED+=("claude mcp add -s user atuin -- atuin mcp")
-  fi
+# ── 9. Atuin MCP for Claude Code ──────────────────────────────────────────
+stage "Claude Code — let it read your shell history"
+say "The agent hook is stowed with this repo, so Claude Code's commands are"
+say "already recorded and tagged. Registering the MCP server is the other"
+say "direction: it lets Claude search that history, and read what a command"
+say "printed, instead of guessing. Read-only, and it stays on this machine."
+say "The registration lives in ~/.claude.json, which this repo does not track."
+if ! command -v atuin >/dev/null 2>&1; then
+  warn "atuin is not installed — run ./install.sh first"
+  SKIPPED+=("atuin MCP server — atuin not installed")
+elif ! command -v claude >/dev/null 2>&1; then
+  warn "claude is not installed"
+  SKIPPED+=("claude mcp add -s user atuin -- atuin mcp")
+elif claude mcp list 2>/dev/null | grep -q '^atuin:'; then
+  say "Already registered."
+elif confirm "Register the Atuin MCP server with Claude Code?"; then
+  claude mcp add -s user atuin -- atuin mcp || warn "could not register the MCP server"
+else
+  SKIPPED+=("claude mcp add -s user atuin -- atuin mcp")
 fi
 
-# Atuin AI is a second AI vendor and needs its own account, separate from the
-# sync account above. It cannot be scripted: the login is a browser flow started
-# on first use of the key.
-if command -v atuin >/dev/null 2>&1 && [[ "$(atuin config get ai.enabled 2>/dev/null)" == "true" ]]; then
+# ── 10. Atuin AI ──────────────────────────────────────────────────────────
+stage "Atuin AI — the '?' assistant"
+if ! command -v atuin >/dev/null 2>&1; then
+  warn "atuin is not installed — run ./install.sh first"
+  SKIPPED+=("Atuin Hub login — atuin not installed")
+elif [[ "$(atuin config get ai.enabled 2>/dev/null)" != "true" ]]; then
+  say "Disabled in config.toml ([ai] enabled = false). Nothing to do."
+else
+  say "Press '?' on an empty prompt to generate a command, refine it, or ask a"
+  say "question. Enter runs the suggestion, tab puts it on the prompt."
   printf '\n'
-  say "Atuin AI is enabled: press '?' on an empty prompt for command generation."
-  say "First use opens a browser to log in to Atuin Hub — a separate account"
-  say "from history sync, currently free."
-  note "What it may touch without asking is set by"
-  note "  atuin/.config/atuin/permissions.ai.toml"
-  note "Reads of .env, keys and credentials are denied there, as are rm, sudo,"
-  note "aws, op and ssh. Everything else prompts."
-  SKIPPED+=("press '?' in a new shell to complete the Atuin Hub login")
+  say "This is a second AI vendor. First use opens a browser to log in to Atuin"
+  say "Hub — a separate account from history sync above, currently free."
+  printf '\n'
+  note "What it may do without asking is set by:"
+  note "  ~/.config/atuin/permissions.ai.toml"
+  note "Reads of .env, keys, credentials, .ssh and .aws are denied, as are rm,"
+  note "sudo, aws, op, ssh and curl. Anything else prompts."
+  note "Your working directory is sent on the first '?' of each session."
+  printf '\n'
+  step "Open a new terminal and press '?' to complete the login."
+  SKIPPED+=("press '?' in a new shell to finish the Atuin Hub login")
 fi
 
 finish

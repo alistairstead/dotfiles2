@@ -18,8 +18,12 @@ brew "starship"
 brew "zsh-syntax-highlighting"
 brew "zsh-completions"
 brew "zsh-autosuggestions"
-brew "zsh-history-substring-search"
 brew "fzf-tab"
+
+# atuin owns ctrl-r and the up arrow, and .zshrc calls it twice: pty-proxy on
+# the first line and `atuin init` near the last. Both are guarded on the binary
+# existing, so without this the load test silently skips the whole integration.
+brew "atuin"
 brew "direnv"
 brew "zoxide"
 brew "fzf"
