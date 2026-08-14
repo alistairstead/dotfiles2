@@ -10,6 +10,14 @@ brew "stow"
 # zsh and bash come with macOS; the real Brewfile does not install them either,
 # so CI exercises the same versions this repo runs against.
 brew "starship"
+
+# Zsh plugins, so the .zshrc load test covers the real configuration
+brew "zsh-syntax-highlighting"
+brew "zsh-completions"
+brew "zsh-autosuggestions"
+brew "zsh-history-substring-search"
+brew "zsh-abbr"
+brew "fzf-tab"
 brew "direnv"
 brew "zoxide"
 brew "fzf"

@@ -104,8 +104,17 @@ for ((i = 1; i <= "${#LABELS[@]}"; i++)); do
 done
 
 # SPACE LAYOUTS
+# Assert every space, not just the non-default ones: layout is session state, so a
+# space switched by hand (alt+s) stays switched until something sets it back. Listing
+# all of them makes a config reload the recovery path.
+yabai -m config --space main layout bsp
 yabai -m config --space comms layout stack window_opacity off
+yabai -m config --space code layout bsp
+yabai -m config --space ref layout bsp
+yabai -m config --space productivity layout bsp
+yabai -m config --space vm layout bsp
 yabai -m config --space media layout stack window_opacity off
+yabai -m config --space misc layout bsp
 yabai -m config --space scratch layout float
 
 # RULES

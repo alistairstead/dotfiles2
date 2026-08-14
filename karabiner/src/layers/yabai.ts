@@ -27,7 +27,7 @@ export function yabaiLayer() {
         // f: toYabai$('window --toggle zoom-fullscreen'),
         z: toYabai$('window --toggle zoom-fullscreen'),
         m: toYabai$('window --toggle zoom-fullscreen'),
-        f: toYabai$('space --toggle float'),
+        f: toYabai$('window --toggle float'),
         // choose layout
         s: toYabai$('space --layout stack'),
         d: to$('/opt/homebrew/bin/yabai -m space --layout bsp && /Users/alistairstead/.config/yabai/scripts/ratio.sh'),

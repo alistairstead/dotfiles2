@@ -10,29 +10,35 @@ autoload -Uz compinit && compinit -C
 zmodload zsh/complist
 bindkey -M menuselect '^?' backward-delete-char 2>/dev/null || true
 
-# Zsh plugins (via Homebrew)
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
-fpath=(/opt/homebrew/share/zsh-completions $fpath)
+# Zsh plugins (via Homebrew). Guarded so a missing plugin degrades the shell
+# instead of erroring, e.g. before brew bundle has run on a fresh machine.
+for plugin in \
+  /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+  /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh \
+  /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh \
+  /opt/homebrew/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh; do
+  [ -r "$plugin" ] && source "$plugin"
+done
+unset plugin
 
-# fzf-tab (must be sourced after compinit, before other completions)
-source /opt/homebrew/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh
+[ -d /opt/homebrew/share/zsh-completions ] && fpath=(/opt/homebrew/share/zsh-completions $fpath)
 
-# Highlight abbreviations as valid commands in zsh-syntax-highlighting
-(( ${#ABBR_REGULAR_USER_ABBREVIATIONS} )) && {
-  ZSH_HIGHLIGHT_HIGHLIGHTERS+=(regexp)
-  ZSH_HIGHLIGHT_REGEXP=('^[[:blank:][:space:]]*('${(j:|:)${(Qk)ABBR_REGULAR_USER_ABBREVIATIONS}}')$' fg=green)
-  ZSH_HIGHLIGHT_REGEXP+=('[[:<:]]('${(j:|:)${(Qk)ABBR_GLOBAL_USER_ABBREVIATIONS}}')$' fg=blue)
-}
+# Syntax highlighting styles, only if the plugin loaded
+if (( ${+ZSH_HIGHLIGHT_STYLES} )); then
+  # Highlight abbreviations as valid commands
+  (( ${#ABBR_REGULAR_USER_ABBREVIATIONS} )) && {
+    ZSH_HIGHLIGHT_HIGHLIGHTERS+=(regexp)
+    ZSH_HIGHLIGHT_REGEXP=('^[[:blank:][:space:]]*('${(j:|:)${(Qk)ABBR_REGULAR_USER_ABBREVIATIONS}}')$' fg=green)
+    ZSH_HIGHLIGHT_REGEXP+=('[[:<:]]('${(j:|:)${(Qk)ABBR_GLOBAL_USER_ABBREVIATIONS}}')$' fg=blue)
+  }
 
-# Configure syntax highlighting styles
-ZSH_HIGHLIGHT_STYLES[command]='fg=green'
-ZSH_HIGHLIGHT_STYLES[alias]='fg=green'
-ZSH_HIGHLIGHT_STYLES[builtin]='fg=green'
-ZSH_HIGHLIGHT_STYLES[function]='fg=green'
-ZSH_HIGHLIGHT_STYLES[command-error]='fg=red,bold'
+  ZSH_HIGHLIGHT_STYLES[command]='fg=green'
+  ZSH_HIGHLIGHT_STYLES[alias]='fg=green'
+  ZSH_HIGHLIGHT_STYLES[builtin]='fg=green'
+  ZSH_HIGHLIGHT_STYLES[function]='fg=green'
+  ZSH_HIGHLIGHT_STYLES[command-error]='fg=red,bold'
+fi
 
 # initialise bash completions
 autoload -U +X bashcompinit && bashcompinit
@@ -74,6 +80,7 @@ setopt COMPLETE_IN_WORD     # Complete from cursor position
 # Seed defaults on first run; zsh-abbr skips duplicates.
 # Nothing here may shadow a function in ~/.config/shell/functions.sh (g, gc,
 # jjc) or a script in ~/.local/bin: abbrs expand first and win.
+if (( $+functions[abbr] )); then
 abbr -q ga="git add"
 abbr -q gco="git checkout"
 abbr -q gd="git diff"
@@ -92,6 +99,7 @@ abbr -q jrs="jj rebase -d main"
 abbr -q squash="jj squash"
 abbr -q fetch="jj git fetch"
 abbr -q push="jj git push"
+fi
 
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
