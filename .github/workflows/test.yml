@@ -175,6 +175,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check Brewfile names resolve
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+        run: |
+          # The full brew bundle only runs on a real machine, so a renamed or
+          # removed formula would otherwise stay invisible until setup day.
+          # Casks are macOS-only, which is why this lives in this job.
+          ./scripts/check-brewfile.sh
+
       - name: Validate YAML files
         run: |
           brew install yq

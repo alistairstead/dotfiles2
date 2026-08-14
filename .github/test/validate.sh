@@ -202,6 +202,34 @@ else
   info "zsh-abbr not installed; abbreviation reconciliation not covered"
 fi
 
+# Syntax-checking a config only proves it is well-formed TOML or INI. These
+# hand the file to the tool that actually consumes it, which is what catches an
+# unknown key, a bad value, or a broken include.
+info "Testing configs parse with their own tools..."
+
+if git config --list --file "$HOME/.config/git/config" >/dev/null 2>&1; then
+  success "git reads ~/.config/git/config"
+else
+  error "git cannot read ~/.config/git/config"
+fi
+
+# -G resolves the config for a host and prints it; it does not connect
+if ssh -G github.com >/dev/null 2>&1; then
+  success "ssh reads ~/.ssh/config"
+else
+  error "ssh cannot read ~/.ssh/config"
+fi
+
+if command -v jj >/dev/null 2>&1; then
+  if jj config list --user >/dev/null 2>&1; then
+    success "jj reads ~/.config/jj/config.toml"
+  else
+    error "jj cannot read ~/.config/jj/config.toml"
+  fi
+else
+  info "jj not installed; its config is not covered"
+fi
+
 # Test mise
 info "Testing mise..."
 if mise --version &>/dev/null; then
