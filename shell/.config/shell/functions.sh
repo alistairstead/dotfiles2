@@ -95,11 +95,10 @@ wt() {
         echo "📁 Copied .claude into worktree."
     fi
 
-    # cd into the new worktree
-    # cd "$worktree_path"
-
-    # Open the worktree in Cursor
-    cursor "$worktree_path" &
+    # Open the worktree in the configured editor
+    if command -v zed-preview >/dev/null 2>&1; then
+        zed-preview "$worktree_path" &
+    fi
 
     # Confirm success
     echo "✅ Worktree '$feature_name' created at $worktree_path and checked out."

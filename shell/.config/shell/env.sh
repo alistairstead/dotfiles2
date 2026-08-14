@@ -7,9 +7,6 @@ export GIT_EDITOR='zed-preview --wait'
 export VISUAL='zed-preview --wait'
 export EDITOR='zed-preview --wait'
 
-# Terminal settings
-export TERM=tmux-256color
-
 # AWS Granted settings
 export GRANTED_ENABLE_AUTO_REASSUME="true"
 

@@ -20,8 +20,12 @@ fi
 
 if command -v eza >/dev/null 2>&1; then
     alias ls='eza'
+    alias l='eza --git-ignore --icons'
     alias ll='eza --all --header --long'
     alias la='eza -lbhHigUmuSa'
+    alias llm='eza --all --header --long --sort=modified --icons'
+    alias lx='eza -lbhHigUmuSa@'
+    alias lt='eza --tree --icons'
     alias tree='eza --tree'
 fi
 
@@ -36,7 +40,3 @@ fi
 
 # AWS Granted
 alias assume=". assume"
-
-# Claude notify wrapper
-alias claude-notify="~/dev/personal/dotfiles/scripts/claude-notify"
-alias claude-speak-toggle="~/dev/personal/dotfiles/scripts/claude-speak-toggle"

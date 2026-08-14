@@ -37,7 +37,9 @@ ZSH_HIGHLIGHT_STYLES[command-error]='fg=red,bold'
 # initialise bash completions
 autoload -U +X bashcompinit && bashcompinit
 
-complete -C '/opt/homebrew/bin/aws_completer' aws
+if command -v aws_completer >/dev/null 2>&1; then
+  complete -C "$(command -v aws_completer)" aws
+fi
 
 # Carapace completions (if installed)
 if command -v carapace >/dev/null 2>&1; then
@@ -68,21 +70,14 @@ setopt MENU_COMPLETE        # Tab cycles through options
 setopt AUTO_LIST            # List choices on ambiguous completion
 setopt COMPLETE_IN_WORD     # Complete from cursor position
 
-# Eza defaults and aliases
-
 # Abbreviations (managed by zsh-abbr, persist in ~/.config/zsh-abbr/user-abbreviations)
-# Seed defaults on first run — zsh-abbr skips duplicates
-abbr -q g=git
+# Seed defaults on first run; zsh-abbr skips duplicates.
+# Nothing here may shadow a function in ~/.config/shell/functions.sh (g, gc,
+# jjc) or a script in ~/.local/bin: abbrs expand first and win.
 abbr -q ga="git add"
-abbr -q gc="git commit"
 abbr -q gco="git checkout"
 abbr -q gd="git diff"
 abbr -q gs="git status"
-abbr -q ll="eza --all --header --long"
-abbr -q l='eza --git-ignore --icons'
-abbr -q llm='eza --all --header --long --sort=modified --icons'
-abbr -q lx='eza -lbhHigUmuSa@'
-abbr -q lt='eza --tree --icons'
 abbr -q jl="jj log"
 abbr -q jn="jj new"
 abbr -q jc="jj commit"
@@ -116,18 +111,14 @@ if [[ $- == *i* ]]; then
 fi
 
 
-# ZSH-specific git alias
 # ZSH-specific overrides
 alias size="du -sh"
-alias null="/dev/null"
-
-# ZSH-specific functions
 alias granted-refresh="granted sso populate --sso-region eu-west-2 https://kodehort.awsapps.com/start"
 alias cb='git branch --sort=-committerdate | fzf --header "Checkout Recent Branch" --preview "git diff --color=always {1} " --pointer="" | xargs git checkout'
 
 # Shell integrations
-eval "$(direnv hook zsh)"
-eval "$(starship init zsh)"
+command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"
+command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
 # Vi mode
 bindkey -v
@@ -189,10 +180,14 @@ if [[ $- == *i* ]]; then
 fi
 
 
-eval "$(ww init zsh)"
-
+# Wispr Flow (if installed)
+if command -v ww >/dev/null 2>&1; then
+  eval "$(ww init zsh)"
+fi
 
 # bun completions
-[ -s "/Users/alistairstead/.bun/_bun" ] && source "/Users/alistairstead/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
-. "$HOME/.turso/env"
+# Keep the exit status clean: `source ~/.zshrc` is used as a health check in
+# CI, and a trailing conditional would report the missing optional file.
+true
