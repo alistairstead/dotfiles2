@@ -31,6 +31,19 @@ cd ~/dotfiles
 - Declarative package management via Brewfile
 - Modular configuration with GNU Stow
 
+## First run
+
+`install.sh` handles everything a script can. The rest needs a human: signing
+into 1Password so git can sign commits, granting yabai and Karabiner their
+macOS permissions, signing into the App Store. A wizard walks through those
+step by step, in order, and tells you what it could not finish:
+
+```bash
+./scripts/first-run.sh
+```
+
+Safe to re-run; it detects what is already done.
+
 ## Manual Setup
 
 If you prefer to set up components individually:

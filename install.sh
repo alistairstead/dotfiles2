@@ -159,6 +159,21 @@ if [ -f "Brewfile" ]; then
     BREWFILE=.github/test/Brewfile.ci
   fi
 
+  # Homebrew refuses to load formulae from an untrusted third-party tap. A tap
+  # declared in the Brewfile is one you have chosen to use, so trust it here
+  # rather than leaving the formulae silently unavailable.
+  if brew trust --help >/dev/null 2>&1; then
+    while IFS= read -r tap; do
+      [ -n "$tap" ] || continue
+      if [ -n "$DRY_RUN" ]; then
+        info "  would tap and trust $tap"
+        continue
+      fi
+      brew tap "$tap" >/dev/null 2>&1 || error "Could not tap $tap"
+      brew trust "$tap" >/dev/null 2>&1 || error "Could not trust $tap"
+    done < <(sed -n 's/^tap "\([^"]*\)".*/\1/p' "$BREWFILE")
+  fi
+
   if [ -n "$DRY_RUN" ]; then
     # `check` reports the unmet dependencies without installing any of them
     if brew bundle check --file="$BREWFILE" --verbose; then
