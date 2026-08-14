@@ -33,11 +33,19 @@ bindkey -M menuselect '^?' backward-delete-char 2>/dev/null || true
 
 # Zsh plugins (via Homebrew). Guarded so a missing plugin degrades the shell
 # instead of erroring, e.g. before brew bundle has run on a fresh machine.
+#
+# fzf-tab is first on purpose: its README requires it to load after compinit
+# but *before* anything that wraps zle widgets, and both zsh-syntax-highlighting
+# and zsh-autosuggestions wrap every existing widget at source time. The same
+# README also says fzf-tab must be the last plugin to bind ^I; nothing else
+# here touches ^I (fzf's completion.zsh is not sourced, only its key-bindings.zsh
+# near the bottom, which takes ctrl-t/ctrl-r/alt-c), so both hold at once.
+# Verify with `bindkey "^I"`, which should print fzf-tab-complete.
 for plugin in \
+  /opt/homebrew/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh \
   /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
   /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
-  /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh \
-  /opt/homebrew/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh; do
+  /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh; do
   [ -r "$plugin" ] && source "$plugin"
 done
 unset plugin
@@ -73,6 +81,16 @@ fi
 # aws too and, sourced after, silently won the name, so the aws_completer line
 # had no effect. Carapace's spec is also instant where aws_completer pays a
 # Python interpreter startup on every tab.
+#
+# CARAPACE_BRIDGES is deliberately not set. The docs call it optional; in a zsh
+# shell it is worse than that. Its `zsh` bridge walks zsh's own fpath and hands
+# carapace every completer it finds, taking the registration count from 654 to
+# 2208 and routing 1554 commands that zsh already completes natively out to a
+# carapace subprocess and back into zsh. The other three bridges are inert here:
+# fish and inshellisense are not installed, and the bash bridge adds nothing
+# because bash-completion registers lazily. Count what any setting registers:
+#
+#   carapace _carapace zsh | rg -o '"[a-z0-9._@+-]+"' | sort -u | wc -l
 if command -v carapace >/dev/null 2>&1; then
   source <(carapace _carapace zsh)
 
@@ -178,6 +196,11 @@ fi
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
+# Group support. Both fzf-tab and carapace set group-name and then rely on a
+# descriptions format existing to render the headers; without this line the
+# matches arrive as one undifferentiated list and fzf-tab's F1/F2 group switch
+# has nothing to switch between. No escape sequences here: fzf-tab strips them.
+zstyle ':completion:*:descriptions' format '[%d]'
 # fzf-tab directory preview
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza --color=always --icons --group-directories-first $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza --color=always --icons --group-directories-first $realpath'

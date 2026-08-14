@@ -16,10 +16,21 @@ if command -v direnv >/dev/null 2>&1; then
   eval "$(direnv hook bash)"
 fi
 
-# Carapace completions (if installed)
-if command -v carapace >/dev/null 2>&1; then
+# Carapace completions. The version guard is load bearing: carapace registers
+# its ~650 commands with `complete -o noquote`, and `noquote` arrived in bash
+# 4.4. macOS still ships 3.2.57 as /bin/bash, and this box resolves plain `bash`
+# to it (/bin precedes /opt/homebrew/bin in $PATH), so without the guard every
+# shell start printed `complete: noquote: invalid option name` and bound
+# nothing. Under Homebrew's bash 5 the same block works and takes ~650 commands.
+#
+#   bash -c 'echo $BASH_VERSION'   # < 4.4 means carapace is skipped here
+#
+# The bash-completion sourced further down does not fight this: it registers
+# lazily via `complete -D`, which never displaces an explicit registration.
+if command -v carapace >/dev/null 2>&1 &&
+  ((BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 4))); then
   # shellcheck disable=SC1090
-  source <(carapace _carapace)
+  source <(carapace _carapace bash)
 fi
 
 # Mise version manager (if installed)
