@@ -268,22 +268,28 @@ pause "Granted? Press Enter."
 
 # ── 5. yabai ──────────────────────────────────────────────────────────────
 stage "yabai — accessibility and the scripting addition"
-say "yabai needs Accessibility to move windows. The scripting addition,"
-say "which yabairc loads with 'sudo yabai --load-sa', additionally needs"
-say "SIP partially disabled and a sudoers entry."
-warn "Disabling part of SIP is a security trade-off and needs a Recovery boot."
+say "yabai needs Accessibility to move windows at all."
 step "Grant yabai Accessibility in the pane that opens."
 open_url "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
 pause "Granted? Press Enter."
 say ""
-say "The scripting addition steps, including the exact sudoers line, are"
-say "version-specific. Follow the official wiki rather than anything typed"
-say "from memory:"
-open_url "https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection"
-if confirm "Skip the scripting addition for now?"; then
-  SKIPPED+=("yabai scripting addition — see the wiki; yabai works without it, with fewer features")
+say "The scripting addition is optional in general: yabai tiles, focuses and"
+say "resizes without it. This config does use features that need it, though:"
+say "  space --create, window --space, and window opacity."
+say "Those need the addition, which in turn needs SIP partially disabled."
+if [[ -d /Library/ScriptingAdditions/yabai.osax ]]; then
+  say "${GREEN}scripting addition already installed${RESET}"
+  note "SIP: $(csrutil status 2>/dev/null | head -1 | sed 's/^System Integrity Protection status: //')"
 else
-  pause "Press Enter when the wiki steps are done."
+  warn "Partially disabling SIP is a security trade-off and needs a Recovery boot."
+  say "The steps and the exact sudoers line are version-specific, so follow"
+  say "the wiki rather than anything typed from memory:"
+  open_url "https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection"
+  if confirm "Skip the scripting addition for now?"; then
+    SKIPPED+=("yabai scripting addition — tiling works without it; space moves and opacity do not")
+  else
+    pause "Press Enter when the wiki steps are done."
+  fi
 fi
 
 # ── 6. Raycast ────────────────────────────────────────────────────────────
