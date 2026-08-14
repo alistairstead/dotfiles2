@@ -161,6 +161,14 @@ while IFS= read -r folder; do
     stow -v "$folder" || fail "Failed to stow $folder"
   fi
 done <<<"$(stow_modules .)"
+
+if [ -n "$CI" ]; then
+  # --adopt moves a pre-existing target into the repo and links back to it, so
+  # the runner's own dotfiles would silently replace ours and every check
+  # afterwards would be testing the wrong content. Restore what is committed;
+  # the symlinks stay, now pointing at our files.
+  git checkout -- .
+fi
 success "Dotfiles linked"
 
 # =====================================
