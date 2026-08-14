@@ -99,7 +99,10 @@ if [[ "$url" =~ ^tmux://focus/([^/]+)(/([^/]+)(/([^/]+))?)?$ ]]; then
     terminal_activated=false
     
     # Check common terminal applications
-    if [ "$TERM_PROGRAM" = "ghostty" ]; then
+    if [ "$TERM_PROGRAM" = "zed" ]; then
+        # Zed's built-in terminal. The app is Zed Preview, not Zed
+        osascript -e 'tell application "Zed Preview" to activate' 2>/dev/null && terminal_activated=true
+    elif [ "$TERM_PROGRAM" = "ghostty" ]; then
         osascript -e 'tell application "Ghostty" to activate' 2>/dev/null && terminal_activated=true
     elif [ "$TERM_PROGRAM" = "Apple_Terminal" ]; then
         osascript -e 'tell application "Terminal" to activate' 2>/dev/null && terminal_activated=true
