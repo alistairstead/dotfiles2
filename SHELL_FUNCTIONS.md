@@ -1,8 +1,12 @@
 # Shell Functions & Aliases Documentation
 
-This document provides a reference for custom shell functions and aliases defined in the dotfiles.
+Reference for the custom shell functions and aliases in these dotfiles.
 
-## Git Functions
+Functions and aliases shared by bash and zsh live in `shell/.config/shell/`.
+Anything zsh-only (abbreviations, vi mode, completion styling) lives in
+`zsh/.zshrc`.
+
+## Git & VCS Functions
 
 ### `g` - Smart git wrapper
 ```bash
@@ -18,23 +22,34 @@ gc [message]
 - Without arguments: Opens commit editor with verbose output
 - With arguments: Creates commit with provided message
 
+### `jjc` - Smart jj commit
+```bash
+jjc [message]
+```
+- Without arguments: Opens the jj commit editor
+- With arguments: Commits with the provided message
+
 ### `cb` - Checkout recent branch
 ```bash
 cb
 ```
-Interactive branch selector with preview of changes.
+Interactive branch selector with preview of changes. Zsh only.
 
-### `ghpr` - GitHub PR browser
+### `wt` - Git worktree helper
 ```bash
-ghpr [query]
+wt <feature-name>
 ```
-Browse and checkout GitHub pull requests interactively.
+Creates a worktree beside the repo in `<repo>-worktrees/`, copies `.env`,
+`.envrc` and `.claude` into it, and opens it in Zed.
 
-### `ghgist` - GitHub Gist browser
+### `jjw` - jj workspace helper
 ```bash
-ghgist
+jjw new <name> [revision]
+jjw go <name>
+jjw list
 ```
-Browse and edit your GitHub gists interactively.
+Creates, enters, and lists jj workspaces under `.workspaces/`, copying env
+files and running `direnv allow` on the way in.
 
 ## Utility Functions
 
@@ -50,45 +65,48 @@ envs <env-file>
 ```
 Sources an environment file with automatic export of variables.
 
-### `gi` - Generate .gitignore
-```bash
-gi <language/framework>
-```
-Generates a .gitignore file for the specified language or framework.
-
 ## Key Aliases
 
 ### Navigation & Listing
 - `c` - Clear screen
 - `ls` → `eza` - Modern ls replacement
+- `l` - Compact listing, respects gitignore
 - `ll` - Long listing with headers
 - `la` - Detailed listing with all attributes
+- `llm` - Long listing sorted by modified time
+- `lx` - Long listing with extended attributes
+- `lt` - Tree view with icons
 - `tree` - Tree view using eza
 
-### Git Shortcuts
+### Git Shortcuts (zsh abbreviations)
 - `ga` - git add
-- `gs` - git status (short)
+- `gs` - git status
 - `gco` - git checkout
-- `push` - git push
-- `pull` - git pull
+- `gd` - git diff
+
+Abbreviations expand before functions and PATH lookup, so nothing here may
+share a name with a function in `shell/.config/shell/functions.sh` or a script
+in `~/.local/bin`.
+
+### jj Shortcuts (zsh abbreviations)
+- `jl`, `jn`, `jc`, `je`, `jd`, `js`, `j`, `jdf` - jj log/new/commit/edit/describe/status/diff
+- `jgf`, `jgp` - jj git fetch/push
+- `jrs` - jj rebase -d main
+- `fetch`, `push`, `squash` - jj equivalents
 
 ### Modern Tool Replacements
 - `cat` → `bat` - Better file viewer
-- `top` → `btop` - Better process monitor
+- `top`, `htop` → `btop` - Better process monitor
 - `diff` → `delta` - Better diff viewer
+- `rm` → `trash` - Safe delete, zsh interactive only
 
 ### Development
 - `vim` → `nvim` - Neovim
-- `pn` → `pnpm` - Package manager shortcut
+- `mr`, `mi`, `mu`, `ml`, `mc` - mise run/install/use/list/current
 
 ### AWS
 - `assume` - AWS credential assumption
 - `granted-refresh` - Refresh AWS SSO credentials
-
-## Configuration Shortcuts
-- `zshrc` - Edit ~/.zshrc
-- `vimrc` - Edit Neovim config
-- `tmuxrc` - Edit tmux config
 
 ## Vi Mode Keybindings
 - `jk` - Exit insert mode (ESC alternative)
@@ -97,21 +115,16 @@ Generates a .gitignore file for the specified language or framework.
 
 ## FZF Integration
 - `Ctrl+T` - File picker with preview
+- `Ctrl+R` - History search
 - `Alt+C` - Directory picker
-
-## Atuin (Enhanced History)
-- `Ctrl+R` - Interactive history search (replaces default)
-- `↑` - Search history in current directory
-- `ah` - List history
-- `as` - Search history
-- `ai` - Import history from shell
-- `ast` - Show history statistics
+- Tab completion is routed through fzf-tab, with eza previews for directories
 
 ## Tmux Integration
 The configuration includes numerous tmux shortcuts mapped through Ghostty. See [CHEAT_SHEET.md](./CHEAT_SHEET.md) for the complete list.
 
 ## Performance Notes
-- Completions are lazy-loaded for faster startup
+- `compinit -C` skips the security check on cached completions
 - FZF uses `fd` for better performance
 - Zoxide replaces `cd` for smarter navigation
-- History search is optimized with substring matching
+- History search uses substring matching (zsh-history-substring-search)
+- PATH is built once in `shell/.config/shell/path.sh`; re-sourcing is a no-op

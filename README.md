@@ -43,7 +43,7 @@ brew bundle
 ./scripts/macos-setup.sh
 
 # Link dotfiles
-stow git nvim tmux zsh # etc...
+stow git tmux zsh # etc...
 
 # Install tmux plugins
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm

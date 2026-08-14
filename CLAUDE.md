@@ -13,7 +13,7 @@ This is a GNU Stow-based dotfiles repository for macOS. The repository manages p
 - **Initial installation**: `./install.sh` - Comprehensive installer that sets up entire environment
 - **Install Homebrew packages**: `brew bundle`
 - **Update all packages**: `brew update && brew upgrade`
-- **Link specific app configs**: `stow <app>` (e.g., `stow nvim`)
+- **Link specific app configs**: `stow <app>` (e.g., `stow tmux`)
 - **Unlink configs**: `stow -D <app>`
 - **Re-stow after changes**: `stow -R <app>`
 
@@ -58,8 +58,8 @@ Each application directory follows the Stow convention:
 
 ### Application Configurations
 
-- **Shell**: `zsh/` (with Zap plugin manager), `bash/`, `shell/` (common configs)
-- **Editor**: `nvim/` - Neovim with LazyVim configuration
+- **Shell**: `zsh/` (Homebrew plugins, zsh-abbr), `bash/`, `shell/` (common configs shared by both)
+- **Editor**: `zed/` - Zed settings, keymap, tasks
 - **Terminal**: `ghostty/`, `tmux/` (with custom theme and plugins)
 - **Window Management**: `yabai/` (tiling window manager)
 - **Development**: `git/`, `gh/`, `direnv/`, `mise/` (runtime management)
@@ -77,7 +77,7 @@ Each application directory follows the Stow convention:
 ## When Making Changes
 
 1. **Config Updates**: After modifying configs, run `stow -R <app>` to update symlinks
-2. **New Applications**: Create directory structure matching home layout, then `stow <app>`
+2. **New Applications**: Create directory structure matching home layout, then `stow <app>`. The installer picks it up automatically: `scripts/stow-modules.sh` derives the package list from the directories on disk, and CI checks every tracked file in every package landed in `$HOME`. Add an exclusion there only if the directory is not a `$HOME` mirror (as with `karabiner/`).
 3. **Brew Packages**: Edit `Brewfile` then run `brew bundle`
 4. **Shell Scripts**: Ensure shellcheck compliance (enforced in CI)
 5. **Karabiner Rules**: Edit TypeScript in `karabiner/src/`, then `pnpm build`
@@ -85,9 +85,7 @@ Each application directory follows the Stow convention:
 ## Claude Code Hooks
 
 The repository includes custom hooks in `claude/.claude/hooks/` that:
-- Enforce Bun usage over npm/yarn/pnpm
-- Log tool usage for debugging
-- Run TypeScript linting
+- Enforce Bun usage over npm/yarn/pnpm, and log tool usage (`pre-use-tool.ts`)
 - Send macOS notifications for long-running tasks
 - Speak events aloud via Piper TTS, falling back to `say`; voice tuning in `VOICE_PROFILES` in `claude/.claude/hooks/speak-notification.ts` (see hooks README)
 
