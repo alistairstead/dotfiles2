@@ -7,8 +7,8 @@ brew "git"
 brew "stow"
 
 # Shell and terminal tools
-brew "zsh"
-brew "bash"
+# zsh and bash come with macOS; the real Brewfile does not install them either,
+# so CI exercises the same versions this repo runs against.
 brew "starship"
 brew "direnv"
 brew "zoxide"
@@ -25,6 +25,5 @@ brew "tmux"
 brew "gh"
 
 # Optional but useful for testing
-brew "atuin"
 brew "jq"
 brew "yq"

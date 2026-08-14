@@ -147,39 +147,20 @@ fi
 
 info "Creating symlinks with GNU Stow..."
 
-# Define stow folders
-STOW_FOLDERS=(
-  "bash"
-  "bin"
-  "claude"
-  "direnv"
-  "gh"
-  "git"
-  "granted"
-  "ghostty"
-  "mise"
-  "shell"
-  "ssh"
-  "starship"
-  "tmux"
-  "yabai"
-  "zsh"
-)
+# The package list is derived from the directories on disk; see the file for
+# what counts as a package and why karabiner and scripts are excluded.
+# shellcheck source=scripts/stow-modules.sh
+. ./scripts/stow-modules.sh
 
-# Stow each folder
-for folder in "${STOW_FOLDERS[@]}"; do
-  if [ -d "$folder" ]; then
-    info "Stowing $folder..."
-    if [ -n "$CI" ]; then
-      # In CI, adopt existing files to avoid conflicts
-      stow -v --adopt "$folder" || error "Failed to stow $folder"
-    else
-      stow -v "$folder" || error "Failed to stow $folder"
-    fi
+while IFS= read -r folder; do
+  info "Stowing $folder..."
+  if [ -n "$CI" ]; then
+    # In CI, adopt existing files to avoid conflicts
+    stow -v --adopt "$folder" || fail "Failed to stow $folder"
   else
-    error "Directory $folder not found, skipping..."
+    stow -v "$folder" || fail "Failed to stow $folder"
   fi
-done
+done <<<"$(stow_modules .)"
 success "Dotfiles linked"
 
 # =====================================
@@ -196,23 +177,7 @@ else
 fi
 
 # =====================================
-# 7. Zap (Zsh Plugin Manager)
-# =====================================
-
-if [ ! -d "$HOME/.local/share/zap" ]; then
-  info "Installing Zap..."
-  if [ -z "$CI" ]; then
-    zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
-  else
-    zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1 --keep-zshrc || true
-  fi
-  success "Zap installed"
-else
-  info "Zap already installed"
-fi
-
-# =====================================
-# 8. Mise Runtime Management
+# 7. Mise Runtime Management
 # =====================================
 
 if ! command -v mise &>/dev/null; then
@@ -238,7 +203,7 @@ fi
 success "Mise configured - will auto-read .nvmrc, .ruby-version, .tool-versions, etc."
 
 # =====================================
-# 9. Tmux Plugin Manager
+# 8. Tmux Plugin Manager
 # =====================================
 
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
@@ -251,7 +216,7 @@ else
 fi
 
 # =====================================
-# 10. Shell Configuration
+# 9. Shell Configuration
 # =====================================
 
 if [ -z "$CI" ] && [ "$SHELL" != "/bin/zsh" ]; then
@@ -260,24 +225,9 @@ if [ -z "$CI" ] && [ "$SHELL" != "/bin/zsh" ]; then
   success "Default shell set to zsh"
 fi
 
-# =====================================
-# 11. PATH Setup
-# =====================================
-
-info "Setting up PATH..."
-if ! grep -q "/opt/homebrew/bin" ~/.zshenv 2>/dev/null; then
-  cat >>~/.zshenv <<EOF
-
-# Homebrew PATH
-eval "\$(/opt/homebrew/bin/brew shellenv)"
-export PATH="/opt/homebrew/opt/mysql-client@8.4/bin:\$PATH"
-export PATH="/opt/homebrew/opt/trash/bin:\$PATH"
-export PATH="\$HOME/.local/bin:\$PATH"
-EOF
-  success "PATH configured"
-else
-  info "PATH already configured"
-fi
+# PATH is not configured here. It is built by shell/.config/shell/path.sh,
+# which .zshenv and .profile source. Appending to ~/.zshenv would write
+# through the stow symlink and into this repo.
 
 # =====================================
 # Final Steps

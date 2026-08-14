@@ -81,6 +81,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      - name: Check CI Brewfile is a subset of Brewfile
+        run: |
+          # Brewfile.ci is a hand-picked subset; anything in it that is not in
+          # the real Brewfile means CI is testing against something you do not
+          # actually install.
+          status=0
+          while IFS= read -r pkg; do
+            if ! grep -qE "^brew \"${pkg}\"" Brewfile; then
+              echo "::error::${pkg} is in Brewfile.ci but not in Brewfile"
+              status=1
+            fi
+          done < <(sed -n 's/^brew "\([^"]*\)".*/\1/p' .github/test/Brewfile.ci)
+          exit $status
+
       - name: Validate YAML files
         run: |
           # Install yq for YAML validation

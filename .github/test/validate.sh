@@ -35,24 +35,40 @@ for cmd in "${REQUIRED_COMMANDS[@]}"; do
   fi
 done
 
-# Check symlinks
-info "Checking symlinks..."
-EXPECTED_SYMLINKS=(
-  "$HOME/.config/git/config"
-  "$HOME/.config/starship.toml"
-  "$HOME/.config/tmux/tmux.conf"
-  "$HOME/.zshrc"
-  "$HOME/.bashrc"
-  "$HOME/.config/mise/config.toml"
-)
+# Check every tracked file in every stow package landed in $HOME. The package
+# list comes from the same file install.sh uses, so the two cannot drift.
+info "Checking stowed modules..."
+# shellcheck source=../../scripts/stow-modules.sh
+. ./scripts/stow-modules.sh
 
-for link in "${EXPECTED_SYMLINKS[@]}"; do
-  if [ -L "$link" ] || [ -f "$link" ] || [ -d "$link" ]; then
-    success "$link exists"
-  else
-    error "$link does NOT exist"
+# Names stow is configured to skip (see .stowrc)
+is_ignored() {
+  case "$(basename "$1")" in
+    README.* | .DS_Store) return 0 ;;
+  esac
+  return 1
+}
+
+while IFS= read -r module; do
+  linked=0
+  missing=0
+  while IFS= read -r file; do
+    # Still in the index but gone from the worktree; stow cannot link it
+    [ -e "$file" ] || continue
+    rel=${file#"$module"/}
+    is_ignored "$rel" && continue
+    if [ -e "$HOME/$rel" ]; then
+      linked=$((linked + 1))
+    else
+      missing=$((missing + 1))
+      error "$module: ~/$rel is missing"
+    fi
+  done < <(git ls-files "$module")
+
+  if [ "$missing" -eq 0 ]; then
+    success "$module linked ($linked files)"
   fi
-done
+done < <(stow_modules .)
 
 # Test shell configurations
 info "Testing shell configurations..."
@@ -65,12 +81,20 @@ else
 fi
 
 # Test Bash config
-# Note: Bash config may fail in non-interactive mode due to certain commands
-if bash -c "source ~/.bashrc" 2>/dev/null || bash -c "export PS1='$ '; source ~/.bashrc" 2>/dev/null; then
+if bash -c "source ~/.bashrc"; then
   success "Bash configuration loads without errors"
 else
-  # Try to get more details about the error
-  info "Bash configuration may have non-critical errors (often expected in CI)"
+  error "Bash configuration has errors"
+fi
+
+# PATH should be built once, not re-prepended per source
+info "Testing PATH is idempotent..."
+DOUBLED=$(zsh -c 'source ~/.zshrc >/dev/null 2>&1; printf "%s" "$PATH"' |
+  tr ':' '\n' | sort | uniq -d)
+if [ -z "$DOUBLED" ]; then
+  success "PATH has no duplicate entries"
+else
+  error "PATH has duplicate entries: $(echo "$DOUBLED" | tr '\n' ' ')"
 fi
 
 # Test mise
