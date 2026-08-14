@@ -1,10 +1,14 @@
 name: Full Install
 
-# Per-push CI installs 22 of 78 formulae and no casks, so a package that
-# resolves but fails to build, a cask that has moved, and every line of
-# scripts/macos-setup.sh all stay unverified there. This runs the real thing.
-# It is slow, which is why it is weekly rather than per-push; macOS runners are
-# free on a public repo.
+# Per-push CI installs 22 of 78 formulae and skips scripts/macos-setup.sh, so a
+# formula that resolves but fails to build, and every line of the macOS setup,
+# stay unverified there. This installs the real formula list and runs the real
+# macOS setup, weekly rather than per-push because it is slow.
+#
+# Formulae and casks together take about five minutes, so both are installed.
+# Mac App Store entries are skipped: they need a signed-in Apple ID, and
+# brew bundle waits on one indefinitely instead of failing. The first run of
+# this workflow sat on a single mas line for 95 minutes before being cancelled.
 
 on:
   schedule:
@@ -16,7 +20,8 @@ jobs:
   full-install:
     name: Full install on macOS Latest
     runs-on: macos-latest
-    timeout-minutes: 120
+    # Formulae only should be well inside this; a hang should fail, not linger
+    timeout-minutes: 60
 
     steps:
       - name: Checkout repository
@@ -43,6 +48,13 @@ jobs:
 
       - name: Run installation script
         run: |
+          # Mac App Store installs need a signed-in Apple ID, which a runner
+          # does not have; brew bundle waits on it indefinitely rather than
+          # failing. Skipping is by name.
+          HOMEBREW_BUNDLE_MAS_SKIP="$(sed -n 's/^mas "\([^"]*\)".*/\1/p' Brewfile | tr '\n' ' ')"
+          export HOMEBREW_BUNDLE_MAS_SKIP
+          echo "Skipping App Store apps: ${HOMEBREW_BUNDLE_MAS_SKIP:-none}"
+
           chmod +x install.sh
           ./install.sh
 
@@ -65,8 +77,10 @@ jobs:
       - name: Report what got installed
         if: always()
         run: |
-          echo "### Installed" >> "$GITHUB_STEP_SUMMARY"
-          echo "- formulae: $(brew list --formula | wc -l | tr -d ' ')" >> "$GITHUB_STEP_SUMMARY"
-          echo "- casks: $(brew list --cask | wc -l | tr -d ' ')" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "Declared: $(grep -c '^brew ' Brewfile) formulae, $(grep -c '^cask ' Brewfile) casks" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "### Installed"
+            echo "- formulae: $(brew list --formula | wc -l | tr -d ' ') installed, $(grep -c '^brew ' Brewfile) declared"
+            echo "- casks: $(brew list --cask | wc -l | tr -d ' ') installed, $(grep -c '^cask ' Brewfile) declared"
+            echo ""
+            echo "$(grep -c '^mas ' Brewfile) App Store app(s) skipped; a runner has no Apple ID."
+          } >> "$GITHUB_STEP_SUMMARY"
