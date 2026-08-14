@@ -11,6 +11,7 @@ import {
   to$,
   toKey,
   ToEvent,
+  ToKeyParam,
   toRemoveNotificationMessage,
 } from 'karabiner.ts'
 
@@ -83,8 +84,8 @@ tell application "System Events"
   end try
 end tell'`)
 
-export const toSymbol = (v) => {
-  const symbols = {
+export const toSymbol = (v: string) => {
+  const symbols: Record<string, ToEvent> = {
     '!': toKey(1, '⇧'),
     '@': toKey(2, '⇧'),
     '£': toKey(3, '⇧'),
@@ -120,5 +121,6 @@ export const toSymbol = (v) => {
     '"': toKey("'", '⇧'),
     '|': toKey('\\', '⇧'),
   }
-  return symbols[v] || toKey(v)
+  // Anything not in the map is assumed to already be a key karabiner knows
+  return symbols[v] ?? toKey(v as ToKeyParam)
 }

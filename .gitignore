@@ -6,3 +6,4 @@ claude/.claude/hooks/.speak-muted
 # TTS binary, compiled from speak.swift by install.sh. ~/.claude/hooks is a
 # stow symlink to this directory, so the build lands here.
 claude/.claude/hooks/speak
+karabiner/tsconfig.tsbuildinfo
