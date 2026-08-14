@@ -9,7 +9,6 @@
 #
 # Fast, feature-rich, cross-platform terminal emulator
 # Configuration optimized for:
-# • macOS integration with tmux multiplexer
 # • Development workflow shortcuts
 # • Vim-like navigation and text editing
 # • Beautiful Catppuccin theming
@@ -17,8 +16,6 @@
 # Key Encodings Reference:
 # \x0a = Enter/Return
 # \x1b = Esc
-# \x02 = Ctrl+B (tmux prefix)
-# \x00 = Ctrl+Space (tmux prefix2)
 #
 # https://ghostty.org/docs/config/reference
 

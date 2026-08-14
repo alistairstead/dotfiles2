@@ -13,7 +13,7 @@ This is a GNU Stow-based dotfiles repository for macOS. The repository manages p
 - **Initial installation**: `./install.sh` - Comprehensive installer that sets up entire environment
 - **Install Homebrew packages**: `brew bundle`
 - **Update all packages**: `brew update && brew upgrade`
-- **Link specific app configs**: `stow <app>` (e.g., `stow tmux`)
+- **Link specific app configs**: `stow <app>` (e.g., `stow zsh`)
 - **Unlink configs**: `stow -D <app>`
 - **Re-stow after changes**: `stow -R <app>`
 
@@ -23,11 +23,6 @@ This is a GNU Stow-based dotfiles repository for macOS. The repository manages p
   - Build: `cd karabiner && pnpm build` (uses tsx to compile TypeScript config)
 - **Shell validation**: `shellcheck *.sh scripts/*.sh` (also enforced in CI)
 - **Test installation**: Run GitHub Actions workflow (`.github/workflows/test.yml`)
-
-### Tmux Plugin Management
-
-- **Install plugins**: `~/.tmux/plugins/tpm/bin/install_plugins`
-- **Update plugins**: `<prefix> + U` (inside tmux)
 
 ## Architecture
 
@@ -61,7 +56,7 @@ Each application directory follows the Stow convention:
 - **Shell**: `zsh/` (Homebrew plugins, zsh-abbr), `bash/`, `shell/` (common configs shared by both)
 - **History**: `atuin/` - shell history in SQLite. Owns `Ctrl+R` and the up arrow; `atuin init` is sourced late in `.zshrc` (after the fzf key bindings and after `bindkey -v`, both of which would otherwise clobber it), while `atuin pty-proxy init` must be the *first* line of `.zshrc` because it re-execs the shell. `[dotfiles]` is deliberately disabled — aliases and env vars stay in `shell/`, see the config's own comments. `permissions.ai.toml` gates what the `?` assistant may read, write and run
 - **Editor**: `zed/` - Zed settings, keymap, tasks
-- **Terminal**: `ghostty/`, `tmux/` (with custom theme and plugins)
+- **Terminal**: `ghostty/`
 - **Window Management**: `yabai/` (tiling window manager)
 - **Development**: `git/`, `gh/`, `direnv/` (`direnvrc` carries `use_aws` / `use_gcloud` for per-project cloud context, see `direnv/README.md`), `mise/` (runtime management)
 - **Automation**: `karabiner/` - TypeScript-based keyboard customization

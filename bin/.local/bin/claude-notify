@@ -35,7 +35,7 @@ if command -v terminal-notifier >/dev/null 2>&1; then
     -activate com.apple.Terminal
 fi
 
-# Also send bell for tmux integration (when in other windows)
+# Also send a terminal bell, for when the window is not focused
 echo -e "\a"
 
 # Exit with the same code as Claude

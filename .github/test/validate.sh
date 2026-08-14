@@ -24,7 +24,6 @@ REQUIRED_COMMANDS=(
   "bash"
   "mise"
   "nvim"
-  "tmux"
 )
 
 for cmd in "${REQUIRED_COMMANDS[@]}"; do
@@ -300,15 +299,6 @@ if mise --version &>/dev/null; then
   fi
 else
   error "Mise is not functional"
-fi
-
-# Test tmux configuration
-info "Testing tmux..."
-if tmux -f ~/.config/tmux/tmux.conf new-session -d -s validate; then
-  tmux kill-session -t validate
-  success "Tmux configuration is valid"
-else
-  error "Tmux configuration has errors"
 fi
 
 # Test Neovim

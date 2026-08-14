@@ -19,7 +19,6 @@ cd ~/dotfiles
 - **Terminal**: Ghostty, WezTerm
 - **Editor**: Neovim (LazyVim configuration)
 - **Shell**: Zsh with Starship prompt
-- **Multiplexer**: Tmux
 - **Window Management**: Aerospace, Yabai
 - **Version Management**: mise (fast runtime manager, reads .nvmrc, .ruby-version, etc.)
 - **Development Tools**: Git, GitHub CLI, Direnv
@@ -56,11 +55,7 @@ brew bundle
 ./scripts/macos-setup.sh
 
 # Link dotfiles
-stow git tmux zsh # etc...
-
-# Install tmux plugins
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-~/.tmux/plugins/tpm/bin/install_plugins
+stow git zsh # etc...
 ```
 
 ## Directory Structure

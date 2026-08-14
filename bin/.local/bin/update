@@ -20,10 +20,6 @@ NOW=$(date +"%Y-%m-%d-%H-%M-%S")
 } >>"/tmp/u-$NOW.txt"
 echo "✅ 🐙 gh extensions upgraded"
 
-gum spin --spinner globe --title "🪟 tpm plugins updating..." --show-output -- ~/.tmux/plugins/tpm/bin/update_plugins all >>"/tmp/u-$NOW.txt"
-printf "\n" >>"/tmp/u-$NOW.txt"
-echo "✅ 🪟 tpm plugins updated"
-
 gum spin --spinner globe --title "🍻 brew updating" --show-output -- brew update | tee -a "/tmp/u-$NOW.txt"
 printf "\n" >>"/tmp/u-$NOW.txt"
 echo "✅ 🍻 brew updated"

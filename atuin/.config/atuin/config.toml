@@ -57,11 +57,11 @@ cwd_filter = [
 ## is drawn from ANSI palette colors, so it already follows whatever the
 ## terminal is set to.
 ##
-## A hand-written Catppuccin theme would mean pinning hex codes, and the colors
-## here are not pinned: ghostty's `theme = light:catppuccin-latte,dark:
-## catppuccin-mocha` line is commented out, and tmux is on macchiato, not mocha.
-## Hardcoding one flavour would break the light/dark switch the moment that
-## ghostty line is uncommented. Set the terminal's theme and Atuin follows.
+## A hand-written Catppuccin theme would mean pinning hex codes, and no flavour
+## is pinned here: ghostty's `theme = light:catppuccin-latte,dark:
+## catppuccin-mocha` line is commented out. Hardcoding one flavour would break
+## the light/dark switch the moment that ghostty line is uncommented. Set the
+## terminal's theme and Atuin follows.
 ##
 ## If a fixed theme is ever wanted: write themes/<name>.toml beside this file
 ## mapping the Meaning keys (Base, Title, AlertError, SyntaxCommand, SyntaxFlag,
@@ -77,13 +77,6 @@ filters = ["global", "workspace", "directory", "host", "session"]
 ## Exit code first — the reason to have moved off the flat HISTFILE at all.
 [ui]
 columns = ["exit", "duration", "time", "command"]
-
-## Inside tmux, draw the search UI in a popup floating above the pane instead of
-## over it, so the pane's scrollback survives. Falls back silently outside tmux
-## or on tmux < 3.2. The known iTerm2 popup incompatibility does not apply here;
-## Ghostty is the terminal.
-[tmux]
-enabled = true
 
 ## Command output capture -----------------------------------------------------
 

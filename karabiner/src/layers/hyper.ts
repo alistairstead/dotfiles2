@@ -1,11 +1,11 @@
-import { rule, map, to$, withModifier } from 'karabiner.ts'
+import { rule, map, withModifier } from 'karabiner.ts'
 
 export function hyperLayer() {
   return [
     // Navigation across all applications (vim-style)
     rule('Hyper Navigation').manipulators([
       withModifier(['shift', 'control', 'option', 'command'])({
-        // Tmux-aware navigation (sends Ctrl+key for tmux integration)
+        // Vim-style navigation (sends Ctrl+key)
         h: { key_code: 'h', modifiers: ['control'] },
         j: { key_code: 'j', modifiers: ['control'] },
         k: { key_code: 'k', modifiers: ['control'] },
@@ -25,9 +25,6 @@ export function hyperLayer() {
         
         // Delete operations
         x: { key_code: 'delete_forward' },
-        
-        // For tmux integration - send the tmux prefix
-        spacebar: to$('tmux send-keys C-b'),
       }),
     ]),
     

@@ -181,9 +181,6 @@ Configuration and the reasoning behind each setting: `atuin/.config/atuin/config
 - `atuin daemon status` to check it; comment out the pty-proxy block at the top
   of `.zshrc` if a terminal ever misbehaves
 
-## Tmux Integration
-The configuration includes numerous tmux shortcuts mapped through Ghostty. See [CHEAT_SHEET.md](./CHEAT_SHEET.md) for the complete list.
-
 ## Performance Notes
 - `compinit -C` skips the security check on cached completions
 - FZF uses `fd` for better performance

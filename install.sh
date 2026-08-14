@@ -209,13 +209,12 @@ fi
 
 info "Creating required directories..."
 if [ -n "$DRY_RUN" ]; then
-  for dir in ~/.config ~/.local/bin ~/.tmux/plugins; do
+  for dir in ~/.config ~/.local/bin; do
     [ -d "$dir" ] || info "  would create $dir"
   done
 else
   mkdir -p ~/.config
   mkdir -p ~/.local/bin
-  mkdir -p ~/.tmux/plugins
   success "Directories created"
 fi
 
@@ -334,24 +333,7 @@ fi
 success "Mise configured - will auto-read .nvmrc, .ruby-version, .tool-versions, etc."
 
 # =====================================
-# 8. Tmux Plugin Manager
-# =====================================
-
-if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-  info "Installing tmux plugin manager..."
-  if [ -n "$DRY_RUN" ]; then
-    info "  would clone tpm into ~/.tmux/plugins/tpm and install plugins"
-  else
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-    ~/.tmux/plugins/tpm/bin/install_plugins || true
-  fi
-  success "Tmux plugins installed"
-else
-  info "Tmux plugin manager already installed"
-fi
-
-# =====================================
-# 9. Shell Configuration
+# 8. Shell Configuration
 # =====================================
 
 if [ -z "$CI" ] && [ "$SHELL" != "/bin/zsh" ]; then

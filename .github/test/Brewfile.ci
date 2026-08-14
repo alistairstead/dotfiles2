@@ -35,7 +35,6 @@ brew "fd"
 # Development tools
 brew "mise"
 brew "neovim"
-brew "tmux"
 brew "gh"
 brew "jj"
 
