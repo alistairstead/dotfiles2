@@ -50,10 +50,12 @@ jobs:
         run: |
           # Mac App Store installs need a signed-in Apple ID, which a runner
           # does not have; brew bundle waits on it indefinitely rather than
-          # failing. Skipping is by name.
-          HOMEBREW_BUNDLE_MAS_SKIP="$(sed -n 's/^mas "\([^"]*\)".*/\1/p' Brewfile | tr '\n' ' ')"
+          # failing. The skip list is space-separated, so an app whose name
+          # contains spaces can only be matched by its id. Homebrew's skipper
+          # checks name or id for exactly this reason.
+          HOMEBREW_BUNDLE_MAS_SKIP="$(sed -n 's/^mas .*id: *\([0-9][0-9]*\).*/\1/p' Brewfile | tr '\n' ' ')"
           export HOMEBREW_BUNDLE_MAS_SKIP
-          echo "Skipping App Store apps: ${HOMEBREW_BUNDLE_MAS_SKIP:-none}"
+          echo "Skipping App Store ids: ${HOMEBREW_BUNDLE_MAS_SKIP:-none}"
 
           chmod +x install.sh
           ./install.sh
