@@ -36,16 +36,32 @@ esac
 # Helper Functions
 # =====================================
 
+# Colour and cursor control only when writing to a terminal. Piped into a file
+# or a CI log they are noise, and CI logs are where this output gets read.
+if [ -t 1 ]; then
+  C_BLUE=$'\033[00;34m'
+  C_GREEN=$'\033[00;32m'
+  C_RED=$'\033[0;31m'
+  C_OFF=$'\033[0m'
+  C_LINE=$'\r\033[2K'
+else
+  C_BLUE=""
+  C_GREEN=""
+  C_RED=""
+  C_OFF=""
+  C_LINE=""
+fi
+
 info() {
-  printf "\r  [ \033[00;34m..\033[0m ] %s\n" "$1"
+  printf "%s  [ %s..%s ] %s\n" "$C_LINE" "$C_BLUE" "$C_OFF" "$1"
 }
 
 success() {
-  printf "\r\033[2K  [ \033[00;32mOK\033[0m ] %s\n" "$1"
+  printf "%s  [ %sOK%s ] %s\n" "$C_LINE" "$C_GREEN" "$C_OFF" "$1"
 }
 
 error() {
-  printf "\r\033[2K  [\033[0;31mFAIL\033[0m] %s\n" "$1"
+  printf "%s  [%sFAIL%s] %s\n" "$C_LINE" "$C_RED" "$C_OFF" "$1"
 }
 
 fail() {

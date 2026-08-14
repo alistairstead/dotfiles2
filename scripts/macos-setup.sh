@@ -133,12 +133,49 @@ if [ -n "$DRY_RUN" ]; then
     echo ""
 fi
 
+PRIVATE_ENV="$HOME/private/macos-setup.env"
+
 # Machine-local values that should not live in a public repo, e.g.
 # LOGIN_WINDOW_TEXT. Optional.
-if [ -r "$HOME/private/macos-setup.env" ]; then
+if [ -r "$PRIVATE_ENV" ]; then
     # shellcheck source=/dev/null
-    . "$HOME/private/macos-setup.env"
+    . "$PRIVATE_ENV"
 fi
+
+# can_prompt — is there a human to ask? Not in CI, not during a dry run, and
+# not when stdin is a pipe.
+can_prompt() {
+    [ -z "$DRY_RUN" ] && [ -z "${CI:-}" ] && [ -t 0 ]
+}
+
+# ask_with_default "Prompt" "current" — read a value on stdout's terminal,
+# offering the current one as the default. Prints the answer.
+ask_with_default() {
+    local prompt=$1 current=$2 input
+    if [ -n "$current" ]; then
+        printf '  %s\n  [Enter keeps: %s] ' "$prompt" "$current" >&2
+    else
+        printf '  %s\n  [Enter skips] ' "$prompt" >&2
+    fi
+    read -r input || true
+    [ -z "$input" ] && input=$current
+    printf '%s' "$input"
+}
+
+# save_private KEY VALUE — idempotent upsert into $PRIVATE_ENV so the question
+# is asked once. The file holds personal details, so it stays private.
+save_private() {
+    local key=$1 value=$2 tmp
+    mkdir -p "$(dirname "$PRIVATE_ENV")"
+    touch "$PRIVATE_ENV"
+    chmod 600 "$PRIVATE_ENV"
+    tmp=$(mktemp)
+    grep -vE "^${key}=" "$PRIVATE_ENV" > "$tmp" || true
+    printf '%s=%q\n' "$key" "$value" >> "$tmp"
+    mv "$tmp" "$PRIVATE_ENV"
+    chmod 600 "$PRIVATE_ENV"
+    echo "  ✓ saved $key to $PRIVATE_ENV"
+}
 
 echo "Setting up macOS system preferences..."
 
@@ -184,6 +221,31 @@ link_mysql_client() {
     fi
 }
 
+# Lock screen contact message. Personal, so never committed: taken from
+# LOGIN_WINDOW_TEXT if set, otherwise asked for once and saved to $PRIVATE_ENV.
+# With no human to ask, whatever is on the machine is left alone.
+configure_login_window_text() {
+    local current desired
+    current=$(defaults read /Library/Preferences/com.apple.loginwindow LoginwindowText 2>/dev/null || true)
+    desired=${LOGIN_WINDOW_TEXT:-}
+
+    if [ -z "$desired" ]; then
+        if ! can_prompt; then
+            echo "  (login window text left as-is; set LOGIN_WINDOW_TEXT to manage it)"
+            return 0
+        fi
+        desired=$(ask_with_default "Lock screen contact message, e.g. a phone number to call if found:" "$current")
+        if [ -z "$desired" ]; then
+            echo "  (login window text left as-is)"
+            return 0
+        fi
+        save_private LOGIN_WINDOW_TEXT "$desired"
+    fi
+
+    [ "$desired" = "$current" ] && return 0
+    sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText -string "$desired"
+}
+
 # Configure macOS system defaults
 setup_system_defaults() {
     echo "Configuring system defaults..."
@@ -203,15 +265,10 @@ setup_system_defaults() {
     # Disable guest account login
     sudo defaults write /Library/Preferences/com.apple.loginwindow GuestEnabled -bool false
     
-    # Set login window text. The message is normally a personal phone number
-    # and this repo is public, so it is not hardcoded here. Set
-    # LOGIN_WINDOW_TEXT in ~/private/macos-setup.env to manage it; without
-    # that, whatever is already on the machine is left alone.
-    if [ -n "${LOGIN_WINDOW_TEXT:-}" ]; then
-        sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText -string "$LOGIN_WINDOW_TEXT"
-    else
-        echo "  (login window text unmanaged; set LOGIN_WINDOW_TEXT to change it)"
-    fi
+    # Set login window text. It is normally a personal phone number and this
+    # repo is public, so it is asked for once and kept in $PRIVATE_ENV rather
+    # than committed.
+    configure_login_window_text
     
     # Disable system startup chime
     sudo nvram SystemAudioVolume=" "
