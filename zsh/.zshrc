@@ -123,10 +123,13 @@ if (( $+functions[abbr] )); then
     (( ${+_abbrs[$_name]} )) || abbr erase "$_name" >/dev/null 2>&1
   done
 
-  # Only write when something actually differs; each add rewrites the store
+  # Only write when something actually differs; each add rewrites the store.
+  # --force is what makes a changed expansion take effect: without it zsh-abbr
+  # refuses to overwrite an existing name. Note the name must be unquoted here;
+  # passing "name=value" as one quoted word silently adds nothing.
   for _name in ${(k)_abbrs}; do
     [[ ${_stored[$_name]-} == "${_abbrs[$_name]}" ]] && continue
-    abbr --add --force --quiet "$_name=${_abbrs[$_name]}" >/dev/null 2>&1
+    abbr --force --quiet $_name="${_abbrs[$_name]}" >/dev/null 2>&1
   done
 
   unset _abbrs _stored _k _v _name
