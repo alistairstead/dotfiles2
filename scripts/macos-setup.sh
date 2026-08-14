@@ -344,11 +344,10 @@ setup_app_store() {
 # Configure application-specific settings
 setup_applications() {
     echo "Configuring application-specific settings..."
-    
-    # Disable font smoothing for Alacritty
+
+    # Keep font smoothing on globally
     defaults write -g CGFontRenderingFontSmoothingDisabled -bool false
-    defaults write org.alacritty AppleFontSmoothing -int 0
-    
+
     echo "✓ Application settings configured"
 }
 

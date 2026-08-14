@@ -99,7 +99,9 @@ if [[ "$url" =~ ^tmux://focus/([^/]+)(/([^/]+)(/([^/]+))?)?$ ]]; then
     terminal_activated=false
     
     # Check common terminal applications
-    if [ "$TERM_PROGRAM" = "Apple_Terminal" ]; then
+    if [ "$TERM_PROGRAM" = "ghostty" ]; then
+        osascript -e 'tell application "Ghostty" to activate' 2>/dev/null && terminal_activated=true
+    elif [ "$TERM_PROGRAM" = "Apple_Terminal" ]; then
         osascript -e 'tell application "Terminal" to activate' 2>/dev/null && terminal_activated=true
     elif [ "$TERM_PROGRAM" = "iTerm.app" ]; then
         osascript -e 'tell application "iTerm2" to activate' 2>/dev/null && terminal_activated=true
@@ -107,8 +109,6 @@ if [[ "$url" =~ ^tmux://focus/([^/]+)(/([^/]+)(/([^/]+))?)?$ ]]; then
         osascript -e 'tell application "WezTerm" to activate' 2>/dev/null && terminal_activated=true
     elif pgrep -f kitty >/dev/null 2>&1; then
         osascript -e 'tell application "kitty" to activate' 2>/dev/null && terminal_activated=true
-    elif pgrep -f alacritty >/dev/null 2>&1; then
-        osascript -e 'tell application "Alacritty" to activate' 2>/dev/null && terminal_activated=true
     elif pgrep -f "Hyper" >/dev/null 2>&1; then
         osascript -e 'tell application "Hyper" to activate' 2>/dev/null && terminal_activated=true
     elif pgrep -f "Tabby" >/dev/null 2>&1; then
