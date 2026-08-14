@@ -103,7 +103,8 @@ fi
 
 
 # A fresh login shell, not this one. Inheriting the caller's PATH would hide
-# both duplicates and ordering, since path_prepend skips what is already set.
+# duplicates, and would start the ordering check from a PATH that is already
+# correct rather than from the system default path_helper hands a real shell.
 clean_zsh() {
   local env_args
   env_args=(HOME="$HOME" USER="${USER:-$(id -un)}" TERM=dumb
@@ -115,7 +116,9 @@ clean_zsh() {
 
 # PATH should be built once, not re-prepended per source
 info "Testing PATH..."
-FULL_PATH=$(clean_zsh -c 'source ~/.zshrc >/dev/null 2>&1; printf "%s" "$PATH"')
+# -l is load bearing: only a login shell runs /etc/zprofile, and path_helper
+# there is what the ordering checks below exist to catch.
+FULL_PATH=$(clean_zsh -l -c 'source ~/.zshrc >/dev/null 2>&1; printf "%s" "$PATH"')
 DOUBLED=$(echo "$FULL_PATH" | tr ':' '\n' | sort | uniq -d)
 if [ -z "$DOUBLED" ]; then
   success "PATH has no duplicate entries"
@@ -148,6 +151,10 @@ check_precedes() {
 check_precedes "$HOME/.local/bin" "/opt/homebrew/bin"
 check_precedes "$HOME/.local/bin" "/usr/bin"
 check_precedes "$HOME/bin" "/usr/bin"
+# The one path_helper undid: /etc/zprofile rebuilds PATH with /etc/paths first,
+# which demoted Homebrew below the system bins and made `bash` the 3.2 in /bin.
+check_precedes "/opt/homebrew/bin" "/usr/bin"
+check_precedes "/opt/homebrew/bin" "/bin"
 
 # Aliases, functions and scripts must resolve to what the configs define.
 # Each entry is "name<TAB>expected substring of `type` output".

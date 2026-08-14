@@ -39,6 +39,7 @@ brew "granted"
 
 # Terminal tools
 brew "atuin"     # Shell history in SQLite; owns ctrl-r and the up arrow
+brew "bash"      # macOS ships 3.2; carapace in .bashrc needs >= 4.4
 brew "bat"
 brew "btop"
 brew "direnv"
