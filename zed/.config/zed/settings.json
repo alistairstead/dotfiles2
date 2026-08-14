@@ -1,466 +1,391 @@
 {
-	"diff_view_style": "unified",
- "vim_mode": true,
- "document_folding_ranges": "on",
+  // ---------------------------------------------------------------------------
+  // Editor
+  // ---------------------------------------------------------------------------
+  "vim_mode": true,
+  "base_keymap": "VSCode",
+  "diff_view_style": "unified",
+  "document_folding_ranges": "on",
   "semantic_tokens": "combined",
   "cursor_shape": "underline",
+  "cursor_blink": false,
   "multi_cursor_modifier": "cmd_or_ctrl",
   "text_rendering_mode": "platform_default",
   "cli_default_open_behavior": "existing_window",
+  "code_lens": "on",
+  "colorize_brackets": true,
+  "middle_click_paste": false,
+  "lsp_document_colors": "background",
+  "completion_menu_scrollbar": "auto",
+  "use_auto_surround": true,
+  "use_on_type_format": true,
+  "inline_code_actions": true,
+  "use_system_prompts": true,
+  "close_on_file_delete": true,
+  "always_treat_brackets_as_autoclosed": false,
+  "restore_on_startup": "last_workspace",
+  "buffer_line_height": "comfortable",
+  "minimum_contrast_for_highlights": 65.0,
+  "show_completion_documentation": true,
+  "auto_signature_help": true,
+  "autoscroll_on_clicks": false,
+  "show_wrap_guides": false,
+  "current_line_highlight": "gutter",
+  "relative_line_numbers": "enabled",
+  "vertical_scroll_margin": 5,
+  "snippet_sort_order": "bottom",
+  "drag_and_drop_selection": {
+    "enabled": false
+  },
+  "completions": {
+    "lsp_insert_mode": "replace_subsequence"
+  },
+  "inlay_hints": {
+    "show_parameter_hints": true,
+    "show_type_hints": true,
+    "show_other_hints": false,
+    "show_value_hints": true,
+    "show_background": false,
+    "enabled": true
+  },
+  "indent_guides": {
+    "enabled": false,
+    "coloring": "indent_aware"
+  },
+  // Mouse-hover popovers stay out of the way, but the delay is long enough that
+  // `K` (editor::Hover) still works -- the keyboard hover path is gated on this
+  // same flag, so it cannot be `false`.
+  "hover_popover_enabled": true,
+  "hover_popover_delay": 1000,
+  "diagnostics": {
+    "inline": {
+      "enabled": true
+    }
+  },
+  // The default number of lines to expand excerpts in the multibuffer by.
+  "expand_excerpt_lines": 10,
+  // The default number of context lines shown in multibuffer excerpts.
+  "excerpt_context_lines": 10,
+
+  // ---------------------------------------------------------------------------
+  // Vim
+  // ---------------------------------------------------------------------------
+  "vim": {
+    // "always" also routes every delete/change through the system clipboard.
+    // Set back to "always" if you miss that.
+    "use_system_clipboard": "on_yank",
+    "use_smartcase_find": true,
+    "toggle_relative_line_numbers": true,
+    "custom_digraphs": {}
+  },
+
+  // ---------------------------------------------------------------------------
+  // Appearance
+  // ---------------------------------------------------------------------------
+  "theme": {
+    "mode": "dark",
+    "light": "Zedokai Light (Filter Sun)",
+    "dark": "Zedokai Darker (Filter Spectrum)"
+  },
+  "icon_theme": {
+    "mode": "system",
+    "light": "Zed (Default)",
+    "dark": "Zed (Default)"
+  },
+  "ui_font_family": ".SystemUIFont",
+  "ui_font_weight": 200.0,
+  "ui_font_size": 16,
+  "agent_ui_font_size": 16.0,
+  "agent_buffer_font_size": 14.0,
+  "buffer_font_size": 14,
+  "buffer_font_family": "Victor Mono",
+  "buffer_font_fallbacks": ["Symbols Nerd Font Mono"],
+  "buffer_font_weight": 300.0,
+  "buffer_font_features": {
+    "liga": true,
+    "calt": true,
+    "kern": true
+  },
+  "active_pane_modifiers": {
+    // Inset border size of the active pane, in pixels.
+    "border_size": 1.0,
+    // Opacity of the inactive panes. 0 means transparent, 1 means opaque.
+    // Values are clamped to the [0.0, 1.0] range.
+    "inactive_opacity": 0.6
+  },
+  "image_viewer": {
+    "unit": "decimal"
+  },
+  "use_system_window_tabs": false,
+  "bottom_dock_layout": "full",
+  "confirm_quit": true,
+  "zoomed_padding": false,
+  "which_key": {
+    "delay_ms": 500,
+    "enabled": true
+  },
+
+  // ---------------------------------------------------------------------------
+  // Panels, docks and chrome
+  // ---------------------------------------------------------------------------
   "status_bar": {
     "show_active_file": true
   },
-  "code_lens": "on",
-  "ssh_connections": [
-  {
-   "host": "192.168.0.187",
-   "username": "hassio",
-   "args": [],
-   "projects": [
-    {
-     "paths": [
-      "/./"
-     ]
-    },
-    {
-     "paths": [
-      "/home/hassio"
-     ]
-    }
-   ],
-   "nickname": "Homeassistant"
-  }
- ],
- "git_panel": {
-  "dock": "right"
- },
- "agent_servers": {
-  "claude-acp": {
-   "default_config_options": {
-    "mode": "auto"
-   },
-   "type": "registry"
-  }
- },
- "snippet_sort_order": "bottom",
- "edit_predictions": {
-  "provider": "copilot"
- },
- "which_key": {
-  "delay_ms": 500,
-  "enabled": false
- },
- "prettier": {
-  "allowed": false
- },
- "image_viewer": {
-  "unit": "decimal"
- },
- "colorize_brackets": true,
- "middle_click_paste": false,
- "tasks": {
-  "prefer_lsp": true
- },
- "lsp_document_colors": "background",
- "completion_menu_scrollbar": "auto",
- "use_auto_surround": true,
- "use_on_type_format": true,
- "inline_code_actions": true,
- "drag_and_drop_selection": {
-  "enabled": false
- },
- "use_system_prompts": true,
- "close_on_file_delete": true,
- "always_treat_brackets_as_autoclosed": false,
- "restore_on_startup": "last_workspace",
- "buffer_line_height": "comfortable",
- "git": {
-  "inline_blame": {
-   "enabled": false
-  }
- },
- "minimum_contrast_for_highlights": 65.0,
- "hover_popover_enabled": false,
- "show_completion_documentation": true,
- "audio": {
-  "experimental.rodio_audio": true
- },
- "calls": {
-  "mute_on_join": true
- },
- "diagnostics": {
-  "inline": {
-   "enabled": true
-  }
- },
- "collaboration_panel": {
-  "dock": "right"
- },
- "outline_panel": {
-  "dock": "right",
-  "auto_reveal_entries": false,
-  "auto_fold_dirs": false
- },
- "project_panel": {
-  "dock": "right",
-  "hide_gitignore": false,
-  "hide_root": true,
-  "drag_and_drop": true,
-  "sticky_scroll": false,
-  "auto_fold_dirs": false,
-  "starts_open": false,
-  "auto_reveal_entries": true
- },
- "search": {
-  "center_on_match": true,
-  "case_sensitive": true,
-  "whole_word": true,
-  "include_ignored": false
- },
- "preview_tabs": {
-  "enabled": false
- },
- "inlay_hints": {
-  "show_parameter_hints": true,
-  "show_type_hints": true,
-  "show_other_hints": false,
-  "show_value_hints": true,
-  "show_background": false,
-  "enabled": true
- },
- "completions": {
-  "lsp_insert_mode": "replace_subsequence"
- },
- "tabs": {
-  "show_diagnostics": "errors",
-  "git_status": true
- },
- "auto_signature_help": true,
- "autoscroll_on_clicks": false,
- "show_wrap_guides": false,
- "current_line_highlight": "gutter",
- "agent_buffer_font_size": 14.0,
- "context_servers": {
-		"mcp-server-sequential-thinking": {
-   "enabled": false,
-   "settings": {}
+  "toolbar": {
+    "selections_menu": false,
+    "agent_review": false,
+    "breadcrumbs": false,
+    "quick_actions": false
   },
-  "postgres-context-server": {
-   "enabled": false,
-			"settings": {
-				"database_url": "postgresql://postgres:password@dev-postgres.orb.local:5432/local"
-			}
-		},
-		"mcp-server-context7": {
-   "enabled": false,
-			"settings": {
-				"default_minimum_tokens": "10000"
-			}
-		}
-	},
-	"use_system_window_tabs": false,
-	"theme": {
-  "mode": "dark",
-  "light": "Zedokai Light (Filter Sun)",
-  "dark": "Zedokai Darker (Filter Spectrum)"
- },
-	"icon_theme": {
-  "mode": "system",
-  "light": "Zed (Default)",
-  "dark": "Zed (Default)"
- },
-	"base_keymap": "VSCode",
-	"ui_font_family": ".SystemUIFont",
-	"ui_font_weight": 200.0,
-	"ui_font_size": 16,
-	"agent_ui_font_size": 16.0,
-	"buffer_font_size": 14,
-	"buffer_font_family": "Victor Mono",
-  "buffer_font_fallbacks": ["Symbols Nerd Font Mono"],
-	"buffer_font_weight": 300.0,
-	"buffer_font_features": {
-		"liga": true,
-		"calt": true,
-		"kern": true
-	},
-	"active_pane_modifiers": {
-		"border_size": 1.0,
+  "title_bar": {
+    "show_branch_name": false,
+    "show_project_items": true,
+    "show_onboarding_banner": true,
+    "show_user_picture": true,
+    "show_sign_in": true
+  },
+  "scrollbar": {
+    "diagnostics": "none",
+    "show": "never",
+    "axes": {
+      "horizontal": false,
+      "vertical": false
+    }
+  },
+  "tabs": {
+    "show_diagnostics": "errors",
+    "git_status": true
+  },
+  "preview_tabs": {
+    "enabled": false
+  },
+  "git_panel": {
+    "dock": "right"
+  },
+  "collaboration_panel": {
+    "dock": "right"
+  },
+  "outline_panel": {
+    "dock": "right",
+    "auto_reveal_entries": false,
+    "auto_fold_dirs": false
+  },
+  "project_panel": {
+    "dock": "right",
+    "hide_gitignore": false,
+    "hide_root": true,
+    "drag_and_drop": true,
+    "sticky_scroll": false,
+    "auto_fold_dirs": false,
+    "starts_open": false,
+    "auto_reveal_entries": true
+  },
 
-		// Inset border size of the active pane, in pixels.
-		// Opacity of the inactive panes. 0 means transparent, 1 means opaque.
-		// Values are clamped to the [0.0, 1.0] range.
-		"inactive_opacity": 0.6
-	},
-	"bottom_dock_layout": "full",
-	"confirm_quit": true,
-	"zoomed_padding": false,
-	// The default number of lines to expand excerpts in the multibuffer by.
-	"expand_excerpt_lines": 10,
-	// The default number of context lines shown in multibuffer excerpts.
-	"excerpt_context_lines": 10,
-	"vim": {
-    "use_system_clipboard": "always",
-		"use_smartcase_find": true,
-		"toggle_relative_line_numbers": true,
-		"custom_digraphs": {}
-	},
-	"load_direnv": "shell_hook",
-	"relative_line_numbers": "enabled",
-	"cursor_blink": false,
-	"vertical_scroll_margin": 5,
-	"indent_guides": {
-		"enabled": false,
-		"coloring": "indent_aware"
-	},
-	"formatter": "language_server",
-	"languages": {
-		"JavaScript": {
-			"formatter": { "language_server": { "name": "biome" } },
-			"code_actions_on_format": {
-				"source.fixAll.biome": true,
-				"source.organizeImports.biome": true
-			}
-		},
-		"TypeScript": {
-			"formatter": { "language_server": { "name": "biome" } },
-			"code_actions_on_format": {
-				"source.fixAll.biome": true,
-				"source.organizeImports.biome": true
-			}
-		},
-		"JSX": {
-			"formatter": { "language_server": { "name": "biome" } },
-			"code_actions_on_format": {
-				"source.fixAll.biome": true,
-				"source.organizeImports.biome": true
-			}
-		},
-		"TSX": {
-			"formatter": { "language_server": { "name": "biome" } },
-			"code_actions_on_format": {
-				"source.fixAll.biome": true,
-				"source.organizeImports.biome": true
-			}
-		},
-		"JSON": {
-			"formatter": { "language_server": { "name": "biome" } },
-			"code_actions_on_format": {
-				"source.fixAll.biome": true
-			}
-		},
-		"JSONC": {
-			"formatter": { "language_server": { "name": "biome" } },
-			"code_actions_on_format": {
-				"source.fixAll.biome": true
-			}
-		},
-		"CSS": { "formatter": { "language_server": { "name": "biome" } } }
-	},
-	"lsp": {
-		"typescript-language-server": {
-			"settings": {
-				"typescript": {
-					"preferences": {
-						"includePackageJsonAutoImports": "on"
-					}
-				}
-			}
-		},
-		"biome": {
-			"settings": {
-				"require_config_file": true
-			}
-		},
-		"vtsls": {
-			"initialization_options": {
-				"preferences": {
-					"includeInlayParameterNameHints": "all",
-					"includeInlayParameterNameHintsWhenArgumentMatchesName": true,
-					"includeInlayFunctionParameterTypeHints": true,
-					"includeInlayVariableTypeHints": true,
-					"includeInlayPropertyDeclarationTypeHints": true,
-					"includeInlayFunctionLikeReturnTypeHints": true
-				}
-			},
-			"settings": {
-				"typescript": {
-					"tsserver": { "maxTsServerMemory": 16184 },
-					"updateImportsOnFileMove": { "enabled": "always" },
-					"suggest": {
-						"completeFunctionCalls": true
-					},
-					"inlayHints": {
-						"parameterNames": { "enabled": "all" },
-						"parameterTypes": { "enabled": true },
-						"variableTypes": { "enabled": true },
-						"propertyDeclarationTypes": { "enabled": true },
-						"functionLikeReturnTypes": { "enabled": true }
-					}
-				}
-			}
-		},
-	},
-	"enable_language_server": true,
-	"show_edit_predictions": true,
-	"use_autoclose": true,
-	"autosave": "off",
-	"format_on_save": "on",
-	"remove_trailing_whitespace_on_save": true,
-	"ensure_final_newline_on_save": true,
-	// Toolbar related settings
-	"toolbar": {
-  "selections_menu": false,
-  "agent_review": false,
-  "breadcrumbs": false,
-  "quick_actions": false
- },
-	// Titlebar related settings
-	"title_bar": {
-		// Whether to show the branch icon beside branch switcher in the titlebar.
-		// Whether to show the branch name button in the titlebar.
-		"show_branch_name": false,
-		// Whether to show the project host and name in the titlebar.
-		"show_project_items": true,
-		// Whether to show onboarding banners in the titlebar.
-		"show_onboarding_banner": true,
-		// Whether to show user picture in the titlebar.
-		"show_user_picture": true,
-		// Whether to show the sign in button in the titlebar.
-		"show_sign_in": true
-	},
-	"scrollbar": {
-		"diagnostics": "none",
-  "show": "never",
-		"axes": {
-			// When false, forcefully disables the horizontal scrollbar. Otherwise, obey other settings.
-			"horizontal": false,
-			// When false, forcefully disables the vertical scrollbar. Otherwise, obey other settings.
-			"vertical": false
-		}
-	},
-	// When to populate a new search's query based on the text under the cursor.
-	// This setting can take the following three values:
-	//
-	// 1. Always populate the search query with the word under the cursor (default).
-	//    "always"
-	// 2. Only populate the search query when there is text selected
-	//    "selection"
-	// 3. Never populate the search query
-	//    "never"
-	"seed_search_query_from_cursor": "always",
-	// When enabled, automatically adjusts search case sensitivity based on your query.
-	// If your search query contains any uppercase letters, the search becomes case-sensitive;
-	// if it contains only lowercase letters, the search becomes case-insensitive.
-	"use_smartcase_search": true,
-	"agent": {
-		"thinking_display": "preview",
+  // ---------------------------------------------------------------------------
+  // Search and file finder
+  // ---------------------------------------------------------------------------
+  "search": {
+    "center_on_match": true,
+    // Left at the defaults: `case_sensitive: true` would make
+    // `use_smartcase_search` below a no-op, and `whole_word: true` silently
+    // hides substring matches in every project search.
+    "case_sensitive": false,
+    "whole_word": false,
+    "include_ignored": false
+  },
+  "seed_search_query_from_cursor": "always",
+  "use_smartcase_search": true,
+  "file_finder": {
+    "modal_max_width": "large",
+    // Can accept 3 values:
+    //   * "all":     use all gitignored files
+    //   * "indexed": use only the files Zed has indexed
+    //   * "smart":   search ignored files when called from a gitignored worktree
+    "include_ignored": "indexed"
+  },
+
+  // ---------------------------------------------------------------------------
+  // Formatting and language servers
+  // ---------------------------------------------------------------------------
+  "format_on_save": "on",
+  "formatter": "language_server",
+  "remove_trailing_whitespace_on_save": true,
+  "ensure_final_newline_on_save": true,
+  "autosave": "off",
+  "enable_language_server": true,
+  "use_autoclose": true,
+  "tasks": {
+    "prefer_lsp": true
+  },
+  "load_direnv": "shell_hook",
+  // Biome covers JS/TS/JSON/CSS. Prettier is left enabled so Markdown and YAML
+  // still format on save -- Biome has no stable support for either.
+  "prettier": {
+    "allowed": true
+  },
+  "languages": {
+    "JavaScript": {
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      }
+    },
+    "TypeScript": {
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      }
+    },
+    "JSX": {
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      }
+    },
+    "TSX": {
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      }
+    },
+    "JSON": {
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true
+      }
+    },
+    "JSONC": {
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true
+      }
+    },
+    "CSS": { "formatter": { "language_server": { "name": "biome" } } },
+    "Markdown": { "formatter": "prettier" },
+    "YAML": { "formatter": "prettier" }
+  },
+  "lsp": {
+    "biome": {
+      "settings": {
+        "require_config_file": true
+      }
+    },
+    "vtsls": {
+      "initialization_options": {
+        "preferences": {
+          "includeInlayParameterNameHints": "all",
+          "includeInlayParameterNameHintsWhenArgumentMatchesName": true,
+          "includeInlayFunctionParameterTypeHints": true,
+          "includeInlayVariableTypeHints": true,
+          "includeInlayPropertyDeclarationTypeHints": true,
+          "includeInlayFunctionLikeReturnTypeHints": true
+        }
+      },
+      "settings": {
+        "typescript": {
+          "tsserver": { "maxTsServerMemory": 16384 },
+          "updateImportsOnFileMove": { "enabled": "always" },
+          "suggest": {
+            "completeFunctionCalls": true
+          },
+          "inlayHints": {
+            "parameterNames": { "enabled": "all" },
+            "parameterTypes": { "enabled": true },
+            "variableTypes": { "enabled": true },
+            "propertyDeclarationTypes": { "enabled": true },
+            "functionLikeReturnTypes": { "enabled": true }
+          }
+        }
+      }
+    }
+  },
+
+  // ---------------------------------------------------------------------------
+  // Git
+  // ---------------------------------------------------------------------------
+  "git": {
+    "inline_blame": {
+      "enabled": false
+    }
+  },
+
+  // ---------------------------------------------------------------------------
+  // AI
+  // ---------------------------------------------------------------------------
+  "edit_predictions": {
+    "provider": "copilot"
+  },
+  "show_edit_predictions": true,
+  "agent_servers": {
+    "claude-acp": {
+      "default_config_options": {
+        "mode": "auto"
+      },
+      "type": "registry"
+    }
+  },
+  "agent": {
+    "dock": "left",
+    "thinking_display": "preview",
     "show_turn_stats": true,
     "message_editor_min_lines": 6,
     "expand_terminal_card": false,
     "expand_edit_card": true,
     "single_file_review": true,
-    "new_thread_location": "local_project",
-    "dock": "left",
+    "play_sound_when_agent_done": "always",
+    "default_profile": "write",
+    // Zed's default. "allow" auto-approves `terminal` and `edit_file` with no
+    // prompt, in every project.
     "tool_permissions": {
-    "default": "allow"
+      "default": "confirm"
+    },
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4"
+    },
+    "model_parameters": [],
+    "inline_assistant_model": {
+      "provider": "zed.dev",
+      "model": "claude-sonnet-4"
+    }
   },
-  "default_profile": "write",
-		"profiles": {
-			"container-use": {
-				"name": "Container Use",
-				"tools": {
-					"fetch": true,
-					"thinking": true,
-					"copy_path": false,
-					"find_path": false,
-					"delete_path": false,
-					"create_directory": false,
-					"list_directory": false,
-					"diagnostics": false,
-					"read_file": false,
-					"open": false,
-					"move_path": false,
-					"grep": false,
-					"edit_file": false,
-					"terminal": false
-				},
-				"enable_all_context_servers": false,
-				"context_servers": {
-					"container-use": {
-						"tools": {
-							"environment_add_service": true,
-							"environment_checkpoint": true,
-							"environment_config": true,
-							"environment_create": true,
-							"environment_file_delete": true,
-							"environment_file_edit": true,
-							"environment_file_list": true,
-							"environment_file_read": true,
-							"environment_file_write": true,
-							"environment_open": true,
-							"environment_run_cmd": true,
-							"environment_update_metadata": true
-						}
-					}
-				}
-			}
-		},
-		"play_sound_when_agent_done": "always",
-		"default_model": {
-			"provider": "copilot_chat",
-			"model": "claude-sonnet-4"
-		},
-		"model_parameters": [],
-		"inline_assistant_model": {
-			"provider": "zed.dev",
-			"model": "claude-sonnet-4"
-		}
-	},
-	// Settings related to the file finder.
-	"file_finder": {
-		// Determines how much space the file finder can take up in relation to the available window width.
-		// There are 5 possible width values:
-		//
-		// 1. Small: This value is essentially a fixed width.
-		//    "modal_max_width": "small"
-		// 2. Medium:
-		//    "modal_max_width": "medium"
-		// 3. Large:
-		//    "modal_max_width": "large"
-		// 4. Extra Large:
-		//    "modal_max_width": "xlarge"
-		// 5. Fullscreen: This value removes any horizontal padding, as it consumes the whole viewport width.
-		//    "modal_max_width": "full"
-		//
-		// Default: small
-		"modal_max_width": "large",
-		// Can accept 3 values:
-		//   * `true`: Use all gitignored files
-		//   * `false`: Use only the files Zed had indexed
-		//   * `null`: Be smart and search for ignored when called from a gitignored worktree
-		"include_ignored": "indexed"
-	},
-	// Settings specific to the terminal
-	"terminal": {
-		"bell": "system",
-    "font_weight": 100,
-		"font_size": 14,
-		"font_family": "Victor Mono",
-		"line_height": "standard",
+  "context_servers": {},
 
-		// Whether or not selecting text in the terminal will automatically
-		// copy to the system clipboard.
-		"copy_on_select": true,
-		// Whether to show the terminal button in the status bar
-		"button": true,
-		"toolbar": {
-			// Whether to display the terminal title in its toolbar's breadcrumbs.
-			// Only shown if the terminal title is not empty.
-			//
-			// The shell running in the terminal needs to be configured to emit the title.
-			// Example: `echo -e "\e]2;New Title\007";`
-			"breadcrumbs": true
-		},
-		"default_height": 320
-	}
+  // ---------------------------------------------------------------------------
+  // Terminal
+  // ---------------------------------------------------------------------------
+  "terminal": {
+    "bell": "system",
+    "font_weight": 100,
+    "font_size": 14,
+    "font_family": "Victor Mono",
+    "line_height": "standard",
+    // Whether selecting text in the terminal copies to the system clipboard.
+    "copy_on_select": true,
+    "button": true,
+    "toolbar": {
+      "breadcrumbs": true
+    },
+    "default_height": 320
+  },
+
+  // ---------------------------------------------------------------------------
+  // Misc
+  // ---------------------------------------------------------------------------
+  "calls": {
+    "mute_on_join": true
+  },
+  "ssh_connections": [
+    {
+      "host": "192.168.0.187",
+      "username": "hassio",
+      "args": [],
+      "projects": [{ "paths": ["/./"] }, { "paths": ["/home/hassio"] }],
+      "nickname": "Homeassistant"
+    }
+  ]
 }

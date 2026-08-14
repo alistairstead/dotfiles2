@@ -1,234 +1,299 @@
 [
-	{
-		"use_key_equivalents": true,
-		"bindings": {
-			"cmd-z": "workspace::ToggleZoom"
-		}
-	},
-	{
-		"context": "Workspace",
-		"bindings": {
-			"cmd-k": [
-				"projects::OpenRecent",
-				{
-					"create_new_window": true
-				}
-			],
-			"cmd-shift-k": [
-				"projects::OpenRecent",
-				{
-					"create_new_window": false
-				}
-			]
-		}
-	},
-	{
-		"context": "VimControl && !menu",
-		"bindings": {
-			// Put key bindings here if you want them to work in normal & visual mode.
-		}
-	},
-	{
-		"context": "vim_mode == visual && !VimWaiting && !VimObject",
-		"bindings": {
-			"ctrl-j": "editor::MoveLineDown",
-			"ctrl-k": "editor::MoveLineUp",
-			"shift-j": "editor::SplitSelectionIntoLines"
-		}
-	},
-	{
-		"context": "vim_mode == normal && !menu",
-		"bindings": {
-			"space w": "workspace::Save",
-			"space q": "pane::CloseActiveItem",
-			"space q q": "workspace::CloseWindow",
+  {
+    // Scoped so cmd-z stays "undo" in plain text inputs (search bar, rename
+    // field, panel filters) where there is no vim normal mode to fall back on.
+    "context": "vim_mode == normal || vim_mode == visual || Terminal || EmptyPane",
+    "use_key_equivalents": true,
+    "bindings": {
+      "cmd-z": "workspace::ToggleZoom"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-k": ["projects::OpenRecent", { "create_new_window": true }],
+      "cmd-shift-k": ["projects::OpenRecent", { "create_new_window": false }]
+    }
+  },
+  {
+    "context": "VimControl && !menu",
+    "bindings": {
+      // Put key bindings here if you want them to work in normal & visual mode.
+    }
+  },
+  {
+    "context": "vim_mode == normal && !menu",
+    "bindings": {
+      // `space w` and `space q` are prefixes only. Binding them to an action as
+      // well makes every `space w …` / `space q …` chord wait for the chord
+      // timeout first. Save lives on ctrl-s / cmd-s.
+      "space q q": "workspace::CloseWindow",
 
-			"space f f": "file_finder::Toggle",
-			"space f r": "projects::OpenRecent",
-			"space f g": "workspace::NewSearch",
-			"space f b": "tab_switcher::Toggle",
+      "space f f": "file_finder::Toggle",
+      "space f r": "projects::OpenRecent",
+      "space f g": "workspace::NewSearch",
+      "space f b": "tab_switcher::Toggle",
+      "space f s": "workspace::Save",
 
-			"space b d": "pane::CloseActiveItem",
-			"space b o": "pane::CloseOtherItems",
-			"space b b": "tab_switcher::Toggle",
-			"space m p": "markdown::OpenPreviewToTheSide",
-			"space m P": "markdown::OpenPreview",
+      "space b d": "pane::CloseActiveItem",
+      "space b o": "pane::CloseOtherItems",
+      "space b b": "tab_switcher::Toggle",
+      "space m p": "markdown::OpenPreviewToTheSide",
+      "space m P": "markdown::OpenPreview",
 
-			"space l d": [
-				"task::Spawn",
-				{ "task_name": "LazyDocker", "reveal_target": "center" }
-			],
-			"space l j": [
-				"task::Spawn",
-				{ "task_name": "JJUI", "reveal_target": "center" }
-			],
-			"space g h": [
-				"task::Spawn",
-				{ "task_name": "GithubDash", "reveal_target": "center" }
-			],
+      "space l d": [
+        "task::Spawn",
+        { "task_name": "LazyDocker", "reveal_target": "center" }
+      ],
+      "space l j": [
+        "task::Spawn",
+        { "task_name": "JJUI", "reveal_target": "center" }
+      ],
+      "space g h": [
+        "task::Spawn",
+        { "task_name": "GithubDash", "reveal_target": "center" }
+      ],
 
-			"shift-h": "pane::ActivatePreviousItem",
-			"shift-l": "pane::ActivateNextItem",
+      "shift-h": "pane::ActivatePreviousItem",
+      "shift-l": "pane::ActivateNextItem",
 
-			"g d": "editor::GoToDefinition",
-			"g D": "editor::GoToDeclaration",
-			"g r": "editor::FindAllReferences",
-			"g i": "editor::GoToImplementation",
-			"g t": "editor::GoToTypeDefinition",
-			"g a": "editor::ToggleCodeActions",
-			"g R": "editor::Rename",
-			"K": "editor::Hover",
+      "g d": "editor::GoToDefinition",
+      "g D": "editor::GoToDeclaration",
+      "g r": "editor::FindAllReferences",
+      "g i": "editor::GoToImplementation",
+      "g t": "editor::GoToTypeDefinition",
+      "g a": "editor::ToggleCodeActions",
+      "g R": "editor::Rename",
+      "K": "editor::Hover",
 
-			"[ d": "editor::GoToPreviousDiagnostic",
-			"] d": "editor::GoToDiagnostic",
-			"[ h": "editor::GoToPreviousHunk",
-			"] h": "editor::GoToHunk",
+      "[ d": "editor::GoToPreviousDiagnostic",
+      "] d": "editor::GoToDiagnostic",
+      "[ h": "editor::GoToPreviousHunk",
+      "] h": "editor::GoToHunk",
 
-			"space e": "project_panel::ToggleFocus",
+      "space e": "project_panel::ToggleFocus",
+      "space o": "outline_panel::ToggleFocus",
 
-			"space g g": "git_panel::ToggleFocus",
-			"space g s": "git_panel::ToggleFocus",
-			"space g b": "git::Blame",
-			"space g d": "editor::ToggleSelectedDiffHunks",
-			"space g r": "git::Restore",
+      "space g g": "git_panel::ToggleFocus",
+      "space g s": "git_panel::ToggleFocus",
+      "space g b": "git::Blame",
+      "space g d": "editor::ToggleSelectedDiffHunks",
+      "space g r": "git::Restore",
 
-			"space t t": "workspace::NewCenterTerminal",
-			"space t h": "terminal_panel::ToggleFocus",
-			"space t v": "workspace::NewTerminal",
+      "space t t": "workspace::NewCenterTerminal",
+      "space t h": "terminal_panel::ToggleFocus",
+      "space t v": "workspace::NewTerminal",
 
-			"space s v": "pane::SplitRight",
-			"space s h": "pane::SplitDown",
-			"space s c": "pane::CloseActiveItem",
-			"space w v": "pane::SplitRight",
-			"space w h": "pane::SplitDown",
-			"space w m": "workspace::ToggleZoom",
-			"space -": "pane::SplitDown",
-			"space |": "pane::SplitRight",
+      "space s v": "pane::SplitRight",
+      "space s h": "pane::SplitDown",
+      "space s c": "pane::CloseActiveItem",
+      "space w v": "pane::SplitRight",
+      "space w h": "pane::SplitDown",
+      "space w m": "workspace::ToggleZoom",
+      "space w d": "pane::CloseActiveItem",
+      "space w o": "workspace::FocusCenterPane",
+      "space -": "pane::SplitDown",
+      "space |": "pane::SplitRight",
 
-			"space /": "workspace::NewSearch",
-			"space s w": "buffer_search::Deploy",
-			"space s g": "workspace::NewSearch",
+      "space /": "workspace::NewSearch",
+      "space s w": "buffer_search::Deploy",
+      "space s g": "workspace::NewSearch",
 
-			"space space": "command_palette::Toggle",
-			"space .": "file_finder::Toggle",
-			"space ,": "tab_switcher::Toggle",
+      "space space": "command_palette::Toggle",
+      "space .": "file_finder::Toggle",
+      "space ,": "tab_switcher::Toggle",
 
-			"space c a": "editor::ToggleCodeActions",
-			"space c r": "editor::Rename",
-			"space c f": "editor::Format",
+      "space c a": "editor::ToggleCodeActions",
+      "space c r": "editor::Rename",
+      "space c f": "editor::Format",
 
-			"space a a": "agent::ToggleFocus",
+      "space a a": "agent::ToggleFocus",
 
-			"space d b": "editor::ToggleBreakpoint",
-			"space d c": "debugger::RunToCursor",
-			"space d s": "debugger::StepOver",
-			"space d i": "debugger::StepInto",
-			"space d o": "debugger::StepOut",
+      "space d d": "debugger::Start",
+      "space d c": "debugger::Continue",
+      "space d C": "debugger::RunToCursor",
+      "space d b": "editor::ToggleBreakpoint",
+      "space d s": "debugger::StepOver",
+      "space d i": "debugger::StepInto",
+      "space d o": "debugger::StepOut",
+      "space d t": "debugger::Stop",
+      "space d u": "debug_panel::ToggleFocus",
 
-			"space t r": "task::Spawn",
-			"space t l": "task::Rerun",
+      "space t r": "task::Spawn",
+      "space t l": "task::Rerun",
 
-			"ctrl-p": "file_finder::Toggle",
-			"ctrl-s": "workspace::Save"
+      "ctrl-p": "file_finder::Toggle",
+      "ctrl-s": "workspace::Save"
 
-			// "shift-y": ["workspace::SendKeystrokes", "y $"] // Use neovim's yank behavior: yank to end of line.
-		}
-	},
-	{
-		"context": "vim_mode == insert",
-		"bindings": {
-			// "j j": "vim::NormalBefore",
-			"j k": "vim::NormalBefore"
-		}
-	},
-	{
-		"context": "EmptyPane || SharedScreen",
-		"bindings": {
-			// Put key bindings here (in addition to the context above) if you want them to
-			// work when no editor exists.
-			"f": "file_finder::Toggle"
-		}
-	},
-	// This is problematic in other typing context
-	{
-		"context": "(Dock && vim_mode == normal) || (Editor && vim_mode == normal && !menu)",
-		"bindings": {
-			"space e": "project_panel::ToggleFocus"
-		}
-	},
+      // "shift-y": ["workspace::SendKeystrokes", "y $"] // Use neovim's yank behavior: yank to end of line.
+    }
+  },
+  {
+    "context": "vim_mode == insert",
+    "bindings": {
+      // "j j": "vim::NormalBefore",
+      "j k": "vim::NormalBefore"
+    }
+  },
+  {
+    // With no buffer open there is no editor, so no vim mode and none of the
+    // `vim_mode == normal` leader bindings above apply. These repeat the
+    // UI-toggle subset as plain key sequences so the leader still works.
+    "context": "EmptyPane || SharedScreen",
+    "bindings": {
+      "f": "file_finder::Toggle",
 
-	{
-		"context": "Dock || Terminal || Editor",
-		"bindings": {
-			"ctrl-h": "workspace::ActivatePaneLeft",
-			"ctrl-l": "workspace::ActivatePaneRight",
-			"ctrl-k": "workspace::ActivatePaneUp",
-			"ctrl-j": "workspace::ActivatePaneDown",
-			"ctrl-w h": "workspace::ActivatePaneLeft",
-			"ctrl-w l": "workspace::ActivatePaneRight",
-			"ctrl-w k": "workspace::ActivatePaneUp",
-			"ctrl-w j": "workspace::ActivatePaneDown",
-			"ctrl-w v": "pane::SplitRight",
-			"ctrl-w s": "pane::SplitDown",
-			"ctrl-w c": "pane::CloseActiveItem"
-		}
-	},
+      "space space": "command_palette::Toggle",
+      "space .": "file_finder::Toggle",
+      "space ,": "tab_switcher::Toggle",
+      "space /": "workspace::NewSearch",
 
-	{
-		"context": "Terminal",
-		"bindings": {
-			// These binding cause problems need to restrict them to when the terminal is in normal mode. Can this be done with an env variable?
-			// "shift-h": "pane::ActivatePreviousItem",
-			// "shift-l": "pane::ActivateNextItem",
-			"cmd-t": "workspace::NewTerminal",
-			"cmd-shift-t": "workspace::NewCenterTerminal"
-		}
-	},
+      "space e": "project_panel::ToggleFocus",
+      "space o": "outline_panel::ToggleFocus",
+      "space a a": "agent::ToggleFocus",
+      "space d u": "debug_panel::ToggleFocus",
 
-	{
-		"context": "Editor",
-		"bindings": {
-			"ctrl-s": "workspace::Save"
-		}
-	},
+      "space f f": "file_finder::Toggle",
+      "space f r": "projects::OpenRecent",
+      "space f g": "workspace::NewSearch",
+      "space f b": "tab_switcher::Toggle",
 
-	{
-		"context": "Editor && showing_completions",
-		"bindings": {
-			"ctrl-j": "editor::ContextMenuNext",
-			"ctrl-k": "editor::ContextMenuPrevious",
-			"ctrl-n": "editor::ContextMenuNext",
-			"ctrl-p": "editor::ContextMenuPrevious"
-		}
-	},
-	{
-		"context": "Modal || CommandPalette || FileFinder || TabSwitcher",
-		"bindings": {
-			"ctrl-j": "menu::SelectNext",
-			"ctrl-k": "menu::SelectPrevious",
-			"ctrl-n": "menu::SelectNext",
-			"ctrl-p": "menu::SelectPrevious"
-		}
-	},
-	{
-		"context": "ProjectPanel && !editing",
-		"bindings": {
-			"a": "project_panel::NewFile",
-			"l": "project_panel::Open"
-		}
-	},
-	{
-		"context": "CommitEditor > Editor",
-		"use_key_equivalents": true,
-		"bindings": {
-			"cmd-z": "git::ExpandCommitEditor",
-			"ctrl-a": "git::GenerateCommitMessage"
-		}
-	},
-	{
-		"context": "(CommitEditor > Editor && vim_mode == normal)",
-		"bindings": {
-			"space a m": "git::GenerateCommitMessage"
-		}
-	}
+      "space g g": "git_panel::ToggleFocus",
+      "space g s": "git_panel::ToggleFocus",
+
+      "space t t": "workspace::NewCenterTerminal",
+      "space t h": "terminal_panel::ToggleFocus",
+      "space t v": "workspace::NewTerminal",
+
+      "space l d": [
+        "task::Spawn",
+        { "task_name": "LazyDocker", "reveal_target": "center" }
+      ],
+      "space l j": [
+        "task::Spawn",
+        { "task_name": "JJUI", "reveal_target": "center" }
+      ],
+      "space g h": [
+        "task::Spawn",
+        { "task_name": "GithubDash", "reveal_target": "center" }
+      ]
+    }
+  },
+  {
+    // Covers an editor focused inside a dock (e.g. the agent panel).
+    "context": "(Dock && vim_mode == normal) || (Editor && vim_mode == normal && !menu)",
+    "bindings": {
+      "space e": "project_panel::ToggleFocus"
+    }
+  },
+  {
+    // `ctrl-w` chords are excluded from Terminal so plain ctrl-w stays
+    // delete-word-backwards inside TUIs like Claude Code, rather than becoming
+    // a prefix that swallows the keystroke.
+    "context": "(Dock || Editor) && !Terminal",
+    "bindings": {
+      "ctrl-w h": "workspace::ActivatePaneLeft",
+      "ctrl-w l": "workspace::ActivatePaneRight",
+      "ctrl-w k": "workspace::ActivatePaneUp",
+      "ctrl-w j": "workspace::ActivatePaneDown",
+      "ctrl-w w": "workspace::ActivateNextPane",
+      "ctrl-w o": "workspace::FocusCenterPane",
+      "ctrl-w v": "pane::SplitRight",
+      "ctrl-w s": "pane::SplitDown",
+      "ctrl-w c": "pane::CloseActiveItem"
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      // These binding cause problems need to restrict them to when the terminal is in normal mode. Can this be done with an env variable?
+      // "shift-h": "pane::ActivatePreviousItem",
+      // "shift-l": "pane::ActivateNextItem",
+      "cmd-t": "workspace::NewTerminal",
+      "cmd-shift-t": "workspace::NewCenterTerminal"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-s": "workspace::Save"
+    }
+  },
+  {
+    // No context: GPUI treats a context-less binding as matching at the deepest
+    // node, so this reaches every panel, terminal, modal and empty pane -- and
+    // it fires before a TUI ever sees the keystroke. Anything that must keep
+    // ctrl-j/ctrl-k (completion menu, modal lists) is redefined BELOW this
+    // block: at equal depth the later definition wins.
+    "bindings": {
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-l": "workspace::ActivatePaneRight",
+      "ctrl-k": "workspace::ActivatePaneUp",
+      "ctrl-j": "workspace::ActivatePaneDown"
+    }
+  },
+  // --- Blocks below reclaim ctrl-j / ctrl-k from the global block above. ---
+  // They match at the same depth, so they must stay AFTER it.
+  {
+    "context": "vim_mode == visual && !VimWaiting && !VimObject",
+    "bindings": {
+      "ctrl-j": "editor::MoveLineDown",
+      "ctrl-k": "editor::MoveLineUp",
+      "shift-j": "editor::SplitSelectionIntoLines"
+    }
+  },
+  {
+    "context": "Editor && showing_completions",
+    "bindings": {
+      "ctrl-j": "editor::ContextMenuNext",
+      "ctrl-k": "editor::ContextMenuPrevious",
+      "ctrl-n": "editor::ContextMenuNext",
+      "ctrl-p": "editor::ContextMenuPrevious"
+    }
+  },
+  {
+    "context": "Modal || CommandPalette || FileFinder || TabSwitcher",
+    "bindings": {
+      "ctrl-j": "menu::SelectNext",
+      "ctrl-k": "menu::SelectPrevious",
+      "ctrl-n": "menu::SelectNext",
+      "ctrl-p": "menu::SelectPrevious"
+    }
+  },
+  {
+    // A picker's query input is an `Editor` nested *below* the modal, so the
+    // block above only matches at the modal's depth and loses to any binding
+    // that matches at the deepest node. This descendant form matches at full
+    // depth, which is what actually keeps ctrl-j/ctrl-k working in the file
+    // finder, command palette and tab switcher.
+    "context": "(Modal || CommandPalette || FileFinder || TabSwitcher) > Editor",
+    "bindings": {
+      "ctrl-j": "menu::SelectNext",
+      "ctrl-k": "menu::SelectPrevious",
+      "ctrl-n": "menu::SelectNext",
+      "ctrl-p": "menu::SelectPrevious"
+    }
+  },
+  {
+    "context": "ProjectPanel && !editing",
+    "bindings": {
+      "a": "project_panel::NewFile",
+      "l": "project_panel::Open",
+      "space e": "project_panel::ToggleFocus"
+    }
+  },
+  {
+    "context": "CommitEditor > Editor",
+    "use_key_equivalents": true,
+    "bindings": {
+      "cmd-z": "git::ExpandCommitEditor",
+      "ctrl-a": "git::GenerateCommitMessage"
+    }
+  },
+  {
+    "context": "(CommitEditor > Editor && vim_mode == normal)",
+    "bindings": {
+      "space a m": "git::GenerateCommitMessage"
+    }
+  }
 ]

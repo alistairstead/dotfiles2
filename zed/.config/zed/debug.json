@@ -1,61 +1,79 @@
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Debug TypeScript",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/src/index.ts",
-      "args": [],
-      "console": "integratedTerminal",
-      "sourceMaps": true,
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "preLaunchTask": "npm: build"
-    },
-    {
-      "name": "Debug JavaScript",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/src/index.js",
-      "args": [],
-      "console": "integratedTerminal",
-      "env": {
-        "NODE_ENV": "development"
-      }
-    },
-    {
-      "name": "Debug Serverless Function",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/node_modules/.bin/serverless",
-      "args": ["invoke", "local", "-f", "myFunction"],
-      "console": "integratedTerminal",
-      "env": {
-        "AWS_PROFILE": "development"
-      }
-    },
-    {
-      "name": "Attach to Process",
-      "type": "node",
-      "request": "attach",
-      "port": 9229,
-      "restart": true,
-      "sourceMaps": true,
-      "localRoot": "${workspaceFolder}"
-    },
-    {
-      "name": "Debug Deno",
-      "type": "pwa-node",
-      "request": "launch",
-      "program": "${workspaceFolder}/main.ts",
-      "args": [],
-      "console": "integratedTerminal",
-      "env": {},
-      "runtimeExecutable": "deno",
-      "runtimeArgs": ["run", "--inspect-brk", "--allow-all"]
+[
+  {
+    "label": "Debug TypeScript",
+    "adapter": "JavaScript",
+    "type": "node",
+    "request": "launch",
+    "program": "$ZED_WORKTREE_ROOT/src/index.ts",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "args": [],
+    "console": "integratedTerminal",
+    "sourceMaps": true,
+    "outFiles": ["$ZED_WORKTREE_ROOT/dist/**/*.js"],
+    "skipFiles": ["<node_internals>/**"],
+    "env": {
+      "NODE_ENV": "development"
     }
-  ]
-}
+  },
+  {
+    "label": "Debug JavaScript",
+    "adapter": "JavaScript",
+    "type": "node",
+    "request": "launch",
+    "program": "$ZED_WORKTREE_ROOT/src/index.js",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "args": [],
+    "console": "integratedTerminal",
+    "skipFiles": ["<node_internals>/**"],
+    "env": {
+      "NODE_ENV": "development"
+    }
+  },
+  {
+    "label": "Debug Current File",
+    "adapter": "JavaScript",
+    "type": "node",
+    "request": "launch",
+    "program": "$ZED_FILE",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "console": "integratedTerminal",
+    "skipFiles": ["<node_internals>/**"]
+  },
+  {
+    "label": "Debug Serverless Function",
+    "adapter": "JavaScript",
+    "type": "node",
+    "request": "launch",
+    "program": "$ZED_WORKTREE_ROOT/node_modules/.bin/serverless",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "args": ["invoke", "local", "-f", "myFunction"],
+    "console": "integratedTerminal",
+    "skipFiles": ["<node_internals>/**"],
+    "env": {
+      "AWS_PROFILE": "development"
+    }
+  },
+  {
+    "label": "Attach to Process",
+    "adapter": "JavaScript",
+    "type": "node",
+    "request": "attach",
+    "port": 9229,
+    "restart": true,
+    "sourceMaps": true,
+    "localRoot": "$ZED_WORKTREE_ROOT",
+    "skipFiles": ["<node_internals>/**"]
+  },
+  {
+    "label": "Debug Deno",
+    "adapter": "JavaScript",
+    "type": "node",
+    "request": "launch",
+    "program": "$ZED_WORKTREE_ROOT/main.ts",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "args": [],
+    "console": "integratedTerminal",
+    "runtimeExecutable": "deno",
+    "runtimeArgs": ["run", "--inspect-brk", "--allow-all"]
+  }
+]
