@@ -76,29 +76,60 @@ setopt MENU_COMPLETE        # Tab cycles through options
 setopt AUTO_LIST            # List choices on ambiguous completion
 setopt COMPLETE_IN_WORD     # Complete from cursor position
 
-# Abbreviations (managed by zsh-abbr, persist in ~/.config/zsh-abbr/user-abbreviations)
-# Seed defaults on first run; zsh-abbr skips duplicates.
-# Nothing here may shadow a function in ~/.config/shell/functions.sh (g, gc,
-# jjc) or a script in ~/.local/bin: abbrs expand first and win.
+# Abbreviations. zsh-abbr persists these to ~/.config/zsh-abbr/user-abbreviations,
+# which is machine-local state this repo does not track. That store is
+# append-only by default: seeding with `abbr -q` never removes anything, so a
+# name deleted from here used to live on and keep shadowing whatever it hid.
+# Abbreviations expand ahead of functions and PATH, so a stale `gc` silently
+# beats the gc() function and ~/.local/bin/gc, with no error.
+#
+# This block is therefore declarative: the list below is the source of truth
+# and the store is reconciled to it on every startup. Anything not declared
+# here is erased. That means `abbr add` at the prompt lasts for the session
+# only; to keep an abbreviation, add it here.
+#
+# Nothing here may shadow a function in ~/.config/shell/functions.sh or a
+# script in ~/.local/bin; scripts/check-collisions.sh enforces that.
 if (( $+functions[abbr] )); then
-abbr -q ga="git add"
-abbr -q gco="git checkout"
-abbr -q gd="git diff"
-abbr -q gs="git status"
-abbr -q jl="jj log"
-abbr -q jn="jj new"
-abbr -q jc="jj commit"
-abbr -q je="jj edit"
-abbr -q jd="jj describe"
-abbr -q js="jj status"
-abbr -q j="jj status"
-abbr -q jdf="jj diff"
-abbr -q jgf="jj git fetch"
-abbr -q jgp="jj git push"
-abbr -q jrs="jj rebase -d main"
-abbr -q squash="jj squash"
-abbr -q fetch="jj git fetch"
-abbr -q push="jj git push"
+  typeset -A _abbrs=(
+    ga     "git add"
+    gco    "git checkout"
+    gd     "git diff"
+    gs     "git status"
+    jl     "jj log"
+    jn     "jj new"
+    jc     "jj commit"
+    je     "jj edit"
+    jd     "jj describe"
+    js     "jj status"
+    j      "jj status"
+    jdf    "jj diff"
+    jgf    "jj git fetch"
+    jgp    "jj git push"
+    jrs    "jj rebase -d main"
+    squash "jj squash"
+    fetch  "jj git fetch"
+    push   "jj git push"
+  )
+
+  # zsh-abbr stores keys and values with literal quotes; strip them to compare
+  typeset -A _stored=()
+  typeset _k _v _name
+  for _k _v in ${(kv)ABBR_REGULAR_USER_ABBREVIATIONS}; do
+    _stored[${(Q)_k}]=${(Q)_v}
+  done
+
+  for _name in ${(k)_stored}; do
+    (( ${+_abbrs[$_name]} )) || abbr erase "$_name" >/dev/null 2>&1
+  done
+
+  # Only write when something actually differs; each add rewrites the store
+  for _name in ${(k)_abbrs}; do
+    [[ ${_stored[$_name]-} == "${_abbrs[$_name]}" ]] && continue
+    abbr --add --force --quiet "$_name=${_abbrs[$_name]}" >/dev/null 2>&1
+  done
+
+  unset _abbrs _stored _k _v _name
 fi
 
 # Completion styling

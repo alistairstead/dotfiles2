@@ -106,9 +106,12 @@ fi
 # A fresh login shell, not this one. Inheriting the caller's PATH would hide
 # both duplicates and ordering, since path_prepend skips what is already set.
 clean_zsh() {
-  env -i HOME="$HOME" USER="${USER:-$(id -un)}" TERM=dumb \
-    PATH=/usr/bin:/bin:/usr/sbin:/sbin \
-    zsh "$@"
+  local env_args
+  env_args=(HOME="$HOME" USER="${USER:-$(id -un)}" TERM=dumb
+    PATH=/usr/bin:/bin:/usr/sbin:/sbin)
+  # Passed through so a caller can point zsh at a throwaway config dir
+  [ -n "${XDG_CONFIG_HOME:-}" ] && env_args+=(XDG_CONFIG_HOME="$XDG_CONFIG_HOME")
+  env -i "${env_args[@]}" zsh "$@"
 }
 
 # PATH should be built once, not re-prepended per source
@@ -178,8 +181,25 @@ if clean_zsh -i -c 'whence -w abbr' >/dev/null 2>&1; then
   else
     error "zsh-abbr loaded but seeded no abbreviations"
   fi
+
+  # The store is machine-local state this repo does not track, so the only way
+  # to keep it from accumulating shadowing entries is for .zshrc to reconcile
+  # it. Seed a stale abbr into a throwaway store and check it does not survive.
+  ABBR_HOME=$(mktemp -d)
+  mkdir -p "$ABBR_HOME/zsh-abbr"
+  printf 'abbr "gc"="git commit"\nabbr "zzstale"="echo stale"\n' \
+    > "$ABBR_HOME/zsh-abbr/user-abbreviations"
+
+  survivors=$(XDG_CONFIG_HOME="$ABBR_HOME" clean_zsh -i -c \
+    'abbr list-abbreviations' 2>/dev/null | grep -cE '^(gc|zzstale)$' || true)
+  if [ "$survivors" -eq 0 ]; then
+    success "Undeclared abbreviations are erased on startup"
+  else
+    error "$survivors undeclared abbreviation(s) survived startup"
+  fi
+  rm -rf "$ABBR_HOME"
 else
-  info "zsh-abbr not installed; abbreviation seeding not covered"
+  info "zsh-abbr not installed; abbreviation reconciliation not covered"
 fi
 
 # Test mise

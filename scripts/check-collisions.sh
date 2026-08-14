@@ -6,10 +6,10 @@
 # which silently shadows ~/.local/bin/gc. Nothing errors; the wrong thing just
 # runs. This checks the four namespaces against each other.
 #
-# Limit: seeded abbrs are checked, but zsh-abbr persists them to
-# ~/.config/zsh-abbr/user-abbreviations. An abbr seeded once and later removed
-# from .zshrc still lives in that file, and no repo-level check can see it.
-# Use `abbr erase <name>` to clear those.
+# The declared list in .zshrc is authoritative: it reconciles
+# ~/.config/zsh-abbr/user-abbreviations on every startup, erasing anything not
+# declared. So checking the repo covers everything that can survive a shell
+# restart, and a name removed from the list stops shadowing for real.
 
 set -uo pipefail
 
@@ -20,7 +20,14 @@ ALIASES="shell/.config/shell/aliases.sh"
 FUNCTIONS="shell/.config/shell/functions.sh"
 BINDIR="bin/.local/bin"
 
-abbrs=$(sed -n "s/^[[:space:]]*abbr -q \([A-Za-z0-9_-]*\)=.*/\1/p" "$ZSHRC" | sort -u)
+# Names declared in the `typeset -A _abbrs=( name "expansion" ... )` block
+abbrs=$(sed -n '/^ *typeset -A _abbrs=(/,/^ *)/p' "$ZSHRC" |
+  sed -n 's/^[[:space:]]*\([A-Za-z0-9_-][A-Za-z0-9_-]*\)[[:space:]]*".*/\1/p' | sort -u)
+
+if [ -z "$abbrs" ]; then
+  echo "❌ Found no declared abbreviations in $ZSHRC; has the block moved?"
+  exit 1
+fi
 aliases=$(sed -n "s/^[[:space:]]*alias \([A-Za-z0-9_-]*\)=.*/\1/p" "$ALIASES" "$ZSHRC" | sort -u)
 functions=$(sed -n "s/^\([A-Za-z0-9_-]*\)() *{.*/\1/p" "$FUNCTIONS" | sort -u)
 scripts=$(find "$BINDIR" -maxdepth 1 -type f -perm -u+x -exec basename {} \; | sort -u)
