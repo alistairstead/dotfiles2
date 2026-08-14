@@ -3,6 +3,7 @@
 
 # Source shared shell configurations
 for file in ~/.config/shell/*.sh; do
+  # shellcheck source=/dev/null
   [ -r "$file" ] && source "$file"
 done
 
@@ -17,6 +18,7 @@ fi
 
 # Carapace completions (if installed)
 if command -v carapace >/dev/null 2>&1; then
+  # shellcheck disable=SC1090
   source <(carapace _carapace)
 fi
 

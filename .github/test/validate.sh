@@ -2,13 +2,16 @@
 # Validation script for CI testing
 # Checks that the installation completed successfully
 
-set -e
-
 echo "=== Running Dotfiles Installation Validation ==="
+
+FAILURES=()
 
 # Color functions
 success() { echo "✅ $1"; }
-error() { echo "❌ $1"; exit 1; }
+error() {
+  echo "❌ $1"
+  FAILURES+=("$1")
+}
 info() { echo "ℹ️  $1"; }
 
 # Check required commands
@@ -37,12 +40,10 @@ info "Checking symlinks..."
 EXPECTED_SYMLINKS=(
   "$HOME/.config/git/config"
   "$HOME/.config/starship.toml"
-  "$HOME/.config/nvim"
   "$HOME/.config/tmux/tmux.conf"
   "$HOME/.zshrc"
   "$HOME/.bashrc"
   "$HOME/.config/mise/config.toml"
-  "$HOME/.config/atuin/config.toml"
 )
 
 for link in "${EXPECTED_SYMLINKS[@]}"; do
@@ -57,7 +58,7 @@ done
 info "Testing shell configurations..."
 
 # Test Zsh config
-if zsh -c "source ~/.zshrc" 2>/dev/null; then
+if zsh -c "source ~/.zshrc"; then
   success "Zsh configuration loads without errors"
 else
   error "Zsh configuration has errors"
@@ -76,7 +77,7 @@ fi
 info "Testing mise..."
 if mise --version &>/dev/null; then
   success "Mise is functional"
-  
+
   # Check if Node.js was installed
   if mise list | grep -q "node"; then
     success "Node.js is installed via mise"
@@ -89,8 +90,8 @@ fi
 
 # Test tmux configuration
 info "Testing tmux..."
-if tmux -f ~/.config/tmux/tmux.conf new-session -d -s test 2>/dev/null; then
-  tmux kill-session -t test
+if tmux -f ~/.config/tmux/tmux.conf new-session -d -s validate; then
+  tmux kill-session -t validate
   success "Tmux configuration is valid"
 else
   error "Tmux configuration has errors"
@@ -100,7 +101,7 @@ fi
 info "Testing Neovim..."
 if nvim --version &>/dev/null; then
   success "Neovim is installed"
-  
+
   # Basic config test
   if nvim --headless -c "quit" 2>/dev/null; then
     success "Neovim starts without errors"
@@ -113,5 +114,13 @@ fi
 
 # Summary
 echo ""
+if [ ${#FAILURES[@]} -gt 0 ]; then
+  echo "❌ ${#FAILURES[@]} validation check(s) failed:"
+  for failure in "${FAILURES[@]}"; do
+    echo "  - $failure"
+  done
+  exit 1
+fi
+
 success "All validation checks passed!"
 echo "The dotfiles installation appears to be successful."

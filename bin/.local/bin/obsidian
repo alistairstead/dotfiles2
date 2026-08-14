@@ -45,7 +45,7 @@ echo -e "${BLUE}Searching for '${QUERY}' in ${NOTES_DIR}...${NC}\n"
 
 # Create temporary file for search results
 TEMP_FILE=$(mktemp)
-trap "rm -f $TEMP_FILE" EXIT
+trap 'rm -f "$TEMP_FILE"' EXIT
 
 # Search using ripgrep with context
 rg --color=always \

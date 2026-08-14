@@ -158,7 +158,6 @@ STOW_FOLDERS=(
   "granted"
   "ghostty"
   "mise"
-  "nvim"
   "shell"
   "ssh"
   "starship"
