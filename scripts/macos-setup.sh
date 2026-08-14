@@ -133,6 +133,13 @@ if [ -n "$DRY_RUN" ]; then
     echo ""
 fi
 
+# Machine-local values that should not live in a public repo, e.g.
+# LOGIN_WINDOW_TEXT. Optional.
+if [ -r "$HOME/private/macos-setup.env" ]; then
+    # shellcheck source=/dev/null
+    . "$HOME/private/macos-setup.env"
+fi
+
 echo "Setting up macOS system preferences..."
 
 # Enable Touch ID for sudo (if not already enabled)
@@ -196,8 +203,15 @@ setup_system_defaults() {
     # Disable guest account login
     sudo defaults write /Library/Preferences/com.apple.loginwindow GuestEnabled -bool false
     
-    # Set login window text
-    sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText -string "Found this computer? Please call +1 (415) 935-3547"
+    # Set login window text. The message is normally a personal phone number
+    # and this repo is public, so it is not hardcoded here. Set
+    # LOGIN_WINDOW_TEXT in ~/private/macos-setup.env to manage it; without
+    # that, whatever is already on the machine is left alone.
+    if [ -n "${LOGIN_WINDOW_TEXT:-}" ]; then
+        sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText -string "$LOGIN_WINDOW_TEXT"
+    else
+        echo "  (login window text unmanaged; set LOGIN_WINDOW_TEXT to change it)"
+    fi
     
     # Disable system startup chime
     sudo nvram SystemAudioVolume=" "
