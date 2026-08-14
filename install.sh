@@ -32,6 +32,10 @@ fail() {
 info "macOS Dotfiles Installer"
 info "========================"
 
+# Set so `[ -n "$VAR" ]` is safe when they are unset
+CI=${CI:-}
+DOTFILES_FULL_INSTALL=${DOTFILES_FULL_INSTALL:-}
+
 # Detect if running in CI
 if [ -n "$CI" ]; then
   info "Running in CI environment"
@@ -98,28 +102,24 @@ fi
 
 if [ -f "Brewfile" ]; then
   info "Installing packages from Brewfile..."
-  if [ -n "$CI" ]; then
-    # In CI, use a minimal Brewfile if it exists
-    if [ -f ".github/test/Brewfile.ci" ]; then
-      info "Using CI-specific Brewfile"
-      brew bundle --file=.github/test/Brewfile.ci
-    else
-      # Install only essential packages in CI
-      brew bundle --file=Brewfile || true
-    fi
+  # Per-push CI installs a subset to stay fast; the scheduled full-install
+  # workflow sets DOTFILES_FULL_INSTALL to exercise the real Brewfile.
+  if [ -n "$CI" ] && [ -z "$DOTFILES_FULL_INSTALL" ] && [ -f ".github/test/Brewfile.ci" ]; then
+    info "Using CI-specific Brewfile"
+    brew bundle --file=.github/test/Brewfile.ci
   else
     brew bundle --file=Brewfile
   fi
   success "Homebrew packages installed"
 else
-  error "Brewfile not found"
+  fail "Brewfile not found"
 fi
 
 # =====================================
 # 4. macOS System Settings
 # =====================================
 
-if [ -z "$CI" ] && [ -f "scripts/macos-setup.sh" ]; then
+if { [ -z "$CI" ] || [ -n "$DOTFILES_FULL_INSTALL" ]; } && [ -f "scripts/macos-setup.sh" ]; then
   info "Configuring macOS system settings..."
   ./scripts/macos-setup.sh
   success "macOS settings configured"

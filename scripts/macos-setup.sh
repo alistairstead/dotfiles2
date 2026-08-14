@@ -28,13 +28,10 @@ EOF
 
 # Set Homebrew environment variables
 setup_homebrew_env() {
-    echo "Setting Homebrew environment..."
-    export HOMEBREW_NO_ANALYTICS=1
-    
-    # Add to shell profile if not already present
-    if ! grep -q "HOMEBREW_NO_ANALYTICS" ~/.zshenv 2>/dev/null; then
-        echo "export HOMEBREW_NO_ANALYTICS=1" >> ~/.zshenv
-    fi
+    # HOMEBREW_NO_ANALYTICS is exported from shell/.config/shell/env.sh.
+    # Appending it to ~/.zshenv here wrote through the stow symlink and into
+    # the repo.
+    echo "Homebrew environment comes from ~/.config/shell/env.sh"
 }
 
 # Link MySQL client (if installed)

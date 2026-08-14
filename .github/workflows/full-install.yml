@@ -1,0 +1,72 @@
+name: Full Install
+
+# Per-push CI installs 22 of 78 formulae and no casks, so a package that
+# resolves but fails to build, a cask that has moved, and every line of
+# scripts/macos-setup.sh all stay unverified there. This runs the real thing.
+# It is slow, which is why it is weekly rather than per-push; macOS runners are
+# free on a public repo.
+
+on:
+  schedule:
+    # Mondays, 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  full-install:
+    name: Full install on macOS Latest
+    runs-on: macos-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up environment
+        run: |
+          echo "CI=true" >> $GITHUB_ENV
+          # Tells install.sh to use the real Brewfile and run macos-setup.sh
+          echo "DOTFILES_FULL_INSTALL=1" >> $GITHUB_ENV
+
+      - name: Tap and trust what the Brewfile declares
+        run: |
+          # Doubles as the resolution check: with CI set this taps and trusts
+          # every declared tap, which brew bundle then needs to install from.
+          ./scripts/check-brewfile.sh
+
+      - name: Record versions
+        run: |
+          echo "macOS:  $(sw_vers -productVersion)"
+          echo "zsh:    $(zsh --version)"
+          echo "bash:   $(/bin/bash --version | head -1)"
+          echo "brew:   $(brew --version | head -1)"
+
+      - name: Run installation script
+        run: |
+          chmod +x install.sh
+          ./install.sh
+
+      - name: Check the install did not write into the repo
+        if: always()
+        run: |
+          # macos-setup.sh appends to shell config, and ~/.zshenv and ~/.config
+          # are stow symlinks into this checkout.
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::the full install modified tracked files"
+            git status --porcelain
+            git diff
+            exit 1
+          fi
+          echo "Working tree is clean after install"
+
+      - name: Validate installation
+        run: ./.github/test/validate.sh
+
+      - name: Report what got installed
+        if: always()
+        run: |
+          echo "### Installed" >> "$GITHUB_STEP_SUMMARY"
+          echo "- formulae: $(brew list --formula | wc -l | tr -d ' ')" >> "$GITHUB_STEP_SUMMARY"
+          echo "- casks: $(brew list --cask | wc -l | tr -d ' ')" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Declared: $(grep -c '^brew ' Brewfile) formulae, $(grep -c '^cask ' Brewfile) casks" >> "$GITHUB_STEP_SUMMARY"
