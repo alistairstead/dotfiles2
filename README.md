@@ -76,13 +76,26 @@ Each directory contains configuration for a specific application:
 2. Modify application configs in their respective directories
 3. Run `stow <app>` to update symlinks after changes
 
-## AWS CLI Setup
+## Cloud CLI Setup
 
-Sync settings for AWS CLI:
+Sync AWS SSO profiles into `~/.aws/config`:
 
 ```bash
 granted-refresh
 ```
+
+Then assume a role with `assume <profile>`, and clear it with `unassume`.
+
+Cloud context is scoped per project by direnv rather than left sticky in the
+shell, so the prompt only advertises the cloud a project actually uses:
+
+```sh
+use aws kodehort eu-west-2                  # .envrc in an AWS project
+use gcloud default genie-goals-analytics    # .envrc in a GCP project
+```
+
+See [direnv/README.md](direnv/README.md) for the full behaviour, and
+[SHELL_FUNCTIONS.md](SHELL_FUNCTIONS.md#cloud-context-direnv) for the alias list.
 
 ## Troubleshooting
 

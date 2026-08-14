@@ -1,5 +1,26 @@
 #!/bin/zsh
 
+# Atuin pty-proxy. Must be the first thing this file does.
+#
+# It re-execs zsh inside a proxy that sits between the terminal and the shell,
+# reading OSC 133 prompt markers to capture what each command printed. That
+# capture is what lets `?` and Claude Code answer "why did that fail?" from the
+# real error text. Output is held in memory by the daemon: 1MB per command, the
+# last 128 per session, gone when the daemon stops.
+#
+# Everything sourced before this line runs a second time, inside the proxy,
+# which is why it goes above the shell/*.sh loop rather than beside `atuin init`
+# at the bottom. The emitted code no-ops unless the shell is interactive with a
+# tty on both stdin and stdout, so scripts and CI are unaffected, and it guards
+# re-entry via ATUIN_PTY_PROXY_ACTIVE.
+#
+# It `exec`s: if the atuin binary is broken, the shell dies with it. Hence the
+# command -v guard. If a terminal ever fails to open, comment this block out
+# first — nothing else in the Atuin setup depends on it.
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin pty-proxy init zsh)"
+fi
+
 # Source shared shell configurations
 for file in ~/.config/shell/*.sh; do
   [ -r "$file" ] && source "$file"
@@ -15,7 +36,6 @@ bindkey -M menuselect '^?' backward-delete-char 2>/dev/null || true
 for plugin in \
   /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
   /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
-  /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh \
   /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh \
   /opt/homebrew/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh; do
   [ -r "$plugin" ] && source "$plugin"
@@ -52,7 +72,14 @@ if command -v carapace >/dev/null 2>&1; then
   source <(carapace _carapace zsh)
 fi
 
-# History
+# History. Atuin (initialised near the bottom of this file) is what ctrl-r and
+# the up arrow actually search; it keeps its own SQLite store with the exit
+# code, duration, directory and host that none of this can record.
+#
+# This block stays as the offline lifeboat: a plaintext record that survives
+# Atuin being uninstalled, its database being corrupted, or a shell where
+# `atuin init` never ran. `hist_ignore_space` is also still load bearing, since
+# Atuin honours the same leading-space convention for skipping a command.
 HISTSIZE=5000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
@@ -155,7 +182,6 @@ fi
 
 # ZSH-specific overrides
 alias size="du -sh"
-alias granted-refresh="granted sso populate --sso-region eu-west-2 https://kodehort.awsapps.com/start"
 alias cb='git branch --sort=-committerdate | fzf --header "Checkout Recent Branch" --preview "git diff --color=always {1} " --pointer="" | xargs git checkout'
 
 # Shell integrations
@@ -181,17 +207,30 @@ zle -N zle-keymap-select
 # Fix backspace in vi mode
 bindkey "^?" backward-delete-char
 
-# History substring search bindings
-bindkey "$terminfo[kcuu1]" history-substring-search-up
-bindkey "$terminfo[kcud1]" history-substring-search-down
-
 # Initialize mise (if installed)
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"
 fi
 
-# Source fzf key bindings (includes Ctrl+R for history search)
+# Source fzf key bindings. This binds ctrl-t, alt-c *and* ctrl-r; Atuin is
+# initialised below and takes ctrl-r back, which is why the order matters.
 [ -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ] && source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+
+# Atuin. Position is load bearing, for two separate reasons:
+#
+#   - It must come after the fzf key bindings above, or fzf wins ctrl-r.
+#   - It must come after `bindkey -v`. The init script emits bare `bindkey`
+#     calls with no -M, so they land in whichever keymap is current; `bindkey -v`
+#     swaps main to viins and would discard every binding made before it.
+#
+# This also binds `?` on an empty prompt to Atuin AI. The binding is emitted
+# without -M, so it lands in viins only; `?` in vicmd is still search-backward.
+# What the assistant may touch is set by permissions.ai.toml in the atuin
+# package, not here.
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin init zsh)"
+fi
+
 [ -r ~/private/.zshrc ] && source ~/private/.zshrc
 
 # Performance optimizations
@@ -203,7 +242,7 @@ export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20  # Limit suggestion buffer size
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --inline-info'
 export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {}'"
-export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
+# No FZF_CTRL_R_OPTS: ctrl-r belongs to Atuin, so fzf never reads it.
 
 
 # Mise aliases (if installed)

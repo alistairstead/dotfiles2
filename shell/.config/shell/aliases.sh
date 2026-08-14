@@ -39,4 +39,7 @@ if command -v delta >/dev/null 2>&1; then
 fi
 
 # AWS Granted
+# Both must be sourced: they mutate the current shell's environment.
 alias assume=". assume"
+alias unassume=". assume --unset"
+alias granted-refresh='granted sso populate --sso-region "$KODEHORT_SSO_REGION" "$KODEHORT_SSO_START_URL"'

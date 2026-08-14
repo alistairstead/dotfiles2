@@ -105,8 +105,34 @@ in `~/.local/bin`.
 - `mr`, `mi`, `mu`, `ml`, `mc` - mise run/install/use/list/current
 
 ### AWS
-- `assume` - AWS credential assumption
+- `assume` - AWS credential assumption (exports `AWS_PROFILE` for the whole shell)
+- `unassume` - Clear the assumed profile from the current shell
 - `granted-refresh` - Refresh AWS SSO credentials
+
+### Cloud context (direnv)
+
+`direnv/.config/direnv/direnvrc` adds two `use` helpers so cloud context follows
+the project instead of the shell. Each clears the other cloud's variables, which
+is what keeps the starship prompt honest.
+
+```sh
+# .envrc in an AWS project
+use aws kodehort eu-west-2
+
+# .envrc in a GCP project
+use gcloud default genie-goals-analytics
+
+# ...impersonating a service account, the gcloud analogue of `assume`
+use gcloud default genie-goals-analytics deploy@genie-goals-analytics.iam.gserviceaccount.com
+```
+
+`use gcloud <configuration>` takes a name from `gcloud config configurations
+list`; it sets `CLOUDSDK_ACTIVE_CONFIG_NAME`, which both the gcloud CLI and the
+prompt read, so nothing has to mutate global gcloud state with `gcloud config
+set`. Run `direnv allow` after writing an `.envrc`.
+
+Full behaviour, including how the prompt is configured and what to do when a
+profile is stuck in a shell: [direnv/README.md](direnv/README.md).
 
 ## Vi Mode Keybindings
 - `jk` - Exit insert mode (ESC alternative)
@@ -115,9 +141,45 @@ in `~/.local/bin`.
 
 ## FZF Integration
 - `Ctrl+T` - File picker with preview
-- `Ctrl+R` - History search
 - `Alt+C` - Directory picker
 - Tab completion is routed through fzf-tab, with eza previews for directories
+
+## History Search (Atuin)
+- `Ctrl+R` / `Up` - Search history in Atuin's TUI, not fzf or zsh
+- `Ctrl+R` again, inside the TUI - Cycle filter scope: global → workspace →
+  directory → host → session. Workspace means the whole git repo tree, so
+  `wt` and `jjw` worktrees of one project share a scope
+- `Ctrl+S` - Cycle match mode (fuzzy, prefix, fulltext)
+- `Tab` - Put the command on the prompt to edit; `Enter` does the same, by
+  choice (`enter_accept = false`)
+- `Ctrl+O` - Inspector for the selected entry; `Ctrl+A` then `d` deletes it
+- Every entry carries its exit code, duration, directory, host and shell:
+  `atuin search --exclude-exit 0 --cwd . --after yesterday`, `atuin stats week`
+- Commands run by Claude Code are recorded and tagged, and hidden from
+  interactive search. `atuin search --author '$all-agent' -- ''` shows them
+- Leading space still keeps a command out, as it always did
+
+Configuration and the reasoning behind each setting: `atuin/.config/atuin/config.toml`.
+
+## Atuin AI
+- `?` on an empty prompt (insert mode) - Generate a command, refine it, or ask a
+  question. `Enter` runs the suggestion, `Tab` puts it on the prompt. `?` in
+  normal mode is still `vi-history-search-forward`
+- `/help`, `/new`, `/model`, `/reload` - Slash commands inside the assistant
+- Skills in `~/.config/atuin/skills/<name>/SKILL.md` or `.atuin/skills/` register
+  as their own slash commands; `TERMINAL.md` supplies standing context
+- Requires an Atuin Hub login on first use, separate from the sync account
+- What it may do without asking:
+  `atuin/.config/atuin/permissions.ai.toml`. Credentials, keys and destructive
+  commands are denied; anything unlisted prompts
+
+## Command Output Capture
+- `atuin pty-proxy` runs at the very top of `.zshrc` and records what each
+  command printed; the daemon holds 1MB per command, last 128 per session, in
+  memory only
+- Lets `?` and Claude Code answer "why did that fail" from the real error
+- `atuin daemon status` to check it; comment out the pty-proxy block at the top
+  of `.zshrc` if a terminal ever misbehaves
 
 ## Tmux Integration
 The configuration includes numerous tmux shortcuts mapped through Ghostty. See [CHEAT_SHEET.md](./CHEAT_SHEET.md) for the complete list.
@@ -126,5 +188,6 @@ The configuration includes numerous tmux shortcuts mapped through Ghostty. See [
 - `compinit -C` skips the security check on cached completions
 - FZF uses `fd` for better performance
 - Zoxide replaces `cd` for smarter navigation
-- History search uses substring matching (zsh-history-substring-search)
+- `atuin init` is sourced late in `.zshrc`: after the fzf key bindings, which
+  also claim `Ctrl+R`, and after `bindkey -v`, which would otherwise discard it
 - PATH is built once in `shell/.config/shell/path.sh`; re-sourcing is a no-op

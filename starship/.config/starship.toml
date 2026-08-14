@@ -15,6 +15,20 @@ error_symbol = "[❯](bold red)"
 success_symbol = "[❯](bold green)"
 vicmd_symbol = "[❮](bold green)"
 
+# Cloud context is scoped per project by direnv (see direnv/.config/direnv/direnvrc).
+# aws renders from AWS_PROFILE alone and has no detect_env_vars option, so scoping
+# the variable is what keeps it out of non-AWS projects. gcloud is always-on by
+# default, so it needs the explicit gate.
+[aws]
+expiration_symbol = "⏰"
+
+[gcloud]
+detect_env_vars = [
+  "CLOUDSDK_ACTIVE_CONFIG_NAME",
+  "CLOUDSDK_CORE_PROJECT",
+  "GOOGLE_CLOUD_PROJECT",
+]
+
 [nix_shell]
 format = "[$symbol $name]($style) "
 impure_msg = "*"

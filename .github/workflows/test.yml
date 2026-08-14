@@ -111,6 +111,8 @@ jobs:
           severity: warning
           ignore_paths: nvim node_modules .git zsh
           ignore_names: .zshrc .zprofile .zshenv
+          # No extension or shebang, so the scan misses it without an explicit path.
+          additional_files: direnvrc
 
       - name: Check for shadowed command names
         run: ./scripts/check-collisions.sh

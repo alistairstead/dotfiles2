@@ -189,7 +189,7 @@ finish() {
 # Replace the example below. Set TOTAL_STAGES to match the stages you write.
 # ──────────────────────────────────────────────────────────────────────────
 
-TOTAL_STAGES=7
+TOTAL_STAGES=8
 
 # Run from anywhere: every repo path below is resolved from this script.
 REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -309,16 +309,114 @@ stage "AWS — populate Granted SSO profiles"
 say "The 'assume' and 'granted-refresh' aliases expect Granted to know"
 say "your SSO profiles."
 if command -v granted >/dev/null 2>&1; then
-  say "  granted sso populate --sso-region eu-west-2 https://kodehort.awsapps.com/start"
+  sso_start_url="${KODEHORT_SSO_START_URL:-https://kodehort.awsapps.com/start}"
+  sso_region="${KODEHORT_SSO_REGION:-eu-west-2}"
+  say "  granted sso populate --sso-region $sso_region $sso_start_url"
   if confirm "Populate SSO profiles now?"; then
-    granted sso populate --sso-region eu-west-2 https://kodehort.awsapps.com/start \
+    granted sso populate --sso-region "$sso_region" "$sso_start_url" \
       || warn "granted sso populate did not complete"
+    if confirm "Run 'granted doctor'? It asks you to pick a profile, then checks it."; then
+      granted doctor || warn "granted doctor reported problems"
+    else
+      SKIPPED+=("granted doctor")
+    fi
   else
     SKIPPED+=("granted sso populate")
   fi
 else
   warn "granted is not installed — run ./install.sh first"
   SKIPPED+=("granted sso populate — granted not installed")
+fi
+
+# ── 8. Atuin sync ─────────────────────────────────────────────────────────
+stage "Atuin — history sync and the encryption key"
+say "Atuin works fully offline. Sync is what carries history between machines,"
+say "and doubles as the backup a flat .zsh_history never had. It is end-to-end"
+say "encrypted, so the server never sees a command."
+if ! command -v atuin >/dev/null 2>&1; then
+  warn "atuin is not installed — run ./install.sh first"
+  SKIPPED+=("atuin sync — atuin not installed")
+elif atuin status >/dev/null 2>&1; then
+  say "Already logged in. Nothing to do."
+else
+  say "Import whatever the shell recorded before Atuin took over:"
+  if confirm "Run 'atuin import auto' now?"; then
+    atuin import auto || warn "atuin import did not complete"
+  else
+    SKIPPED+=("atuin import auto")
+  fi
+
+  printf '\n'
+  step "First machine?  atuin register -u <username> -e <email>"
+  step "Any machine after that?  atuin login -u <username>  (asks for the key)"
+  say "Run whichever applies, in another window, then come back."
+  pause "Press Enter once you are registered or logged in."
+
+  if atuin status >/dev/null 2>&1; then
+    printf '\n'
+    warn "Save the encryption key to 1Password NOW."
+    say "It is the only way to log in on another machine, and the only way to"
+    say "read your own history again if this one dies. There is no reset: lose"
+    say "the key and the synced history is gone."
+    if confirm "Print the key so you can copy it into 1Password?"; then
+      printf '\n'
+      atuin key || warn "could not read the key"
+      printf '\n'
+      pause "Stored in 1Password? Press Enter."
+    else
+      SKIPPED+=("save 'atuin key' output to 1Password — do this before trusting sync")
+    fi
+
+    # `atuin import` fills the history index, not the encrypted record store,
+    # and only the record store syncs. Without this, sync uploads the handful of
+    # commands recorded since install and silently leaves the imported ones
+    # behind ("N in history index, but M in history store"). Atuin tries to run
+    # this itself mid-sync, but it needs $ATUIN_SESSION, which only exists in a
+    # shell where `atuin init` has run — so it fails exactly when you sync from
+    # a terminal opened before the shell config changed.
+    if [[ -n "${ATUIN_SESSION:-}" ]]; then
+      say "Migrating imported history into the syncable record store..."
+      atuin history init-store || warn "atuin history init-store did not complete"
+    else
+      warn "\$ATUIN_SESSION is unset — this shell predates the Atuin config."
+      say "Open a new terminal and run:  atuin history init-store && atuin sync"
+      SKIPPED+=("atuin history init-store — run it from a new shell, then 'atuin sync'")
+    fi
+
+    atuin sync || warn "atuin sync did not complete"
+  else
+    SKIPPED+=("atuin register/login, then save 'atuin key' to 1Password")
+  fi
+fi
+
+# Agent attribution and the MCP server are machine-local: the hook config is
+# stowed with the repo, but the MCP registration lives in ~/.claude.json, which
+# is not tracked.
+if command -v atuin >/dev/null 2>&1 && command -v claude >/dev/null 2>&1; then
+  printf '\n'
+  say "Let Claude Code search this history (read-only, stays on this machine):"
+  if claude mcp list 2>/dev/null | grep -q '^atuin:'; then
+    say "  MCP server already registered."
+  elif confirm "Register the Atuin MCP server with Claude Code?"; then
+    claude mcp add -s user atuin -- atuin mcp || warn "could not register the MCP server"
+  else
+    SKIPPED+=("claude mcp add -s user atuin -- atuin mcp")
+  fi
+fi
+
+# Atuin AI is a second AI vendor and needs its own account, separate from the
+# sync account above. It cannot be scripted: the login is a browser flow started
+# on first use of the key.
+if command -v atuin >/dev/null 2>&1 && [[ "$(atuin config get ai.enabled 2>/dev/null)" == "true" ]]; then
+  printf '\n'
+  say "Atuin AI is enabled: press '?' on an empty prompt for command generation."
+  say "First use opens a browser to log in to Atuin Hub — a separate account"
+  say "from history sync, currently free."
+  note "What it may touch without asking is set by"
+  note "  atuin/.config/atuin/permissions.ai.toml"
+  note "Reads of .env, keys and credentials are denied there, as are rm, sudo,"
+  note "aws, op and ssh. Everything else prompts."
+  SKIPPED+=("press '?' in a new shell to complete the Atuin Hub login")
 fi
 
 finish

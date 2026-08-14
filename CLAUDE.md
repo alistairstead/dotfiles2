@@ -59,10 +59,11 @@ Each application directory follows the Stow convention:
 ### Application Configurations
 
 - **Shell**: `zsh/` (Homebrew plugins, zsh-abbr), `bash/`, `shell/` (common configs shared by both)
+- **History**: `atuin/` - shell history in SQLite. Owns `Ctrl+R` and the up arrow; `atuin init` is sourced late in `.zshrc` (after the fzf key bindings and after `bindkey -v`, both of which would otherwise clobber it), while `atuin pty-proxy init` must be the *first* line of `.zshrc` because it re-execs the shell. `[dotfiles]` is deliberately disabled — aliases and env vars stay in `shell/`, see the config's own comments. `permissions.ai.toml` gates what the `?` assistant may read, write and run
 - **Editor**: `zed/` - Zed settings, keymap, tasks
 - **Terminal**: `ghostty/`, `tmux/` (with custom theme and plugins)
 - **Window Management**: `yabai/` (tiling window manager)
-- **Development**: `git/`, `gh/`, `direnv/`, `mise/` (runtime management)
+- **Development**: `git/`, `gh/`, `direnv/` (`direnvrc` carries `use_aws` / `use_gcloud` for per-project cloud context, see `direnv/README.md`), `mise/` (runtime management)
 - **Automation**: `karabiner/` - TypeScript-based keyboard customization
 - **Claude Integration**: `claude/` - Custom hooks for Claude Code
 

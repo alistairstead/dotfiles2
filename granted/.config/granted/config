@@ -6,6 +6,7 @@ Ordering = "Alphabetical"
 [Keyring]
   Backend = "keychain"
 
-[ProfileRegistry]
-  PrefixAllProfiles = true
-  PrefixDuplicateProfiles = true
+# No [ProfileRegistry] block on purpose: no registry is connected
+# (`granted registry list`), so its settings govern nothing. Profiles come from
+# `granted sso populate` via the granted-refresh alias. Add the block back
+# alongside `granted registry add` if a shared profile repo ever lands.

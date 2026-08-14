@@ -10,6 +10,11 @@ export EDITOR='zed-preview --wait'
 # AWS Granted settings
 export GRANTED_ENABLE_AUTO_REASSUME="true"
 
+# AWS SSO org, single-sourced for the granted-refresh alias and scripts/first-run.sh.
+# Deliberately not GRANTED_* — that prefix is granted's own namespace.
+export KODEHORT_SSO_START_URL="https://kodehort.awsapps.com/start"
+export KODEHORT_SSO_REGION="eu-west-2"
+
 # 1Password SSH agent
 export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 

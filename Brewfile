@@ -38,6 +38,7 @@ brew "awscli"
 brew "granted"
 
 # Terminal tools
+brew "atuin"     # Shell history in SQLite; owns ctrl-r and the up arrow
 brew "bat"
 brew "btop"
 brew "direnv"
@@ -64,12 +65,10 @@ brew "yq"
 brew "zsh-syntax-highlighting"
 brew "zsh-completions"
 brew "zsh-autosuggestions"
-brew "zsh-history-substring-search"
 brew "zsh-abbr"
 brew "fzf-tab"
 
 # Enhanced shell tools
-brew "navi"      # Interactive cheatsheet tool
 brew "glow"      # Markdown rendering in terminal
 brew "just"      # Modern command runner
 brew "watchexec" # File watcher for development
@@ -116,6 +115,7 @@ cask "cleanshot"
 cask "discord"
 cask "dockdoor"
 cask "figma"
+cask "gcloud-cli"
 cask "font-monaspace"
 cask "font-symbols-only-nerd-font"
 cask "font-victor-mono"

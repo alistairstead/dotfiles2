@@ -1,0 +1,65 @@
+# shellcheck shell=bash
+# direnv library — sourced before every .envrc.
+#
+# Cloud context is a property of the project, not of the shell. Without these,
+# `assume <profile>` exports AWS_PROFILE for the life of the shell and starship
+# keeps advertising an AWS profile in GCP projects (and vice versa).
+#
+# Usage in a project .envrc:
+#   use aws kodehort eu-west-2
+#   use gcloud default genie-goals-analytics
+#   use gcloud default genie-goals-analytics deploy@genie-goals-analytics.iam.gserviceaccount.com
+
+# use_aws <profile> [region]
+# Scopes AWS context to this directory tree and clears any gcloud context.
+use_aws() {
+  if [ -z "${1:-}" ]; then
+    log_error "use aws: expected a profile name"
+    return 1
+  fi
+
+  export AWS_PROFILE="$1"
+  if [ -n "${2:-}" ]; then
+    export AWS_REGION="$2" AWS_DEFAULT_REGION="$2"
+  fi
+
+  unset CLOUDSDK_ACTIVE_CONFIG_NAME CLOUDSDK_CORE_PROJECT GOOGLE_CLOUD_PROJECT \
+    CLOUDSDK_AUTH_IMPERSONATE_SERVICE_ACCOUNT
+}
+
+# use_gcloud <configuration> [project] [service-account]
+# Scopes gcloud context to this directory tree and clears any AWS context.
+# <configuration> is the name as `gcloud config configurations list` reports it,
+# backed by ~/.config/gcloud/configurations/config_<configuration>.
+# [service-account] impersonates that account for gcloud, gsutil and bq — the
+# nearest gcloud equivalent to `assume <profile>`. It needs
+# roles/iam.serviceAccountTokenCreator on the target account, and it does not
+# reach application code using ADC (see direnv/README.md).
+use_gcloud() {
+  if [ -z "${1:-}" ]; then
+    log_error "use gcloud: expected a configuration name"
+    return 1
+  fi
+
+  export CLOUDSDK_ACTIVE_CONFIG_NAME="$1"
+  if [ -n "${2:-}" ]; then
+    export CLOUDSDK_CORE_PROJECT="$2" GOOGLE_CLOUD_PROJECT="$2"
+  fi
+
+  if [ -n "${3:-}" ]; then
+    case "$3" in
+      *@*.iam.gserviceaccount.com) ;;
+      *)
+        log_error "use gcloud: '$3' is not a service account email"
+        return 1
+        ;;
+    esac
+    export CLOUDSDK_AUTH_IMPERSONATE_SERVICE_ACCOUNT="$3"
+  else
+    # Never inherit impersonation from the surrounding shell.
+    unset CLOUDSDK_AUTH_IMPERSONATE_SERVICE_ACCOUNT
+  fi
+
+  unset AWS_PROFILE AWS_REGION AWS_DEFAULT_REGION \
+    AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+}
