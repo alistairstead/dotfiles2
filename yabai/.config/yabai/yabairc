@@ -99,23 +99,38 @@ LABELS=(
     scratch
 )
 
+# Prefix each label with its index, so a status bar showing "3-code" also shows
+# that alt+3 focuses it and alt+shift+3 moves a window there.
 for ((i = 1; i <= "${#LABELS[@]}"; i++)); do
+    LABELS[(($i - 1))]="${i}-${LABELS[(($i - 1))]}"
     yabai -m space "$i" --label "${LABELS[(($i - 1))]}"
 done
+
+# Selectors for the rest of this file. Named SP_* to avoid colliding with the
+# app-list arrays below (MAIN, COMMS, CODE, ...).
+SP_MAIN="${LABELS[0]}"
+SP_COMMS="${LABELS[1]}"
+SP_CODE="${LABELS[2]}"
+SP_REF="${LABELS[3]}"
+SP_PRODUCTIVITY="${LABELS[4]}"
+SP_VM="${LABELS[5]}"
+SP_MEDIA="${LABELS[6]}"
+SP_MISC="${LABELS[7]}"
+SP_SCRATCH="${LABELS[8]}"
 
 # SPACE LAYOUTS
 # Assert every space, not just the non-default ones: layout is session state, so a
 # space switched by hand (alt+s) stays switched until something sets it back. Listing
 # all of them makes a config reload the recovery path.
-yabai -m config --space main layout bsp
-yabai -m config --space comms layout stack window_opacity off
-yabai -m config --space code layout bsp
-yabai -m config --space ref layout bsp
-yabai -m config --space productivity layout bsp
-yabai -m config --space vm layout bsp
-yabai -m config --space media layout stack window_opacity off
-yabai -m config --space misc layout bsp
-yabai -m config --space scratch layout float
+yabai -m config --space "$SP_MAIN" layout bsp
+yabai -m config --space "$SP_COMMS" layout stack window_opacity off
+yabai -m config --space "$SP_CODE" layout bsp
+yabai -m config --space "$SP_REF" layout bsp
+yabai -m config --space "$SP_PRODUCTIVITY" layout bsp
+yabai -m config --space "$SP_VM" layout bsp
+yabai -m config --space "$SP_MEDIA" layout stack window_opacity off
+yabai -m config --space "$SP_MISC" layout bsp
+yabai -m config --space "$SP_SCRATCH" layout float
 
 # RULES
 UNMANAGED=(
@@ -153,7 +168,7 @@ COMMS=(
 )
 
 for ((i = 1; i <= "${#COMMS[@]}"; i++)); do
-    yabai -m rule --add label="comms_${COMMS[(($i - 1))]}" app="^${COMMS[(($i - 1))]}$" space=comms
+    yabai -m rule --add label="comms_${COMMS[(($i - 1))]}" app="^${COMMS[(($i - 1))]}$" space="$SP_COMMS"
 done
 
 STICKY=(
@@ -170,7 +185,7 @@ MEDIA=(
 )
 
 for ((i = 1; i <= "${#MEDIA[@]}"; i++)); do
-    yabai -m rule --add label="media_${MEDIA[(($i - 1))]}" app="^${MEDIA[(($i - 1))]}$" space=media
+    yabai -m rule --add label="media_${MEDIA[(($i - 1))]}" app="^${MEDIA[(($i - 1))]}$" space="$SP_MEDIA"
 done
 
 # Productivity
@@ -181,7 +196,7 @@ PRODUCTIVITY=(
 )
 
 for ((i = 1; i <= "${#PRODUCTIVITY[@]}"; i++)); do
-    yabai -m rule --add label="productivity_${PRODUCTIVITY[(($i - 1))]}" app="^${PRODUCTIVITY[(($i - 1))]}$" space=productivity
+    yabai -m rule --add label="productivity_${PRODUCTIVITY[(($i - 1))]}" app="^${PRODUCTIVITY[(($i - 1))]}$" space="$SP_PRODUCTIVITY"
 done
 
 MAIN=(
@@ -190,7 +205,7 @@ MAIN=(
 )
 
 for ((i = 1; i <= "${#MAIN[@]}"; i++)); do
-    yabai -m rule --add label="main_${MAIN[(($i - 1))]}" app="^${MAIN[(($i - 1))]}$" space=main
+    yabai -m rule --add label="main_${MAIN[(($i - 1))]}" app="^${MAIN[(($i - 1))]}$" space="$SP_MAIN"
 done
 
 CODE=(
@@ -201,7 +216,7 @@ CODE=(
 )
 
 for ((i = 1; i <= "${#CODE[@]}"; i++)); do
-    yabai -m rule --add label="code_${CODE[(($i - 1))]}" app="^${CODE[(($i - 1))]}$" space=code
+    yabai -m rule --add label="code_${CODE[(($i - 1))]}" app="^${CODE[(($i - 1))]}$" space="$SP_CODE"
 done
 
 REF=(
@@ -209,7 +224,7 @@ REF=(
 )
 
 for ((i = 1; i <= "${#REF[@]}"; i++)); do
-    yabai -m rule --add label="ref_${REF[(($i - 1))]}" app="^${REF[(($i - 1))]}$" space=ref
+    yabai -m rule --add label="ref_${REF[(($i - 1))]}" app="^${REF[(($i - 1))]}$" space="$SP_REF"
 done
 
 MISC=(
@@ -218,7 +233,7 @@ MISC=(
 )
 
 for ((i = 1; i <= "${#MISC[@]}"; i++)); do
-    yabai -m rule --add label="misc_${MISC[(($i - 1))]}" app="^${MISC[(($i - 1))]}$" space=misc
+    yabai -m rule --add label="misc_${MISC[(($i - 1))]}" app="^${MISC[(($i - 1))]}$" space="$SP_MISC"
 done
 
 VM=(
@@ -226,7 +241,7 @@ VM=(
 )
 
 for ((i = 1; i <= "${#VM[@]}"; i++)); do
-    yabai -m rule --add label="vm_${VM[(($i - 1))]}" app="^${VM[(($i - 1))]}$" space=vm
+    yabai -m rule --add label="vm_${VM[(($i - 1))]}" app="^${VM[(($i - 1))]}$" space="$SP_VM"
 done
 
 echo "yabai configuration loaded.."

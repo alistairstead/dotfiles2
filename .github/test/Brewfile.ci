@@ -11,12 +11,14 @@ brew "stow"
 # so CI exercises the same versions this repo runs against.
 brew "starship"
 
-# Zsh plugins, so the .zshrc load test covers the real configuration
+# Zsh plugins, so the .zshrc load test covers the real configuration.
+# zsh-abbr is omitted: it lives in olets/tap, and third-party taps need
+# explicit trust that CI does not grant. The abbr block in .zshrc is guarded,
+# so CI exercises the same path a machine hits before the tap is trusted.
 brew "zsh-syntax-highlighting"
 brew "zsh-completions"
 brew "zsh-autosuggestions"
 brew "zsh-history-substring-search"
-brew "zsh-abbr"
 brew "fzf-tab"
 brew "direnv"
 brew "zoxide"
