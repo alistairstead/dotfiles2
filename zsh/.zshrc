@@ -60,16 +60,28 @@ if (( ${+ZSH_HIGHLIGHT_STYLES} )); then
   ZSH_HIGHLIGHT_STYLES[command-error]='fg=red,bold'
 fi
 
-# initialise bash completions
-autoload -U +X bashcompinit && bashcompinit
-
-if command -v aws_completer >/dev/null 2>&1; then
-  complete -C "$(command -v aws_completer)" aws
-fi
-
-# Carapace completions (if installed)
+# Carapace completions. Must come after compinit; it registers ~700 commands
+# with compdef, which overwrites whatever compinit found in fpath under the same
+# name. That is the whole point for tools with no native zsh completion, but a
+# few of zsh's own completers are better than carapace's generated specs, so
+# they are claimed back below. Check what owns a command with:
+#
+#   print -r -- ${_comps[git]}     # _carapace_completer, or a native _* function
+#
+# This block also used to be preceded by `complete -C aws_completer aws` (and
+# the bashcompinit needed to make that work). Both are gone: carapace registers
+# aws too and, sourced after, silently won the name, so the aws_completer line
+# had no effect. Carapace's spec is also instant where aws_completer pays a
+# Python interpreter startup on every tab.
 if command -v carapace >/dev/null 2>&1; then
   source <(carapace _carapace zsh)
+
+  # Reclaim the completers zsh does better. Each is a shipped autoloadable
+  # function: _git and _ssh from zsh itself, _brew from Homebrew's
+  # site-functions. Drop a line to hand that command back to carapace.
+  compdef _git git
+  compdef _brew brew
+  compdef _ssh ssh
 fi
 
 # History. Atuin (initialised near the bottom of this file) is what ctrl-r and
