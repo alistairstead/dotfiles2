@@ -1,14 +1,216 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "advisorModel": "opus",
+  "agentPushNotifEnabled": true,
+  "alwaysThinkingEnabled": true,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "autoDreamEnabled": true,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(jj commit:*) in ~/dev/personal/dotfiles",
+      "Bash(shellcheck:*) in ~/dev/personal/dotfiles",
+      "Bash(stow:*) in ~/dev/personal/dotfiles"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: PUBLIC — alistairstead/dotfiles2 (github.com), default branch main",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: main (default); no branch protection rules or rulesets listed via gh — treat as unprotected",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Source control**: The trusted repo (alistairstead/dotfiles2 on github.com) and its remote only",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: personal dotfiles / environment configuration (hobby use)",
+      "**Trusted repo**: /Users/alistairstead/dev/personal/dotfiles, remote github.com:alistairstead/dotfiles2.git — PUBLIC repo: only this repo's own work belongs here; content ported from elsewhere is not cleared for commit/push just because this repo is public",
+      "**Org-specific CLIs**: None configured — this repo's docs reference jj (used instead of git per user CLAUDE.md), stow, mise, brew, shellcheck as routine project tooling",
+      "routine under ~/dev/personal/dotfiles/ prefix: stow/jj/shellcheck/mise/brew invocations, ./install.sh, karabiner pnpm build"
+    ]
+  },
+  "editorMode": "vim",
+  "enabledPlugins": {
+    "clangd-lsp@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "dev-browser@dev-browser-marketplace": true,
+    "fallow@fallow-skills": true,
+    "feature-dev@claude-plugins-official": false,
+    "figma@claude-plugins-official": true,
+    "playwright@claude-plugins-official": false,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
+  },
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_CODE_FORK_SUBAGENT": "1",
     "USE_BUILTIN_RIPGREP": "1"
   },
-  "attribution": {
-    "commit": "",
-    "pr": ""
+  "extraKnownMarketplaces": {
+    "context-mode": {
+      "source": {
+        "repo": "mksglu/context-mode",
+        "source": "github"
+      }
+    },
+    "fallow-skills": {
+      "source": {
+        "repo": "fallow-rs/fallow-skills",
+        "source": "github"
+      }
+    },
+    "obsidian-skills": {
+      "source": {
+        "repo": "kepano/obsidian-skills",
+        "source": "github"
+      }
+    }
   },
+  "feedbackSurveyState": {
+    "lastShownTime": 1754066916309
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/notifications.ts",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "jj claude-snapshot >> /tmp/claude-snapshot.log 2>&1 || true",
+            "type": "command"
+          }
+        ],
+        "matcher": "Task"
+      },
+      {
+        "hooks": [
+          {
+            "command": "atuin hook claude-code",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "command": "atuin hook claude-code",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/notifications.ts",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "jj claude-checkpoint || true",
+            "type": "command"
+          }
+        ],
+        "matcher": "Task"
+      },
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/pre-use-tool.ts",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      },
+      {
+        "hooks": [
+          {
+            "command": "atuin hook claude-code",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "jj claude-snapshot  >> /tmp/claude-snapshot.log 2>&1 || true",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      },
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/notifications.ts",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/notifications.ts",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "command": "git worktree add -b \"worktree-$(basename \"$1\")\" \"$1\" origin/main",
+            "timeout": 10000,
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ]
+  },
+  "inputNeededNotifEnabled": true,
   "permissions": {
     "allow": [
       "Bash(grep:*)",
@@ -55,163 +257,24 @@
       "Read(**/credentials/**)"
     ]
   },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Task",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jj claude-snapshot >> /tmp/claude-snapshot.log 2>&1 || true"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Task",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jj claude-checkpoint || true"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/pre-use-tool.ts"
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/notifications.ts"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jj claude-snapshot  >> /tmp/claude-snapshot.log 2>&1 || true"
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/notifications.ts"
-          }
-        ]
-      }
-    ],
-    "TaskCompleted": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/notifications.ts"
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/notifications.ts"
-          }
-        ]
-      }
-    ],
-    "WorktreeCreate": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "git worktree add -b \"worktree-$(basename \"$1\")\" \"$1\" origin/main",
-            "timeout": 10000
-          }
-        ]
-      }
-    ]
-  },
-  "worktree": {
-    "baseRef": "fresh"
-  },
+  "preferredNotifChannel": "terminal_bell",
+  "remoteControlAtStartup": true,
+  "skipAutoPermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
   "statusLine": {
-    "type": "command",
-    "command": "sh $HOME/.claude/statusline-command.sh"
+    "command": "sh $HOME/.claude/statusline-command.sh",
+    "type": "command"
   },
-  "enabledPlugins": {
-    "typescript-lsp@claude-plugins-official": true,
-    "playwright@claude-plugins-official": false,
-    "feature-dev@claude-plugins-official": false,
-    "dev-browser@dev-browser-marketplace": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "clangd-lsp@claude-plugins-official": true,
-    "fallow@fallow-skills": true,
-    "figma@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true
-  },
-  "extraKnownMarketplaces": {
-    "context-mode": {
-      "source": {
-        "source": "github",
-        "repo": "mksglu/context-mode"
-      }
-    },
-    "obsidian-skills": {
-      "source": {
-        "source": "github",
-        "repo": "kepano/obsidian-skills"
-      }
-    },
-    "fallow-skills": {
-      "source": {
-        "source": "github",
-        "repo": "fallow-rs/fallow-skills"
-      }
-    }
-  },
-  "alwaysThinkingEnabled": true,
-  "advisorModel": "opus",
+  "teammateMode": "in-process",
+  "terminalProgressBarEnabled": true,
+  "theme": "dark",
   "tui": "fullscreen",
   "voice": {
     "enabled": false,
     "mode": "hold"
   },
-  "autoDreamEnabled": true,
-  "skipWorkflowUsageWarning": true,
-  "theme": "dark",
-  "editorMode": "vim",
-  "preferredNotifChannel": "terminal_bell",
-  "terminalProgressBarEnabled": true,
-  "teammateMode": "in-process",
-  "remoteControlAtStartup": true,
-  "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
   "voiceEnabled": false,
-  "feedbackSurveyState": {
-    "lastShownTime": 1754066916309
+  "worktree": {
+    "baseRef": "fresh"
   }
 }

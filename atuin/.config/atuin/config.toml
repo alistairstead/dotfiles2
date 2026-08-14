@@ -1,0 +1,176 @@
+# Atuin — shell history in SQLite, with the context a flat HISTFILE cannot hold:
+# exit code, duration, working directory, host, session, shell, and author.
+#
+# Atuin owns Ctrl+R and the up arrow. It does not own aliases, environment
+# variables, abbreviations, functions, or PATH — see the [dotfiles] block below
+# for why that line is drawn where it is.
+#
+# `atuin default-config` prints every setting with its default. Only deviations
+# from the default are recorded here.
+#
+# TOML rules the layout: every bare key below belongs to the root table, so all
+# of them must come before the first [table] header. Moving one under a table
+# does not error — Atuin just never sees it. `atuin config get <key>` reports
+# "(not set in config file)" when that has happened.
+
+## Enable the "workspace" filter mode: inside a git repo, scope search to that
+## repo's whole tree rather than the current directory. This is the mode that
+## makes `wt` and `jjw` worktrees legible — sibling checkouts of one project
+## share a filter instead of each looking like an unrelated directory.
+workspaces = true
+
+## Follow the shell's vi mode instead of forcing emacs bindings inside the TUI.
+keymap_mode = "auto"
+
+## Tab returns the command to the prompt for editing; enter runs it. `false`
+## makes enter edit as well, which matches how fzf's ctrl-r behaved here: look,
+## then decide. Flip to `true` for one-keystroke replay.
+enter_accept = false
+
+## Commands never worth recalling. Unanchored regexes, so ^ and $ are load
+## bearing: "^ls$" excludes bare `ls` but keeps `ls -la`.
+##
+## Note these must match what actually *ran*, not what was typed. zsh-abbr
+## expands abbreviations in the buffer before execution, so the history records
+## `git status`, never `gs`. Filtering the abbreviation would be a no-op.
+##
+## After changing this list, run `atuin history prune --dry-run` to see which
+## already-recorded entries the new patterns would remove.
+history_filter = [
+  "^ls$",
+  "^l$",
+  "^ll$",
+  "^la$",
+  "^lt$",
+  "^c$",
+  "^clear$",
+  "^exit$",
+]
+
+## Nothing run from inside a dependency tree is worth keeping.
+cwd_filter = [
+  "/node_modules/",
+]
+
+## No [theme] block on purpose. Atuin ships only default/autumn/marine/(none),
+## and its default styling — including syntax highlighting of search results —
+## is drawn from ANSI palette colors, so it already follows whatever the
+## terminal is set to.
+##
+## A hand-written Catppuccin theme would mean pinning hex codes, and the colors
+## here are not pinned: ghostty's `theme = light:catppuccin-latte,dark:
+## catppuccin-mocha` line is commented out, and tmux is on macchiato, not mocha.
+## Hardcoding one flavour would break the light/dark switch the moment that
+## ghostty line is uncommented. Set the terminal's theme and Atuin follows.
+##
+## If a fixed theme is ever wanted: write themes/<name>.toml beside this file
+## mapping the Meaning keys (Base, Title, AlertError, SyntaxCommand, SyntaxFlag,
+## …) to hex codes, and add `[theme] name = "<name>"`. Naming a theme that does
+## not resolve drops Atuin to unstyled rather than falling back, so both land in
+## the same commit.
+
+## Filter modes in the order ctrl-r cycles them. Workspace sits second because
+## it is the one wanted most often; it is skipped automatically outside a repo.
+[search]
+filters = ["global", "workspace", "directory", "host", "session"]
+
+## Exit code first — the reason to have moved off the flat HISTFILE at all.
+[ui]
+columns = ["exit", "duration", "time", "command"]
+
+## Inside tmux, draw the search UI in a popup floating above the pane instead of
+## over it, so the pane's scrollback survives. Falls back silently outside tmux
+## or on tmux < 3.2. The known iTerm2 popup incompatibility does not apply here;
+## Ghostty is the terminal.
+[tmux]
+enabled = true
+
+## Command output capture -----------------------------------------------------
+
+## The daemon holds the output of recent commands in memory, batches history
+## writes, and syncs in the background. pty-proxy is what actually captures the
+## output: it sits between the terminal and the shell and reads OSC 133 prompt
+## markers to tell where one command's output ends and the next begins.
+##
+## Together they are what lets `?` and Claude Code (via `atuin mcp`) answer "why
+## did that fail?" from the real error text rather than guessing from the
+## command. Retention is deliberately small and local: 1MB per command, the last
+## 128 commands per session, in memory only, gone when the daemon stops.
+##
+## Both are marked experimental by Atuin. If the shell ever misbehaves, comment
+## out the pty-proxy line at the top of zsh/.zshrc first — it is the piece that
+## re-execs the shell.
+[daemon]
+enabled = true
+autostart = true
+
+## pty-proxy is started by the explicit init line near the top of zsh/.zshrc
+## rather than by `enabled = true` here. Both routes work and the proxy only
+## starts once, but this setting would start it at the `atuin init` line at the
+## bottom of the file, meaning everything above it runs twice. The explicit line
+## sits before the `~/.config/shell/*.sh` loop, so far less is repeated.
+# [pty_proxy]
+# enabled = true
+
+## Atuin AI --------------------------------------------------------------------
+
+## `?` on an empty prompt opens the assistant: generate a command, refine it,
+## or ask a question. Enter runs the suggestion, tab puts it on the prompt.
+##
+## This is a second AI vendor. Prompts go to Atuin Hub, which requires a login
+## on first use. Nothing is sent until `?` is pressed, and the tools it can use
+## on this machine are gated by permissions.ai.toml beside this file — read that
+## before trusting it near this repo's AWS and 1Password config.
+[ai]
+enabled = true
+
+## What the model is told the client can do. All four default to true; they are
+## listed explicitly because this is the blast radius, and a capability turned
+## off here cannot be re-enabled by a permission rule.
+##
+## History and output are read-only and local. File and command tools are left
+## available but every use is gated by permissions.ai.toml, which defaults to
+## asking.
+[ai.capabilities]
+enable_history_search = true
+enable_history_output = true
+enable_file_tools = true
+enable_command_execution = true
+
+## Sent with the first request of a session. Both default to false. The working
+## directory and the previous command are what make "why did that fail" and
+## "how do I do this here" answerable without retyping context.
+##
+## Note this means the cwd leaves the machine on the first `?` press of a
+## session, before any tool permission is asked for. Client paths are not
+## secret, but they are not nothing.
+[ai.opening]
+send_cwd = true
+send_last_command = true
+
+## Deliberately not enabled ---------------------------------------------------
+
+## `atuin dotfiles` syncs aliases and environment variables. It stays off.
+##
+## Two reasons, either sufficient. First, the aliases do not survive the move:
+## most of shell/.config/shell/aliases.sh is guarded behind `command -v`, the
+## granted aliases must be sourced rather than run, and `rm='trash'` is
+## deliberately interactive-only. A literal key-value store expresses none of
+## that.
+##
+## Second, this repo has already paid for a store shaped like this one. See the
+## abbreviation block in zsh/.zshrc: zsh-abbr's untracked, append-only
+## user-abbreviations store silently shadowed functions with no error, and the
+## fix was declarative reconciliation on every startup plus
+## scripts/check-collisions.sh in CI. Atuin's store is the same shape and worse
+## — encrypted SQLite, so there is no plaintext to diff, no `jj diff`, and no
+## way for check-collisions.sh to see it — and it syncs, so a mistake
+## propagates instead of staying local.
+##
+## Aliases and environment variables live in shell/, tracked and reviewable.
+[dotfiles]
+enabled = false
+
+## `yolo = true` under [ai] bypasses every permission check. Never set it here.
+## The whole point of permissions.ai.toml is that this machine holds AWS SSO
+## config, a 1Password agent socket, and the private keys behind both.

@@ -1,0 +1,108 @@
+# What Atuin AI may do on this machine without asking.
+#
+# This is the global fallback. Atuin AI checks `.atuin/permissions.ai.toml` in
+# the working directory, then every parent directory up to /, and finally this
+# file. Deeper files win, so a project can loosen or tighten anything below.
+#
+# Within one file the order is: `ask` beats `deny` beats `allow`. Anything with
+# no matching rule is asked about, so the safe default is to write nothing.
+#
+# Rule shapes:
+#   AtuinHistory            search shell history (read-only, local)
+#   AtuinOutput             read captured command output (read-only, local)
+#   Read(<glob>)            read files
+#   Write(<glob>)           create/edit files — implies Read on the same glob
+#   Shell(<command>)        run a command
+#
+# Shell matching has two forms and they are not the same:
+#   "git commit *"  word-boundary — matches `git commit -m x`, not `git`
+#   "ls*"           prefix        — matches `ls`, `ls -a`, and `lsof`
+# In `allow` and `ask`, a pattern with no wildcard is an exact match.
+# In `deny`, a pattern with no wildcard is a *prefix* match: `rm` denies
+# `rm -rf /` too. That asymmetry is deliberate and useful, but it means a
+# careless deny is broader than it looks.
+#
+# Compound commands (`a && b`) are split, and every part must be allowed for the
+# whole to run unasked. Atuin's parser is imperfect, which is another reason the
+# allow list below stays small and read-only.
+
+[permissions]
+
+allow = [
+  # Read-only, and never leaves the machine until the model asks for a specific
+  # result. These are the two tools that make the assistant worth having.
+  "AtuinHistory",
+  "AtuinOutput",
+
+  # Read-only inspection of the repo you are standing in. Enough for "why did
+  # that fail" without a permission prompt on every turn.
+  "Shell(jj status)",
+  "Shell(jj log *)",
+  "Shell(jj diff *)",
+  "Shell(git status *)",
+  "Shell(git log *)",
+  "Shell(git diff *)",
+  "Shell(brew list *)",
+  "Shell(mise current *)",
+  "Shell(atuin stats *)",
+]
+
+deny = [
+  # Credentials and keys. Mirrors the deny list in
+  # claude/.claude/settings.json — the same secrets, a different agent.
+  "Read(**/.env)",
+  "Read(**/.env.local)",
+  "Read(**/.env.*.local)",
+  "Read(**/*.pem)",
+  "Read(**/*.key)",
+  "Read(**/*.crt)",
+  "Read(**/*.cert)",
+  "Read(**/secrets/**)",
+  "Read(**/credentials/**)",
+  "Read(**/.ssh/**)",
+  "Read(**/.aws/**)",
+  "Read(**/.config/granted/**)",
+  "Read(**/.local/share/atuin/key)",
+
+  # Writes to anything that decides what runs at login, or that this repo owns.
+  # An agent editing the dotfiles that configure the agent is a loop worth
+  # breaking by hand.
+  "Write(**/.zshrc)",
+  "Write(**/.zshenv)",
+  "Write(**/.bashrc)",
+  "Write(**/.profile)",
+  "Write(**/.config/atuin/**)",
+  "Write(**/.claude/**)",
+
+  # Destructive or credential-adjacent commands. No wildcard, so these are
+  # prefix matches and cover their arguments.
+  "Shell(rm)",
+  "Shell(sudo)",
+  "Shell(chmod)",
+  "Shell(chown)",
+  "Shell(dd)",
+  "Shell(mkfs)",
+  "Shell(diskutil)",
+  "Shell(shutdown)",
+  "Shell(reboot)",
+  "Shell(kill)",
+  "Shell(pkill)",
+  "Shell(op)",
+  "Shell(security)",
+  "Shell(aws)",
+  "Shell(assume)",
+  "Shell(gcloud)",
+  "Shell(ssh)",
+  "Shell(scp)",
+  "Shell(curl)",
+  "Shell(wget)",
+  "Shell(atuin account)",
+  "Shell(atuin key)",
+  "Shell(atuin store)",
+  "Shell(brew uninstall)",
+  "Shell(stow)",
+]
+
+# Everything else — reading source, writing a file, running a build, pushing a
+# branch — falls through to a prompt. That is the intended resting state; widen
+# it per project with a `.atuin/permissions.ai.toml` rather than here.

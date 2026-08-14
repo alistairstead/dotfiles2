@@ -92,6 +92,31 @@ if [[ -r ~/private/.bashrc ]]; then
   source ~/private/.bashrc
 fi
 
+# =====================================
+# ATUIN
+# =====================================
+
+# Binds ctrl-r and the up arrow to the shared SQLite history store, the same one
+# zsh uses. Must be last: `atuin init bash` loads its bundled bash-preexec,
+# which hooks PROMPT_COMMAND and has to see the final value. Sourced mid-file it
+# initialises silently and records nothing — `atuin doctor` then reports
+# "preexec": "unknown" rather than "bash-preexec".
+#
+# `?` is left unbound here (--disable-ai): the AI keybinding is worth having in
+# zsh, which is the shell actually used, and this file is a mirror kept minimal.
+#
+# Unverified: bash here is a thin mirror of zsh and nothing drives it
+# interactively, so recording has not been confirmed end to end. To check, from
+# a real interactive bash in a terminal:
+#
+#   atuin doctor | rg preexec     # want "bash-preexec", not "unknown"
+#
+# If it reports "unknown", nothing is being recorded from bash and this block
+# can be deleted rather than left as decoration.
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin init bash --disable-ai)"
+fi
+
 # Keep the exit status clean: `source ~/.bashrc` is used as a health check in
 # CI, and a trailing conditional would report the missing optional file.
 true
