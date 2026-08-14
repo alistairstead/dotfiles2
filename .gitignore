@@ -1,7 +1,8 @@
 /.agents/
 /.claude/
-# Neovim spell files (user-specific, shouldn't be tracked)
-nvim/.config/nvim/spell/en.utf-8.add
-nvim/.config/nvim/spell/en.utf-8.add.spl
+node_modules/
 # TTS mute flag (runtime state, toggled per machine)
 claude/.claude/hooks/.speak-muted
+# TTS binary, compiled from speak.swift by install.sh. ~/.claude/hooks is a
+# stow symlink to this directory, so the build lands here.
+claude/.claude/hooks/speak

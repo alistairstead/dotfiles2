@@ -24,18 +24,6 @@ gum spin --spinner globe --title "🪟 tpm plugins updating..." --show-output --
 printf "\n" >>"/tmp/u-$NOW.txt"
 echo "✅ 🪟 tpm plugins updated"
 
-gum spin --spinner globe --title "💤 lazy.nvim syncing..." -- nvim --headless "+Lazy! sync" +qa
-printf "\n" >>"/tmp/u-$NOW.txt"
-echo "✅ 💤 lazy.nvim synced"
-
-gum spin --spinner globe --title "🧰 mason.nvim updating" -- nvim --headless "+MasonUpdate" +qa
-printf "\n" >>"/tmp/u-$NOW.txt"
-echo "✅ 🧰 mason.nvim updated"
-
-gum spin --spinner globe --title "🌳 nvim-treesitter updating" -- nvim --headless "+TSUpdate" +qa
-printf "\n" >>"/tmp/u-$NOW.txt"
-echo "✅ 🌳 nvim-treesitter updated"
-
 gum spin --spinner globe --title "🍻 brew updating" --show-output -- brew update | tee -a "/tmp/u-$NOW.txt"
 printf "\n" >>"/tmp/u-$NOW.txt"
 echo "✅ 🍻 brew updated"
