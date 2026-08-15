@@ -16,12 +16,12 @@ cd ~/dotfiles
 
 ### Applications
 
-- **Terminal**: Ghostty, WezTerm
-- **Editor**: Neovim (LazyVim configuration)
-- **Shell**: Zsh with Starship prompt
-- **Window Management**: Aerospace, Yabai
+- **Terminal**: Ghostty
+- **Editor**: Zed
+- **Shell**: Zsh with Starship prompt, Atuin history, zsh-abbr
+- **Window Management**: Yabai, driven by Karabiner
 - **Version Management**: mise (fast runtime manager, reads .nvmrc, .ruby-version, etc.)
-- **Development Tools**: Git, GitHub CLI, Direnv
+- **Development Tools**: Git, jj, GitHub CLI, Direnv
 
 ### Key Features
 

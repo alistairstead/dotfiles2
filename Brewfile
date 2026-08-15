@@ -2,40 +2,47 @@
 # Run with: brew bundle
 
 # Taps
-tap "neovim/neovim"
 tap "common-fate/granted"
-tap "nikitabobko/tap"
+tap "dagger/tap"
 tap "koekeishiya/formulae"
 tap "olets/tap"
+# Needs `brew trust rsteube/tap` before brew will load the carapace extensions
+tap "rsteube/tap"
+# typewhisper is in homebrew/cask now, but the installed copy came from this tap
+# and brew will not untap while it is present. To drop this line:
+#   brew uninstall --cask typewhisper && brew install --cask typewhisper
 tap "typewhisper/tap"
 
 # Core utilities
 brew "coreutils"
-brew "automake"
 brew "autoconf"
 brew "openssl"
-brew "libyaml"
 brew "readline"
-brew "libxslt"
 brew "libtool"
 brew "unixodbc"
 brew "unzip"
 brew "gpg"
+brew "bison"
+brew "cmake"
 
 # Development tools
 brew "git"
 brew "git-delta"
+brew "git-filter-repo"
 brew "gh"
 brew "vim"
 brew "neovim"
 brew "wget"
 brew "curl"
-brew "go"
-brew "deno"
+brew "act"       # Run GitHub Actions locally
 
 # Cloud and infrastructure
 brew "awscli"
 brew "granted"
+brew "terraform"
+brew "terraform-ls"
+brew "tflint"
+brew "railway"
 
 # Terminal tools
 brew "atuin"     # Shell history in SQLite; owns ctrl-r and the up arrow
@@ -46,7 +53,6 @@ brew "direnv"
 brew "eza"
 brew "fzf"
 brew "gum"
-brew "htop"
 brew "jq"
 brew "trash"
 brew "starship"
@@ -56,8 +62,9 @@ brew "zoxide"
 brew "fd"
 brew "ripgrep"
 brew "tree"
-brew "fastfetch"
 brew "yq"
+brew "tldr"
+brew "navi"    # Interactive cheatsheet
 
 # Zsh plugins (via Homebrew)
 brew "zsh-syntax-highlighting"
@@ -67,22 +74,25 @@ brew "zsh-abbr"
 brew "fzf-tab"
 
 # Enhanced shell tools
-brew "glow"      # Markdown rendering in terminal
 brew "just"      # Modern command runner
-brew "watchexec" # File watcher for development
 brew "carapace"  # Multi-shell command argument completion
+# Carapace extensions. Nothing sources these: carapace-bin does an exec.LookPath
+# for each and delegates over its bridge protocol when the binary is on PATH, so
+# installing is the whole setup. carapace-aws parses botocore service definitions
+# for real descriptions and falls back to aws_completer; carapace-magick covers
+# magick, montage, mogrify, compare and identify.
+brew "carapace-aws"
+brew "carapace-magick"
 
 # Database tools
 brew "mysql-client@8.4"
 brew "sqlite"
-brew "lazysql"
 
 # Development utilities
-brew "xh"
 brew "gnu-sed"
-brew "viu"
 brew "stylua"
-brew "diff-so-fancy"
+brew "taplo"     # TOML formatter and language server
+brew "d2"        # Diagram scripting language
 brew "jj"
 brew "jjui"
 brew "lazydocker"
@@ -90,37 +100,51 @@ brew "lazygit"
 brew "fontconfig"
 brew "imagemagick"
 brew "sox"       # Audio processing, used by claude speak hooks
+brew "whisper-cpp" # Local speech-to-text
 brew "shellcheck"
 brew "uv"
+brew "pipx"      # Backs the pipx: backend in mise/config.toml
+brew "nmap"
+
+# Languages and runtimes not managed by mise
+brew "php"
+brew "zig"
+brew "luarocks"
+brew "playwright-cli"
 
 # Advanced development tools
 brew "mise"
-brew "git-cliff"  # Automated changelog generation
-brew "git-absorb" # Automatically fixup commits
-brew "gitui"      # TUI for git
-brew "sccache"    # Shared compilation cache
 
 # Window management
-brew "asmvik/formulae/yabai"
+brew "koekeishiya/formulae/yabai"
 brew "sleepwatcher"
 
 # Casks (GUI applications)
 cask "1password@beta"
 cask "1password-cli@beta"
+cask "bartender"
 cask "choosy"
 cask "cleanmymac"
 cask "cleanshot"
+# Needs `brew trust dagger/tap` before brew will load it
+cask "dagger/tap/container-use"
 cask "discord"
 cask "dockdoor"
 cask "figma"
-cask "gcloud-cli"
+cask "font-fira-code-nerd-font"
 cask "font-monaspace"
 cask "font-symbols-only-nerd-font"
 cask "font-victor-mono"
+cask "gcloud-cli"
 cask "ghostty"
+cask "github@beta"
 cask "google-chrome"
 cask "home-assistant"
+cask "inkscape"
 cask "jordanbaird-ice"
+# Wired into git/config as difftool and mergetool (ksdiff). The copy on this
+# machine was installed by hand; brew bundle passes --adopt, so it takes it over
+cask "kaleidoscope"
 cask "karabiner-elements"
 cask "linearmouse"
 cask "nordvpn"
