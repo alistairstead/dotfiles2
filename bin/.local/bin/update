@@ -43,4 +43,12 @@ gum spin --spinner globe --title "🍻 brew doctoring" --show-output -- brew doc
 printf "\n" >>"/tmp/u-$NOW.txt"
 echo "✅ 🍻 brew doctored"
 
+# Regenerate after the upgrades above: these completions are cached copies of
+# each tool's own generator output, so they go stale when the tool moves.
+if command -v gen-completions >/dev/null 2>&1; then
+  gum spin --spinner globe --title "🐚 completions regenerating..." --show-output -- gen-completions >>"/tmp/u-$NOW.txt"
+  printf "\n" >>"/tmp/u-$NOW.txt"
+  echo "✅ 🐚 completions regenerated"
+fi
+
 echo "✅ 🧾 logged to /tmp/u-$NOW.txt"

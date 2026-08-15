@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# Generate zsh completions for tools that ship a generator but no packaged
+# completion file.
+#
+# Homebrew formulae normally drop a _tool into share/zsh/site-functions and
+# carapace covers another ~650 commands. What is left is tools that can emit a
+# completion but expect you to ask. Doing that at shell start would mean a
+# subprocess fork per tool on every prompt, and uv and opencode are slow to
+# start, so the output is cached here instead and picked up via fpath.
+#
+# Run after installing or upgrading any of these:
+#   gen-completions
+#
+# Wired into install.sh and the `update` script, so it usually runs on its own.
+
+set -uo pipefail
+
+DEST="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions"
+mkdir -p "$DEST"
+
+generated=0
+skipped=0
+
+# Write stdout of a generator to $DEST/$1, but only if it produced something.
+# A failed generator that leaves a truncated file behind is worse than no file:
+# zsh would autoload the stub and the command would complete to nothing.
+emit() {
+  local name=$1 tool=$2
+  shift 2
+
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    skipped=$((skipped + 1))
+    return 0
+  fi
+
+  local tmp
+  tmp=$(mktemp) || return 1
+  if "$@" >"$tmp" 2>/dev/null && [ -s "$tmp" ]; then
+    mv "$tmp" "$DEST/$name"
+    chmod 644 "$DEST/$name" # mktemp gives 600; keep the directory uniform
+    generated=$((generated + 1))
+  else
+    rm -f "$tmp"
+    echo "⚠️  $tool produced no completion; left $DEST/$name alone"
+  fi
+}
+
+emit _uv uv uv generate-shell-completion zsh
+emit _uvx uvx uvx --generate-shell-completion zsh
+emit _opencode opencode opencode completion zsh
+emit _railway railway railway completion zsh
+
+# granted is the awkward one. `granted completion --shell zsh` does not print to
+# stdout: it writes _assume and _granted under ~/.granted/zsh_autocomplete and
+# then appends absolute fpath=(...) lines to ~/.zshenv. Here ~/.zshenv is a stow
+# symlink into this repo, so running it unsandboxed would edit a tracked file.
+#
+# Running it against a throwaway HOME gets the two generated files without the
+# side effect. They are portable: each is a small wrapper that shells out to
+# assumego, with no path baked in.
+if command -v granted >/dev/null 2>&1; then
+  sandbox=$(mktemp -d) || exit 1
+  if HOME="$sandbox" granted completion --shell zsh >/dev/null 2>&1; then
+    for pair in "assume:_assume" "granted:_granted"; do
+      src="$sandbox/.granted/zsh_autocomplete/${pair%%:*}/${pair##*:}"
+      [ -s "$src" ] && cp "$src" "$DEST/${pair##*:}" && generated=$((generated + 1))
+    done
+  else
+    echo "⚠️  granted completion failed; left _assume and _granted alone"
+  fi
+  rm -rf "$sandbox"
+else
+  skipped=$((skipped + 2))
+fi
+
+# compinit runs with -C, which trusts the cached dump and never rescans fpath.
+# Without dropping it, everything above stays invisible until the dump happens
+# to be rebuilt for some other reason.
+rm -f "$HOME"/.zcompdump*
+
+echo "✅ $generated completions in $DEST ($skipped tools not installed)"

@@ -350,6 +350,16 @@ fi
 # which .zshenv and .profile source. Appending to ~/.zshenv would write
 # through the stow symlink and into this repo.
 
+# Completions for the handful of tools that ship a generator but no packaged
+# completion file. Needs the Brewfile installed above, so it goes last.
+info "Generating shell completions..."
+if [ -n "$DRY_RUN" ]; then
+  info "  would run bin/.local/bin/gen-completions"
+else
+  # Non-fatal: a missing completion is a papercut, not a broken install.
+  ./bin/.local/bin/gen-completions || error "Completion generation failed; run gen-completions by hand"
+fi
+
 # =====================================
 # Final Steps
 # =====================================
