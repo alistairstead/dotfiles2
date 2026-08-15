@@ -1,13 +1,14 @@
 # Homebrew Bundle file
 # Run with: brew bundle
 
-# Taps
+# Taps. install.sh taps and `brew trust`s each of these before running
+# brew bundle: declaring a tap here is the decision to use it, and Homebrew
+# refuses to load formulae from an untrusted third-party tap.
 tap "common-fate/granted"
 tap "dagger/tap"
 tap "koekeishiya/formulae"
 tap "olets/tap"
-# Needs `brew trust rsteube/tap` before brew will load the carapace extensions
-tap "rsteube/tap"
+tap "rsteube/tap" # carapace extensions
 # typewhisper is in homebrew/cask now, but the installed copy came from this tap
 # and brew will not untap while it is present. To drop this line:
 #   brew uninstall --cask typewhisper && brew install --cask typewhisper
@@ -126,7 +127,6 @@ cask "bartender"
 cask "choosy"
 cask "cleanmymac"
 cask "cleanshot"
-# Needs `brew trust dagger/tap` before brew will load it
 cask "dagger/tap/container-use"
 cask "discord"
 cask "dockdoor"

@@ -33,8 +33,10 @@ for tap in "${taps[@]}"; do
     continue
   }
   # Homebrew refuses to load formulae from an untrusted third-party tap.
-  # Trusting is a persistent machine-level change, so only do it unprompted on
-  # an ephemeral runner; locally, say what is needed and carry on.
+  # install.sh trusts every tap the Brewfile declares, so on a set-up machine
+  # this is already done. Trusting is still a persistent machine-level change
+  # and this script is a validator, so it only does it on an ephemeral runner;
+  # locally it reports instead, below.
   if [ -n "${CI:-}" ]; then
     brew trust "$tap" >/dev/null 2>&1 || echo "⚠️  could not trust tap '$tap'"
   fi
@@ -65,7 +67,7 @@ resolve() {
           bad=1
         else
           echo "⚠️  ${kind#--} '$name' is in an untrusted tap, so it was not checked"
-          echo "    brew will not load it either; run: brew trust <tap>"
+          echo "    brew will not load it either; run ./install.sh, or brew trust <tap>"
         fi
         ;;
       *)
