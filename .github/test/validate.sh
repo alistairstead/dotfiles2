@@ -173,8 +173,40 @@ vim	nvim
 g	function
 gc	function
 update	$HOME/.local/bin/update
+gen-completions	$HOME/.local/bin/gen-completions
 claude-speak-toggle	$HOME/.local/bin/claude-speak-toggle
 EOF
+
+# fpath has to be built before compinit. `compinit -C` reuses a cached dump and
+# never rescans, so a directory added after it contributes only whatever the
+# dump already happened to contain. That was a live bug: Homebrew's
+# zsh-completions sat in fpath while `augmatch` completed to nothing.
+#
+# Checked through a real completer rather than by reading fpath, because fpath
+# containing the directory is exactly what the broken version also looked like.
+info "Testing completion setup..."
+if clean_zsh -i -c 'command -v uv' >/dev/null 2>&1; then
+  uv_comp=$(clean_zsh -i -c 'print -r -- ${_comps[uv]}' 2>/dev/null)
+  case "$uv_comp" in
+    _uv) success "generated completions are on fpath before compinit" ;;
+    _carapace_completer) error "carapace took uv; add 'compdef _uv uv' beside the other reclaims" ;;
+    *) error "uv completes with '${uv_comp:-nothing}', expected _uv — is the fpath block still above compinit?" ;;
+  esac
+else
+  info "uv not installed, skipping the fpath ordering check"
+fi
+
+# carapace must not shadow the zsh completers we deliberately reclaimed.
+for pair in "git _git" "brew _brew" "ssh _ssh"; do
+  cmd=${pair% *}
+  want=${pair#* }
+  got=$(clean_zsh -i -c "print -r -- \${_comps[$cmd]}" 2>/dev/null)
+  if [ "$got" = "$want" ]; then
+    success "$cmd completes with $want"
+  else
+    error "$cmd completes with '${got:-nothing}', expected $want"
+  fi
+done
 
 # Abbreviations expand ahead of functions and PATH, so a seeded abbr that
 # collides with either silently wins. scripts/check-collisions.sh catches that

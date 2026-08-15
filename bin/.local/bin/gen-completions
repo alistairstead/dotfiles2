@@ -20,10 +20,27 @@ mkdir -p "$DEST"
 
 generated=0
 skipped=0
+changed=0
+
+# Move $1 into place, but only if it differs from what is already there.
+# Tracking that is what keeps a no-op run from deleting .zcompdump and making
+# every shell afterwards pay for a full rebuild.
+install_file() {
+  local src=$1 name=$2
+
+  if cmp -s "$src" "$DEST/$name"; then
+    rm -f "$src"
+  else
+    mv "$src" "$DEST/$name"
+    chmod 644 "$DEST/$name" # mktemp gives 600; keep the directory uniform
+    changed=1
+  fi
+  generated=$((generated + 1))
+}
 
 # Write stdout of a generator to $DEST/$1, but only if it produced something.
 # A failed generator that leaves a truncated file behind is worse than no file:
-# zsh would autoload the stub and the command would complete to nothing.
+# compinit -C would cache the stub and the command would complete to nothing.
 emit() {
   local name=$1 tool=$2
   shift 2
@@ -36,9 +53,7 @@ emit() {
   local tmp
   tmp=$(mktemp) || return 1
   if "$@" >"$tmp" 2>/dev/null && [ -s "$tmp" ]; then
-    mv "$tmp" "$DEST/$name"
-    chmod 644 "$DEST/$name" # mktemp gives 600; keep the directory uniform
-    generated=$((generated + 1))
+    install_file "$tmp" "$name"
   else
     rm -f "$tmp"
     echo "⚠️  $tool produced no completion; left $DEST/$name alone"
@@ -47,8 +62,42 @@ emit() {
 
 emit _uv uv uv generate-shell-completion zsh
 emit _uvx uvx uvx --generate-shell-completion zsh
-emit _opencode opencode opencode completion zsh
 emit _railway railway railway completion zsh
+
+# opencode ships a broken guard. Its yargs template emits
+#
+#   if [[ "'${zsh_eval_context[-1]}" == "loadautofunc" ]]; then
+#
+# and that stray quote makes the comparison "'loadautofunc" == "loadautofunc",
+# which is never true. Autoloaded, the file therefore takes the else branch,
+# re-runs compdef and returns without completing anything: the first tab press
+# does nothing and only the second works.
+#
+# Strip the quote, then refuse to install if it is still there, so an upstream
+# template change shows up as a loud failure rather than a dead tab key.
+if command -v opencode >/dev/null 2>&1; then
+  tmp=$(mktemp)
+  if opencode completion zsh >"$tmp" 2>/dev/null && [ -s "$tmp" ]; then
+    # Drop the quote, on the guard line only. The '"'"' dance is just a single
+    # quote inside a single-quoted string; bash parameter substitution was the
+    # obvious alternative and mangles the nested quotes.
+    sed '/zsh_eval_context/s/"'"'"'/"/' "$tmp" >"$tmp.fixed" && mv "$tmp.fixed" "$tmp"
+
+    # Assert the repaired line is present, not merely that the broken one is
+    # gone — a substitution that mangles the text satisfies the weaker test.
+    if grep -qF '"${zsh_eval_context[-1]}" == "loadautofunc"' "$tmp"; then
+      install_file "$tmp" _opencode
+    else
+      echo "⚠️  opencode: unrecognised completion template, not installed"
+      rm -f "$tmp"
+    fi
+  else
+    rm -f "$tmp"
+    echo "⚠️  opencode produced no completion; left $DEST/_opencode alone"
+  fi
+else
+  skipped=$((skipped + 1))
+fi
 
 # granted is the awkward one. `granted completion --shell zsh` does not print to
 # stdout: it writes _assume and _granted under ~/.granted/zsh_autocomplete and
@@ -58,12 +107,18 @@ emit _railway railway railway completion zsh
 # Running it against a throwaway HOME gets the two generated files without the
 # side effect. They are portable: each is a small wrapper that shells out to
 # assumego, with no path baked in.
+#
+# _assume is worth keeping even though `assume` is an alias for `. assume`.
+# Alias expansion normally means the alias name never reaches its own completer,
+# but this one does fire: `assume <TAB>` lists the real AWS profiles. Do not
+# reach for `setopt COMPLETE_ALIASES` to "fix" it — ll, vim, rm and the mise
+# aliases would all stop completing as their targets.
 if command -v granted >/dev/null 2>&1; then
   sandbox=$(mktemp -d) || exit 1
   if HOME="$sandbox" granted completion --shell zsh >/dev/null 2>&1; then
     for pair in "assume:_assume" "granted:_granted"; do
       src="$sandbox/.granted/zsh_autocomplete/${pair%%:*}/${pair##*:}"
-      [ -s "$src" ] && cp "$src" "$DEST/${pair##*:}" && generated=$((generated + 1))
+      [ -s "$src" ] && install_file "$src" "${pair##*:}"
     done
   else
     echo "⚠️  granted completion failed; left _assume and _granted alone"
@@ -75,7 +130,14 @@ fi
 
 # compinit runs with -C, which trusts the cached dump and never rescans fpath.
 # Without dropping it, everything above stays invisible until the dump happens
-# to be rebuilt for some other reason.
-rm -f "$HOME"/.zcompdump*
-
-echo "✅ $generated completions in $DEST ($skipped tools not installed)"
+# to be rebuilt for some other reason. Only when something actually changed,
+# though: this runs on every `update`, and an unconditional delete would make
+# the next shell after every update pay for a full fpath scan for nothing.
+#
+# The glob also clears the stale .zcompdump.<host>.* siblings zsh leaves behind.
+if [ "$changed" -eq 1 ]; then
+  rm -f "$HOME"/.zcompdump*
+  echo "✅ $generated completions in $DEST ($skipped absent); next new shell rebuilds .zcompdump"
+else
+  echo "✅ $generated completions in $DEST ($skipped absent); unchanged"
+fi
