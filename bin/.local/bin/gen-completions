@@ -109,10 +109,14 @@ fi
 # assumego, with no path baked in.
 #
 # _assume is worth keeping even though `assume` is an alias for `. assume`.
-# Alias expansion normally means the alias name never reaches its own completer,
-# but this one does fire: `assume <TAB>` lists the real AWS profiles. Do not
-# reach for `setopt COMPLETE_ALIASES` to "fix" it — ll, vim, rm and the mise
-# aliases would all stop completing as their targets.
+# Alias expansion usually means an alias name never reaches its own completer,
+# so this one looks like it should be dead. It is not: `assume <TAB>` lists the
+# real AWS profiles.
+#
+# If it ever does stop working, COMPLETE_ALIASES is not the answer. It is off,
+# which is both the zsh default and what this setup wants: with it off an alias
+# completes as its target, which is why ll completes as eza, vim as nvim, rm as
+# trash and mr/mi/mu/mc as mise. Turning it on trades all of those for this one.
 if command -v granted >/dev/null 2>&1; then
   sandbox=$(mktemp -d) || exit 1
   if HOME="$sandbox" granted completion --shell zsh >/dev/null 2>&1; then
