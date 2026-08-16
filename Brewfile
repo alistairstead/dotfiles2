@@ -11,10 +11,6 @@
 tap "common-fate/granted"
 tap "olets/tap"
 tap "rsteube/tap" # carapace extensions
-# typewhisper is in homebrew/cask now, but the installed copy came from this tap
-# and brew will not untap while it is present. To drop this line:
-#   brew uninstall --cask typewhisper && brew install --cask typewhisper
-tap "typewhisper/tap"
 
 # Core utilities
 brew "coreutils"
