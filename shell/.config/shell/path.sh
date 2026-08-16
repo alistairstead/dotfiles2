@@ -60,7 +60,6 @@ path_prepend "/usr/local/bin"
 path_prepend "/opt/homebrew/opt/libpq/bin"
 path_prepend "/opt/homebrew/opt/icu4c/sbin"
 path_prepend "/opt/homebrew/opt/gnu-sed/libexec/gnubin"
-path_prepend "/opt/homebrew/opt/mysql-client@8.4/bin"
 
 # Unversioned python shims (python3 -> python)
 for _py in /opt/homebrew/opt/python@*/libexec/bin; do

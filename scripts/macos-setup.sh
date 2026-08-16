@@ -208,19 +208,6 @@ setup_homebrew_env() {
     echo "Homebrew environment comes from ~/.config/shell/env.sh"
 }
 
-# Link MySQL client (if installed)
-link_mysql_client() {
-    if [ -x "/opt/homebrew/bin/brew" ] && /opt/homebrew/bin/brew list mysql-client@8.4 &>/dev/null; then
-        echo "Linking MySQL client..."
-        # Full path, so the dry-run shims do not cover it
-        if [ -n "$DRY_RUN" ]; then
-            echo "    would run: brew link --overwrite --force mysql-client@8.4"
-        else
-            /opt/homebrew/bin/brew link --overwrite --force mysql-client@8.4
-        fi
-    fi
-}
-
 # Lock screen contact message. Personal, so never committed: taken from
 # LOGIN_WINDOW_TEXT if set, otherwise asked for once and saved to $PRIVATE_ENV.
 # With no human to ask, whatever is on the machine is left alone.
@@ -571,7 +558,6 @@ main() {
 
     setup_touchid_sudo
     setup_homebrew_env
-    link_mysql_client
     setup_system_defaults
     setup_keyboard
     setup_trackpad

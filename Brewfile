@@ -81,7 +81,6 @@ brew "carapace-aws"
 brew "carapace-magick"
 
 # Database tools
-brew "mysql-client@8.4"
 brew "sqlite"
 
 # Development utilities
@@ -108,7 +107,6 @@ brew "pipx"      # Backs the pipx: backend in mise/config.toml
 brew "nmap"
 
 # Languages and runtimes not managed by mise
-brew "php"
 brew "zig"
 brew "luarocks"
 brew "playwright-cli"
