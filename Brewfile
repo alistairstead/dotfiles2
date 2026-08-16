@@ -38,9 +38,6 @@ brew "act"       # Run GitHub Actions locally
 # Cloud and infrastructure
 brew "awscli"
 brew "granted"
-brew "terraform"
-brew "terraform-ls"
-brew "tflint"
 brew "railway"
 
 # Terminal tools
