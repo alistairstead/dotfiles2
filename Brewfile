@@ -97,9 +97,11 @@ brew "fontconfig"
 brew "imagemagick"
 brew "sox"       # Audio processing, used by claude speak hooks
 brew "whisper-cpp" # Local speech-to-text
-# Wispr Flow CLI. zsh/.zshrc evals `ww init zsh`, so the shell integration
-# silently stops if this is missing; the tap is derived from the qualified name
-brew "omihirofumi/tap/ww"
+# Not declared: omihirofumi/tap/ww, the Wispr Flow CLI that zsh/.zshrc evals as
+# `ww init zsh`. The formula builds from source and does not compile against zig
+# 0.16, so declaring it fails `brew bundle` outright. The .zshrc block is guarded
+# on the binary, so a machine without it just has no Wispr Flow integration.
+# Restore the line once the formula builds again.
 brew "shellcheck"
 brew "uv"
 brew "pipx"      # Backs the pipx: backend in mise/config.toml
