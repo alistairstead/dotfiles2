@@ -4,9 +4,11 @@
 # Taps. install.sh taps and `brew trust`s each of these before running
 # brew bundle: declaring a tap here is the decision to use it, and Homebrew
 # refuses to load formulae from an untrusted third-party tap.
+#
+# Only taps whose packages are referenced by a bare name need a line here.
+# dagger/tap and koekeishiya/formulae are absent on purpose: their entries are
+# written tap-qualified further down, which implies the tap on its own.
 tap "common-fate/granted"
-tap "dagger/tap"
-tap "koekeishiya/formulae"
 tap "olets/tap"
 tap "rsteube/tap" # carapace extensions
 # typewhisper is in homebrew/cask now, but the installed copy came from this tap

@@ -5,12 +5,20 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  schedule:
+    # Mondays, 06:00 UTC. Nothing here depends on the repo changing: a formula
+    # that stops building upstream fails this run and nothing else would.
+    - cron: '0 6 * * 1'
   workflow_dispatch:
 
 jobs:
   test-install:
     name: Test on macOS Latest
     runs-on: macos-latest
+    # install.sh runs twice below, and the real Brewfile takes about fifteen
+    # minutes on the first pass. A hang should fail rather than linger; see
+    # HOMEBREW_BUNDLE_MAS_SKIP for the one that ran 95 minutes before cancelling.
+    timeout-minutes: 60
 
     steps:
       - name: Checkout repository
@@ -21,22 +29,23 @@ jobs:
           echo "CI=true" >> $GITHUB_ENV
           echo "HOME=$HOME" >> $GITHUB_ENV
 
-      - name: Record shell versions under test
+          # Mac App Store installs need a signed-in Apple ID, which a runner
+          # does not have; brew bundle waits on one indefinitely rather than
+          # failing. Set here rather than per step so it covers both installs.
+          # The skip list is space-separated, so an app whose name contains
+          # spaces can only be matched by its id.
+          MAS_SKIP="$(sed -n 's/^mas .*id: *\([0-9][0-9]*\).*/\1/p' Brewfile | tr '\n' ' ')"
+          echo "HOMEBREW_BUNDLE_MAS_SKIP=$MAS_SKIP" >> $GITHUB_ENV
+          echo "Skipping App Store ids: ${MAS_SKIP:-none}"
+
+      - name: Record versions under test
         run: |
           # The Brewfile does not install bash or zsh, so CI exercises the
           # macOS system shells, same as a real machine. Log which ones.
-          echo "zsh:  $(zsh --version)"
-          echo "bash: $(/bin/bash --version | head -1)"
-
-      - name: Install zsh-abbr
-        continue-on-error: true
-        run: |
-          # zsh-abbr lives in a third-party tap, which Homebrew will not load
-          # without explicit trust. Best effort: the abbr block in .zshrc is
-          # guarded, so CI still passes without it, just with less coverage.
-          brew tap olets/tap
-          brew trust --formula olets/tap/zsh-abbr
-          brew install olets/tap/zsh-abbr
+          echo "macOS: $(sw_vers -productVersion)"
+          echo "zsh:   $(zsh --version)"
+          echo "bash:  $(/bin/bash --version | head -1)"
+          echo "brew:  $(brew --version | head -1)"
 
       - name: Run installation script
         run: |
@@ -96,6 +105,17 @@ jobs:
           fi
           ./.github/test/validate.sh
 
+      - name: Report what got installed
+        if: always()
+        run: |
+          {
+            echo "### Installed"
+            echo "- formulae: $(brew list --formula | wc -l | tr -d ' ') installed, $(grep -c '^brew ' Brewfile) declared"
+            echo "- casks: $(brew list --cask | wc -l | tr -d ' ') installed, $(grep -c '^cask ' Brewfile) declared"
+            echo ""
+            echo "$(grep -c '^mas ' Brewfile) App Store app(s) skipped; a runner has no Apple ID."
+          } >> "$GITHUB_STEP_SUMMARY"
+
   test-static:
     name: Static Checks
     runs-on: ubuntu-latest
@@ -116,20 +136,6 @@ jobs:
 
       - name: Check for shadowed command names
         run: ./scripts/check-collisions.sh
-
-      - name: Check CI Brewfile is a subset of Brewfile
-        run: |
-          # Brewfile.ci is a hand-picked subset; anything in it that is not in
-          # the real Brewfile means CI is testing against something you do not
-          # actually install.
-          status=0
-          while IFS= read -r pkg; do
-            if ! grep -qE "^brew \"${pkg}\"" Brewfile; then
-              echo "::error::${pkg} is in Brewfile.ci but not in Brewfile"
-              status=1
-            fi
-          done < <(sed -n 's/^brew "\([^"]*\)".*/\1/p' .github/test/Brewfile.ci)
-          exit $status
 
   test-typescript:
     name: TypeScript

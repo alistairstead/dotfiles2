@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Verify every name in the Brewfile still resolves to something Homebrew knows.
 #
-# The full `brew bundle` only ever runs on a real machine; CI installs a small
-# subset. So a formula that gets renamed, deprecated into oblivion, or moved
-# between taps stays invisible until the next time you set up a laptop. This
-# resolves names against Homebrew's metadata. Nothing is installed.
+# CI does install the real Brewfile, but that job takes about fifteen minutes.
+# This resolves every name against Homebrew's metadata in seconds, so a formula
+# that gets renamed, deprecated into oblivion, or moved between taps fails fast
+# in a parallel job instead of part way through the install. Nothing is installed.
 
 set -uo pipefail
 
@@ -16,15 +16,14 @@ status=0
 names() { sed -n "s/^$1 \"\([^\"]*\)\".*/\1/p" "$BREWFILE"; }
 
 # Taps first: most entries are short names that only resolve once their tap is
-# installed, and a tap-qualified name (user/repo/formula) implies its own tap.
+# installed. See the file for which forms of entry imply a tap.
+# shellcheck source=scripts/brewfile-taps.sh
+. ./scripts/brewfile-taps.sh
+
 taps=()
 while IFS= read -r tap; do
   [ -n "$tap" ] && taps+=("$tap")
-done < <({
-  names tap
-  names brew | sed -n 's|^\([^/]*/[^/]*\)/.*|\1|p'
-  names cask | sed -n 's|^\([^/]*/[^/]*\)/.*|\1|p'
-} | sort -u)
+done < <(brewfile_taps "$BREWFILE")
 
 for tap in "${taps[@]}"; do
   brew tap "$tap" >/dev/null 2>&1 || {

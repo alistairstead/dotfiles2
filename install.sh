@@ -76,9 +76,8 @@ fail() {
 info "macOS Dotfiles Installer"
 info "========================"
 
-# Set so `[ -n "$VAR" ]` is safe when they are unset
+# Set so `[ -n "$VAR" ]` is safe when it is unset
 CI=${CI:-}
-DOTFILES_FULL_INSTALL=${DOTFILES_FULL_INSTALL:-}
 
 # Detect if running in CI
 if [ -n "$CI" ]; then
@@ -151,17 +150,18 @@ fi
 
 if [ -f "Brewfile" ]; then
   info "Installing packages from Brewfile..."
-  # Per-push CI installs a subset to stay fast; the scheduled full-install
-  # workflow sets DOTFILES_FULL_INSTALL to exercise the real Brewfile.
   BREWFILE=Brewfile
-  if [ -n "$CI" ] && [ -z "$DOTFILES_FULL_INSTALL" ] && [ -f ".github/test/Brewfile.ci" ]; then
-    info "Using CI-specific Brewfile"
-    BREWFILE=.github/test/Brewfile.ci
-  fi
 
   # Homebrew refuses to load formulae from an untrusted third-party tap. A tap
-  # declared in the Brewfile is one you have chosen to use, so trust it here
+  # the Brewfile depends on is one you have chosen to use, so trust it here
   # rather than leaving the formulae silently unavailable.
+  #
+  # The tap list is derived, not just read off the `tap` lines: an entry like
+  # `cask "dagger/tap/container-use"` needs its tap trusted too and carries no
+  # separate line. See scripts/brewfile-taps.sh.
+  # shellcheck source=scripts/brewfile-taps.sh
+  . ./scripts/brewfile-taps.sh
+
   if brew trust --help >/dev/null 2>&1; then
     while IFS= read -r tap; do
       [ -n "$tap" ] || continue
@@ -171,7 +171,7 @@ if [ -f "Brewfile" ]; then
       fi
       brew tap "$tap" >/dev/null 2>&1 || error "Could not tap $tap"
       brew trust "$tap" >/dev/null 2>&1 || error "Could not trust $tap"
-    done < <(sed -n 's/^tap "\([^"]*\)".*/\1/p' "$BREWFILE")
+    done < <(brewfile_taps "$BREWFILE")
   fi
 
   if [ -n "$DRY_RUN" ]; then
@@ -191,7 +191,7 @@ fi
 # 4. macOS System Settings
 # =====================================
 
-if { [ -z "$CI" ] || [ -n "$DOTFILES_FULL_INSTALL" ]; } && [ -f "scripts/macos-setup.sh" ]; then
+if [ -f "scripts/macos-setup.sh" ]; then
   info "Configuring macOS system settings..."
   if [ -n "$DRY_RUN" ]; then
     ./scripts/macos-setup.sh --dry-run
@@ -200,7 +200,7 @@ if { [ -z "$CI" ] || [ -n "$DOTFILES_FULL_INSTALL" ]; } && [ -f "scripts/macos-s
     success "macOS settings configured"
   fi
 else
-  info "Skipping macOS system settings (CI environment or script not found)"
+  info "Skipping macOS system settings (scripts/macos-setup.sh not found)"
 fi
 
 # =====================================

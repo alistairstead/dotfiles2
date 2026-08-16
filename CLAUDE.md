@@ -88,5 +88,5 @@ The repository includes custom hooks in `claude/.claude/hooks/` that:
 ## Testing
 
 - **Local Testing**: Run `shellcheck` on shell scripts
-- **CI Testing**: GitHub Actions validates installation, syntax, and runs shellcheck
+- **CI Testing**: GitHub Actions runs `install.sh` against the real Brewfile on every push, plus weekly to catch upstream breakage; also validates syntax and runs shellcheck
 - **Manual Validation**: Check symlinks with `ls -la ~/.config/`
