@@ -184,7 +184,10 @@ only works for functions that happen to already be in the dump. `gen-completions
 drops `~/.zcompdump*` for the same reason.
 
 ## History Search (Atuin)
-- `Ctrl+R` / `Up` - Search history in Atuin's TUI, not fzf or zsh
+- `Ctrl+R` / `Up` - Search history in Atuin's TUI, not fzf or zsh. Bound in all
+  three keymaps: fzf claims `^R` in emacs, viins *and* vicmd, but `atuin init`
+  only reclaims the first two, so `.zshrc` binds vicmd back by hand. Without
+  that, `^R` opened Atuin while typing and fzf after `jk`
 - `Ctrl+R` again, inside the TUI - Cycle filter scope: global → workspace →
   directory → host → session. Workspace means the whole git repo tree, so
   `wt` and `jjw` worktrees of one project share a scope

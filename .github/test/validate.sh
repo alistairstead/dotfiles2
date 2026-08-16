@@ -260,6 +260,24 @@ if command -v atuin >/dev/null 2>&1; then
 $(printf '\\e[A')	atuin-up-search
 EOF
 
+  # Per keymap, because the check above only sees the current one. fzf binds ^R
+  # in all three keymaps and `atuin init` reclaims only emacs and viins, so
+  # vicmd silently kept fzf: ctrl-r gave Atuin while typing and fzf after
+  # jk/Esc. .zshrc binds vicmd back explicitly; assert all three so it stays.
+  while IFS=$'\t' read -r keymap expected; do
+    [ -n "$keymap" ] || continue
+    bound=$(clean_zsh -i -c "bindkey -M $keymap '^R'" 2>/dev/null)
+    if [[ "$bound" == *"$expected"* ]]; then
+      success "^R in $keymap is bound to $expected"
+    else
+      error "^R in $keymap is bound to '${bound:-nothing}', expected $expected"
+    fi
+  done <<EOF
+emacs	atuin-search
+viins	atuin-search-viins
+vicmd	atuin-search-vicmd
+EOF
+
   # Only the interactive-insert keymap gets the AI binding. If it ever lands in
   # vicmd too, `?` stops being vi's search-backward.
   vicmd_q=$(clean_zsh -i -c 'bindkey -M vicmd "?"' 2>/dev/null)

@@ -280,6 +280,13 @@ fi
 # package, not here.
 if command -v atuin >/dev/null 2>&1; then
   eval "$(atuin init zsh)"
+
+  # fzf binds ^R in emacs, viins AND vicmd; `atuin init` only reclaims emacs
+  # and viins, because upstream expects vi users to reach for `/` in normal
+  # mode. That left fzf owning ^R in vicmd alone, so ctrl-r opened Atuin while
+  # typing and fzf after jk/Esc — which reads as "it depends on whether the
+  # line has content", since that is when you have usually left insert mode.
+  bindkey -M vicmd '^R' atuin-search-vicmd
 fi
 
 [ -r ~/private/.zshrc ] && source ~/private/.zshrc
