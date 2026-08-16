@@ -73,7 +73,6 @@ path_prepend "$HOME/go/bin"
 path_prepend "$HOME/.sst/bin"
 path_prepend "$HOME/Library/pnpm"
 path_prepend "$HOME/.npm-global/bin"
-path_prepend "$HOME/.turso"
 path_prepend "$HOME/.cargo/bin"
 path_prepend "$HOME/.bun/bin"
 

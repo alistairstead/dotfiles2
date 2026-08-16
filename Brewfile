@@ -100,6 +100,9 @@ brew "fontconfig"
 brew "imagemagick"
 brew "sox"       # Audio processing, used by claude speak hooks
 brew "whisper-cpp" # Local speech-to-text
+# Wispr Flow CLI. zsh/.zshrc evals `ww init zsh`, so the shell integration
+# silently stops if this is missing; the tap is derived from the qualified name
+brew "omihirofumi/tap/ww"
 brew "shellcheck"
 brew "uv"
 brew "pipx"      # Backs the pipx: backend in mise/config.toml
