@@ -1,4 +1,24 @@
 #!/bin/sh
+#
+# Usage: update [-i|--interactive]
+#
+#   -i  Show the outdated list and confirm before upgrading. Without it the
+#       upgrade runs unattended, which is the usual case and what CI resolves.
+
+INTERACTIVE=
+
+case "${1:-}" in
+  -i | --interactive) INTERACTIVE=1 ;;
+  -h | --help)
+    echo "Usage: update [-i|--interactive]"
+    exit 0
+    ;;
+  "") ;;
+  *)
+    echo "Unknown option: $1" >&2
+    exit 1
+    ;;
+esac
 
 gum style \
   --foreground 12 --border-foreground 12 --border double \
@@ -28,9 +48,25 @@ OUTDATED=$(brew outdated)
 echo "$OUTDATED" >>"/tmp/u-$NOW.txt"
 
 if test -n "$OUTDATED"; then
-  gum spin --spinner globe --title "🍻 brew upgrading" --show-output -- brew upgrade | tee -a "/tmp/u-$NOW.txt"
-  printf "\n" >>"/tmp/u-$NOW.txt"
-  echo "✅ 🍻 brew upgraded"
+  # -i shows what is about to change and lets you decline. Declining still
+  # falls through to cleanup and doctor, which is the point: those are the
+  # cheap, safe steps and are worth running even when the upgrade is skipped.
+  if test -n "$INTERACTIVE"; then
+    echo "$OUTDATED"
+    if gum confirm --selected.background=2 --selected.foreground=0 \
+      "Upgrade the outdated formulae above?"; then
+      gum spin --spinner globe --title "🍻 brew upgrading" --show-output -- brew upgrade | tee -a "/tmp/u-$NOW.txt"
+      printf "\n" >>"/tmp/u-$NOW.txt"
+      echo "✅ 🍻 brew upgraded"
+    else
+      echo "Skipped upgrade" >>"/tmp/u-$NOW.txt"
+      echo "⏭️  🍻 upgrade skipped"
+    fi
+  else
+    gum spin --spinner globe --title "🍻 brew upgrading" --show-output -- brew upgrade | tee -a "/tmp/u-$NOW.txt"
+    printf "\n" >>"/tmp/u-$NOW.txt"
+    echo "✅ 🍻 brew upgraded"
+  fi
 
   gum spin --spinner globe --title "🍻 brew cleaning up" --show-output -- brew cleanup --prune=all | tee -a "/tmp/u-$NOW.txt"
   printf "\n" >>"/tmp/u-$NOW.txt"

@@ -51,6 +51,22 @@ jjw list
 Creates, enters, and lists jj workspaces under `.workspaces/`, copying env
 files and running `direnv allow` on the way in.
 
+## Scripts (`~/.local/bin`)
+
+Standalone executables, stowed from `bin/`. Anything here is on `PATH`, so a
+name must not collide with an alias, abbreviation or function —
+`scripts/check-collisions.sh` enforces that.
+
+| Script | What it does |
+|---|---|
+| `update` | gh extensions, then brew update/upgrade/cleanup/doctor, then `gen-completions`. Logs to `/tmp/u-<timestamp>.txt`. `update -i` shows the outdated list and confirms before upgrading |
+| `gen-completions` | Caches completions for tools that generate but do not ship them. Run after installing or upgrading those; `install.sh` and `update` already call it |
+| `update-yabai` | Reinstalls yabai and rewrites the scoped sudoers entry for `--load-sa`, whose hash changes with every build |
+| `claude-notify` | Wraps the `claude` CLI and notifies when a long run finishes |
+| `claude-speak-toggle` | Mutes or unmutes the speak hook. Also bound as a Raycast script |
+| `obsidian` | Full-text search across the vault, opens the hit in `$EDITOR`. Bound as a Zed task |
+| `obsidian-note` | Creates or opens today's daily note. Bound as a Zed task |
+
 ## Utility Functions
 
 ### `copy` - Copy to clipboard
