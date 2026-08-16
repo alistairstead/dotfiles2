@@ -14,11 +14,9 @@ tap "rsteube/tap" # carapace extensions
 
 # Core utilities
 brew "coreutils"
-brew "autoconf"
 brew "openssl"
 brew "readline"
 brew "libtool"
-brew "unixodbc"
 brew "unzip"
 brew "gpg"
 brew "bison"
@@ -72,13 +70,11 @@ brew "fzf-tab"
 # Enhanced shell tools
 brew "just"      # Modern command runner
 brew "carapace"  # Multi-shell command argument completion
-# Carapace extensions. Nothing sources these: carapace-bin does an exec.LookPath
-# for each and delegates over its bridge protocol when the binary is on PATH, so
-# installing is the whole setup. carapace-aws parses botocore service definitions
-# for real descriptions and falls back to aws_completer; carapace-magick covers
-# magick, montage, mogrify, compare and identify.
+# Carapace extension. Nothing sources it: carapace-bin does an exec.LookPath and
+# delegates over its bridge protocol when the binary is on PATH, so installing is
+# the whole setup. carapace-aws parses botocore service definitions for real
+# descriptions and falls back to aws_completer.
 brew "carapace-aws"
-brew "carapace-magick"
 
 # Database tools
 brew "sqlite"
@@ -92,8 +88,6 @@ brew "jj"
 brew "jjui"
 brew "lazydocker"
 brew "lazygit"
-brew "fontconfig"
-brew "imagemagick"
 brew "sox"       # Audio processing, used by claude speak hooks
 brew "whisper-cpp" # Local speech-to-text
 # Not declared: omihirofumi/tap/ww, the Wispr Flow CLI that zsh/.zshrc evals as
