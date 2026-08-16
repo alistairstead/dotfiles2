@@ -144,6 +144,29 @@ profile is stuck in a shell: [direnv/README.md](direnv/README.md).
 - `Alt+C` - Directory picker
 - Tab completion is routed through fzf-tab, with eza previews for directories
 
+## Completions
+
+Three sources feed the same completion system, in the order zsh resolves them:
+
+- **Packaged** - `_tool` files Homebrew drops into `share/zsh/site-functions`
+- **carapace** - one binary covering ~650 commands that ship no zsh completion.
+  Sourced after compinit, so it wins any name it registers; `_git`, `_brew` and
+  `_ssh` are handed back to zsh's own completers with `compdef` because they are
+  better. Check what owns a command with `print -r -- ${_comps[git]}`
+- **Generated** - `gen-completions` caches the output of tools that can emit a
+  completion but only when asked (`uv`, `uvx`, `railway`, and `granted`, which
+  writes files instead of printing and so runs against a throwaway `HOME`).
+  Results land in `~/.cache/zsh/completions`, deliberately a cache rather than a
+  stow package: generated, large, and reproducible
+
+Run `gen-completions` after installing or upgrading any of those tools; it is
+already wired into `install.sh` and the `update` script.
+
+`fpath` is assembled **before** `compinit`, which runs with `-C` and therefore
+trusts a cached dump rather than rescanning. A directory added after compinit
+only works for functions that happen to already be in the dump. `gen-completions`
+drops `~/.zcompdump*` for the same reason.
+
 ## History Search (Atuin)
 - `Ctrl+R` / `Up` - Search history in Atuin's TUI, not fzf or zsh
 - `Ctrl+R` again, inside the TUI - Cycle filter scope: global → workspace →

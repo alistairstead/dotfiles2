@@ -26,7 +26,8 @@ cd ~/dotfiles
 ### Key Features
 
 - Touch ID for sudo authentication
-- Catppuccin Mocha theme across applications
+- Colours set in one place: Atuin and the prompt inherit the terminal's theme
+  rather than pinning their own, so light/dark switching works everywhere
 - Declarative package management via Brewfile
 - Modular configuration with GNU Stow
 
